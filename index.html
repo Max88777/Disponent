@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leitstelle CTS 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            overflow: hidden; 
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+
+        .tab-content {
+            display: none !important;
+        }
+        .tab-content.active {
+            display: flex !important;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col relative">
+
+    <header class="glass-panel p-4 flex justify-between items-center gap-4 z-10 w-full shrink-0 border-b border-slate-700/50">
+        <div class="flex items-center gap-3 shrink-0">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-xl shadow-lg shadow-blue-500/30">
+                CTS
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-white tracking-wide">LEITSTELLE <span class="text-blue-400">2026</span></h1>
+                <p class="text-xs text-slate-400">Stadtwerke Tramau • Dispo-Zentrum</p>
+            </div>
+        </div>
+        
+        <div class="flex gap-2 overflow-x-auto flex-1 mx-4 custom-scrollbar items-center pb-2 md:pb-0 whitespace-nowrap">
+            <button onclick="switchTab('tab-emails', this)" class="nav-btn bg-blue-600 px-4 py-2 rounded-lg text-white transition-colors text-sm font-medium border border-slate-600 relative shrink-0">
+                Postfach
+                <span id="email-badge" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full hidden"></span>
+            </button>
+            <button onclick="switchTab('tab-funk', this)" class="nav-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-600 relative shrink-0">
+                Funk
+                <span id="funk-badge" class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full hidden animate-pulse"></span>
+            </button>
+            <button onclick="switchTab('tab-fuhrpark', this)" class="nav-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-600 shrink-0">
+                Fahrzeughandel
+            </button>
+            <button onclick="switchTab('tab-depot', this)" class="nav-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-600 shrink-0">
+                Betriebshof
+            </button>
+            <button onclick="switchTab('tab-incidents', this)" class="nav-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-600 relative shrink-0">
+                Zwischenfälle
+                <span id="incident-badge" class="absolute -top-1 -right-1 w-3 h-3 bg-amber-500 rounded-full hidden animate-pulse"></span>
+            </button>
+            <button onclick="switchTab('tab-routes', this)" class="nav-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-600 shrink-0">
+                Routen
+            </button>
+            <button onclick="switchTab('tab-personnel', this)" class="nav-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-600 shrink-0">
+                Personal
+            </button>
+            <button onclick="switchTab('tab-dfi', this)" class="nav-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors text-sm font-medium border border-slate-600 shrink-0">
+                DFI
+            </button>
+            <button onclick="switchTab('tab-driver', this)" class="nav-btn px-4 py-2 rounded-lg bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 transition-colors text-sm font-medium border border-blue-500/50 shrink-0">
+                Fahrmodus
+            </button>
+        </div>
+
+        <div class="glass-panel px-4 py-2 rounded-lg border border-slate-700 flex items-center gap-3 shrink-0 bg-slate-900/80">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_#10b981]"></div>
+            <div class="text-right">
+                <div class="text-[10px] text-slate-400 tracking-wider">ECHTZEIT</div>
+                <div id="clock-display" class="font-mono font-bold text-lg text-white">00:00:00</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-hidden p-4 relative">
+        
+        <div id="tab-emails" class="tab-content active h-full flex-col md:flex-row gap-4">
+            <div class="glass-panel w-full md:w-1/3 rounded-xl flex flex-col overflow-hidden shadow-xl">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/80 shrink-0">
+                    <h2 class="font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Posteingang
+                    </h2>
+                </div>
+                <div id="email-list" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1">
+                    <!-- Emails via JS -->
+                </div>
+            </div>
+            <div class="glass-panel w-full md:w-2/3 rounded-xl flex flex-col shadow-xl">
+                <div id="email-reader" class="flex-1 p-6 flex flex-col text-slate-300 overflow-y-auto custom-scrollbar">
+                    <div class="flex-1 flex items-center justify-center text-slate-500">
+                        Wähle eine Nachricht aus, um sie zu lesen.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-funk" class="tab-content h-full flex-col gap-4">
+            <div class="glass-panel w-full rounded-xl flex flex-col h-full shadow-xl">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/80 flex justify-between items-center shrink-0">
+                    <h2 class="font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                        Leitstellen-Funk
+                    </h2>
+                </div>
+                <div id="funk-chat" class="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-3 bg-slate-900/50">
+                    <!-- Funk via JS -->
+                </div>
+                <div class="p-4 border-t border-slate-700 bg-slate-800/80 flex gap-2 shrink-0">
+                    <select id="funk-target" class="bg-slate-900 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 w-1/4">
+                        <option value="all">An: Alle Wagen</option>
+                    </select>
+                    <input type="text" id="funk-input" placeholder="Nachricht an Fahrer..." class="flex-1 bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500" onkeypress="if(event.key === 'Enter') sendFunk()">
+                    <button onclick="sendFunk()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition-colors shadow-lg">
+                        Senden
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-fuhrpark" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
+            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Fahrzeughandel (Neuwagen)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-600 hover:border-indigo-400 transition-colors flex flex-col">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">MAN Lion's City</h3>
+                            <span class="bg-slate-700 text-xs px-2 py-1 rounded text-slate-300">Solobus</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-4 flex-1">Standard-Linienbus. 12m Länge, 3 Türen. Zuverlässiges Arbeitstier.</p>
+                        <button onclick="buyBus('MAN Lion\'s City', 'Solo')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-sm font-medium transition-colors shadow-lg">Kaufen & Zulassen</button>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-600 hover:border-indigo-400 transition-colors flex flex-col">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">MB Citaro G</h3>
+                            <span class="bg-blue-900/50 text-blue-300 text-xs px-2 py-1 rounded border border-blue-700">Gelenkbus</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-4 flex-1">Gelenkbus für stark frequentierte Linien. 18m Länge, 4 Türen.</p>
+                        <button onclick="buyBus('MB Citaro G', 'Gelenk')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-sm font-medium transition-colors shadow-lg">Kaufen & Zulassen</button>
+                    </div>
+                    <div class="bg-slate-800/50 p-5 rounded-xl border border-slate-600 hover:border-indigo-400 transition-colors flex flex-col">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-bold text-lg text-white">Solaris Urbino 12</h3>
+                            <span class="bg-slate-700 text-xs px-2 py-1 rounded text-slate-300">Solobus</span>
+                        </div>
+                        <p class="text-sm text-slate-400 mb-4 flex-1">Moderner, wendiger Solobus. Ideal für enge Innenstädte.</p>
+                        <button onclick="buyBus('Solaris Urbino 12', 'Solo')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg text-sm font-medium transition-colors shadow-lg">Kaufen & Zulassen</button>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
+                <h3 class="font-bold text-slate-300 mb-4">Letzte Zulassungen</h3>
+                <div id="fuhrpark-log" class="text-sm text-slate-400 space-y-2">
+                    <i>Noch keine Fahrzeuge in dieser Schicht gekauft.</i>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-depot" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 shrink-0">
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-slate-400 shadow-lg">
+                    <div class="text-xs text-slate-400">Fahrzeuge im Depot</div>
+                    <div class="text-2xl font-bold text-white" id="stat-depot">0</div>
+                </div>
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-blue-500 shadow-lg">
+                    <div class="text-xs text-slate-400">Auf Linie</div>
+                    <div class="text-2xl font-bold text-white" id="stat-line">0</div>
+                </div>
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-amber-500 shadow-lg">
+                    <div class="text-xs text-slate-400">Wartung / Defekt</div>
+                    <div class="text-2xl font-bold text-white" id="stat-maintenance">0</div>
+                </div>
+                <div class="glass-panel p-4 rounded-xl border-l-4 border-emerald-500 shadow-lg">
+                    <div class="text-xs text-slate-400">Verfügbare Fahrer</div>
+                    <div class="text-2xl font-bold text-white" id="stat-drivers">0</div>
+                </div>
+            </div>
+            <div class="glass-panel rounded-xl flex-1 flex flex-col min-h-[400px] shadow-xl">
+                <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/80 shrink-0">
+                    <h2 class="font-bold text-white">Fahrzeug-Disposition</h2>
+                    <button onclick="autoAssign()" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-1 rounded text-white border border-slate-500 transition-colors shadow">
+                        Auto-Zuweisung forcieren
+                    </button>
+                </div>
+                <div class="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar" id="depot-grid">
+                    <!-- Cards via JS -->
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-incidents" class="tab-content h-full flex-col gap-4">
+            <div class="glass-panel w-full h-full rounded-xl flex flex-col shadow-xl">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/80 shrink-0">
+                    <h2 class="font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Störungsprotokoll
+                    </h2>
+                </div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 bg-slate-900/30">
+                    <div id="incident-list" class="space-y-3">
+                        <!-- Incidents via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-routes" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
+            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
+                <h2 class="text-xl font-bold text-white mb-4">Neue Route planen</h2>
+                <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-400 mb-1">Linie</label>
+                        <input type="text" id="route-line" placeholder="z.B. 100" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div class="md:col-span-5">
+                        <label class="block text-xs text-slate-400 mb-1">Alle Haltestellen (mit Komma trennen)</label>
+                        <input type="text" id="route-stops" placeholder="Hauptbahnhof, Rathaus, Stadion" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-400 mb-1">Start (Uhr)</label>
+                        <input type="time" id="route-time" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" value="06:00">
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-400 mb-1">Ende (Uhr)</label>
+                        <input type="time" id="route-time-end" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" value="23:30">
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-400 mb-1">Umläufe (Busse)</label>
+                        <input type="number" id="route-umlaeufe" min="1" max="10" value="2" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div class="md:col-span-1">
+                        <label class="block text-xs text-slate-400 mb-1">Gesamtfahrtzeit (Min)</label>
+                        <input type="number" id="route-duration" value="45" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                    </div>
+                    <div class="md:col-span-2">
+                        <button onclick="addRoute()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded font-medium transition-colors shadow-lg">
+                            Route speichern
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="glass-panel rounded-xl overflow-hidden flex-1 min-h-[300px] shadow-xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800/80 text-slate-300 text-sm">
+                            <th class="p-4 font-semibold">Linie</th>
+                            <th class="p-4 font-semibold">Strecke</th>
+                            <th class="p-4 font-semibold">Betriebszeit</th>
+                            <th class="p-4 font-semibold">Umläufe</th>
+                            <th class="p-4 font-semibold">Fahrtzeit</th>
+                            <th class="p-4 font-semibold text-right">Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="route-table-body" class="divide-y divide-slate-700/50">
+                        <!-- Routes via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-personnel" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
+            <div class="glass-panel rounded-xl overflow-hidden min-h-[400px] shadow-xl">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/80 flex justify-between items-center shrink-0">
+                    <h2 class="font-bold text-white">Personalstamm</h2>
+                </div>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-800/80 text-slate-300 text-sm">
+                            <th class="p-4 font-semibold">ID</th>
+                            <th class="p-4 font-semibold">Name</th>
+                            <th class="p-4 font-semibold">Status</th>
+                            <th class="p-4 font-semibold">Überstunden</th>
+                            <th class="p-4 font-semibold text-right">Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="personnel-table-body" class="divide-y divide-slate-700/50 bg-slate-900/30">
+                        <!-- Personnel via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="tab-dfi" class="tab-content h-full flex-col items-center justify-center bg-black/70 rounded-xl relative overflow-hidden shadow-2xl">
+            <div class="w-full max-w-4xl bg-[#111] border-4 border-slate-800 rounded-lg p-2 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
+                <div class="absolute top-0 left-0 w-full h-full pointer-events-none" style="background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); z-index: 10;"></div>
+                <div class="bg-black p-4 rounded min-h-[300px] flex flex-col font-mono text-amber-500" style="text-shadow: 0 0 5px rgba(245, 158, 11, 0.7);">
+                    <div class="flex justify-between items-center border-b-2 border-amber-500/30 pb-2 mb-4 z-20 relative">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl font-bold">Haltestelle:</span>
+                            <select id="dfi-stop-select" onchange="changeDfiStop(this.value)" class="bg-black border border-amber-500/50 text-amber-500 rounded p-1 text-lg focus:outline-none focus:border-amber-400 font-mono font-bold max-w-[200px] md:max-w-none">
+                                <!-- Populated via JS -->
+                            </select>
+                        </div>
+                        <span class="text-xl font-bold" id="dfi-clock">00:00</span>
+                    </div>
+                    <div class="flex text-sm text-amber-500/70 mb-2 px-2 z-20 relative">
+                        <div class="w-16">Linie</div>
+                        <div class="flex-1">Ziel</div>
+                        <div class="w-24 text-right">Abfahrt</div>
+                    </div>
+                    <div id="dfi-lines" class="flex-1 flex flex-col gap-2 text-xl z-20 relative">
+                        <!-- DFI Lines via JS -->
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 text-slate-500 text-sm max-w-2xl text-center">
+                Die Dynamische Fahrgastinformation (DFI) berechnet Ankunftszeiten automatisch anhand des Fahrplans und liest Funk-Verspätungen in Echtzeit pro Umlauf aus.
+            </div>
+        </div>
+
+        <div id="tab-driver" class="tab-content h-full flex-col items-center justify-center p-2 md:p-4">
+            
+            <div id="driver-start" class="glass-panel p-8 rounded-xl max-w-md w-full border-t-4 border-blue-500 shadow-2xl">
+                <h2 class="text-2xl font-bold text-white mb-2 text-center">Fahrmodus aktivieren</h2>
+                <p class="text-slate-400 text-sm text-center mb-8">Übernehmen Sie selbst das Steuer eines Fahrzeugs auf einer geplanten Route.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Fahrzeug auswählen</label>
+                        <select id="driver-vehicle-select" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 focus:outline-none">
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Linie übernehmen</label>
+                        <select id="driver-route-select" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 focus:outline-none">
+                        </select>
+                    </div>
+                    <button onclick="startDriverMode()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mt-4 shadow-lg shadow-blue-500/20 transition-all">
+                        Dienst beginnen
+                    </button>
+                </div>
+            </div>
+
+            <div id="driver-cockpit" class="hidden w-full h-full max-w-6xl flex-col gap-4 mx-auto">
+                <div class="glass-panel p-4 md:p-6 rounded-xl border border-slate-700 bg-slate-800/90 shadow-2xl flex-1 flex flex-col relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 50% -20%, #3b82f6, transparent 70%);"></div>
+                    
+                    <div class="flex justify-between items-center mb-4 z-10 border-b border-slate-700/50 pb-4 shrink-0">
+                        <h2 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
+                            <svg class="w-6 h-6 md:w-8 md:h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                            Fahrer-Cockpit
+                        </h2>
+                        <button onclick="stopDriverMode()" class="bg-red-600 hover:bg-red-500 text-white px-4 md:px-6 py-2 rounded-lg font-bold shadow-lg transition-colors border border-red-400/50 text-sm md:text-base whitespace-nowrap">
+                            Schicht beenden
+                        </button>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-4 md:gap-6 flex-1 z-10 pb-2 min-h-0">
+                        
+                        <!-- Linke Seite: Fahrzeug Setup & IBIS -->
+                        <div class="flex flex-col gap-4 w-full md:w-5/12 shrink-0 h-full min-h-0">
+                            <!-- Interaktive Dropdowns -->
+                            <div class="grid grid-cols-2 gap-4 shrink-0">
+                                <div class="bg-slate-900/80 backdrop-blur p-4 rounded-lg border border-slate-600 relative">
+                                    <div class="text-xs text-slate-400 mb-1 flex justify-between items-center">
+                                        <span>Aktuelles Fahrzeug</span>
+                                        <span class="text-[10px] bg-slate-800 px-1 rounded text-slate-300">▼ Ändern</span>
+                                    </div>
+                                    <select id="cockpit-vehicle-select" onchange="changeCockpitVehicle(this.value)" class="w-full bg-transparent font-bold text-base md:text-xl text-white focus:outline-none appearance-none cursor-pointer">
+                                        <!-- Options via JS -->
+                                    </select>
+                                </div>
+                                <div class="bg-slate-900/80 backdrop-blur p-4 rounded-lg border border-slate-600 text-right relative">
+                                    <div class="text-xs text-slate-400 mb-1 flex justify-between items-center flex-row-reverse">
+                                        <span>Linie wechseln</span>
+                                        <span class="text-[10px] bg-slate-800 px-1 rounded text-slate-300">▼ Ändern</span>
+                                    </div>
+                                    <select id="cockpit-route-select" onchange="changeCockpitRoute(this.value)" class="w-full bg-transparent font-bold text-base md:text-xl text-amber-400 text-right focus:outline-none appearance-none cursor-pointer">
+                                        <!-- Options via JS -->
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- IBIS SYSTEM -->
+                            <div class="flex-1 bg-slate-900 rounded-xl border-2 border-slate-700 shadow-inner flex flex-col overflow-hidden min-h-0">
+                                <div class="bg-slate-800 p-2 border-b border-slate-700 flex justify-between items-center shrink-0">
+                                    <span class="text-xs font-bold text-slate-300 tracking-wider truncate mr-2" id="ibis-title">IBIS - BORDCOMPUTER</span>
+                                    <span class="text-xs font-mono text-emerald-400 shrink-0" id="ibis-clock">00:00</span>
+                                </div>
+                                <div id="ibis-display" class="flex-1 p-3 overflow-y-auto custom-scrollbar font-mono bg-[#0a1910] space-y-1 text-emerald-500 text-sm">
+                                    <!-- Stops via JS -->
+                                </div>
+                                <div class="bg-slate-800 p-2 border-t border-slate-700 flex gap-2 shrink-0">
+                                    <button onclick="announceStop()" class="flex-1 bg-slate-700 hover:bg-slate-600 border border-slate-500 text-xs px-2 py-3 rounded text-slate-200 transition-colors shadow-sm flex items-center justify-center gap-1 font-bold">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                                        Ansage
+                                    </button>
+                                    <button id="ibis-next-btn" onclick="advanceStop()" class="flex-1 border text-sm px-2 py-3 rounded text-white font-bold transition-colors shadow-sm bg-blue-700 hover:bg-blue-600 border-blue-500">
+                                        Nächste Hst.
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rechte Seite: Bordfunk -->
+                        <div class="bg-[#0f172a]/90 rounded-xl border border-slate-600 shadow-inner flex flex-col flex-1 overflow-hidden min-h-0">
+                            <div class="bg-slate-800 p-3 border-b border-slate-700 text-sm font-bold text-slate-300 flex items-center gap-2 shrink-0">
+                                <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div>
+                                Bordfunk
+                            </div>
+                            
+                            <div id="driver-funk-chat" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar flex flex-col bg-slate-900/50">
+                                <!-- Messages via JS -->
+                            </div>
+                            
+                            <div class="px-2 py-3 bg-slate-800/90 flex gap-2 overflow-x-auto custom-scrollbar border-t border-slate-700 shrink-0 whitespace-nowrap">
+                                <button onclick="sendDriverFunk('Stau auf der Strecke, ca. 5 Min Verspätung.')" class="bg-slate-700 hover:bg-slate-600 border border-slate-500 text-xs px-4 py-2 rounded-lg text-slate-200 transition-colors">Stau melden</button>
+                                <button onclick="sendDriverFunk('Türstörung, versuche Reset.')" class="bg-slate-700 hover:bg-slate-600 border border-slate-500 text-xs px-4 py-2 rounded-lg text-slate-200 transition-colors">Türstörung</button>
+                                <button onclick="sendDriverFunk('Unfall! Bitte sofort Polizei und Leitwagen!')" class="bg-red-900/60 hover:bg-red-800/60 border border-red-600 text-xs px-4 py-2 rounded-lg text-red-200 transition-colors">Notruf</button>
+                            </div>
+                            
+                            <div class="p-3 border-t border-slate-700 bg-slate-800 flex gap-2 shrink-0">
+                                <input type="text" id="driver-funk-input" placeholder="An Leitstelle tippen..." class="flex-1 bg-slate-900 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" onkeypress="if(event.key === 'Enter') sendDriverFunk()">
+                                <button onclick="sendDriverFunk()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg">
+                                    Senden
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        let vehicles = [
+            { id: '10', type: 'Solo', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null },
+            { id: '11', type: 'Gelenk', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null },
+            { id: '12', type: 'Solo', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null },
+            { id: '14', type: 'Gelenk', status: 'Wartung', line: null, driver: null, tempDriver: null, tempRoute: null },
+            { id: '15', type: 'Solo', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null }
+        ];
+
+        let personnel = [
+            { id: 'P01', name: 'Müller, H.', status: 'Bereit', over: 4, mode: 'Normal' },
+            { id: 'P02', name: 'Schmidt, A.', status: 'Krank', over: 0, mode: 'Normal' },
+            { id: 'P03', name: 'Weber, T.', status: 'Bereit', over: 16, mode: 'Normal' },
+            { id: 'P04', name: 'Wagner, M.', status: 'Bereit', over: 2, mode: 'Normal' },
+            { id: 'P05', name: 'Becker, S.', status: 'Bereit', over: 8, mode: 'Normal' },
+            { id: 'P06', name: 'Hoffmann, J.', status: 'Bereit', over: 21, mode: 'Normal' }
+        ];
+
+        let routes = [
+            { id: '1', line: '100', stops: ['Hauptbahnhof', 'Marktplatz', 'Rathaus', 'Klinikum', 'Stadion'], startTime: '06:00', endTime: '23:30', duration: 45, umlaeufe: 2 }
+        ];
+
+        let selectedDfiStop = 'Hauptbahnhof';
+        let emails = [];
+        let funkMessages = [];
+        let incidents = [];
+        let currentActiveTab = 'tab-emails';
+        let playerAssignment = null; 
+        
+        let umlaufDelays = {}; // DFI Verspätungen pro Umlauf!
+        
+        let lastFunkCheck = Date.now() - 50000;
+        let lastEmailCheck = Date.now() - 290000; // Fast 5 Min am Start
+
+        function playRadioNoise() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+
+                if (!window.radioAudioCtx) {
+                    window.radioAudioCtx = new AudioContext();
+                }
+                const ctx = window.radioAudioCtx;
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+
+                const t = ctx.currentTime;
+                
+                // Master-Volume
+                const masterGain = ctx.createGain();
+                masterGain.gain.value = 0.35;
+                masterGain.connect(ctx.destination);
+
+                // 1. Initiales Mikrofon-Klicken ("Keying")
+                const clickOsc = ctx.createOscillator();
+                clickOsc.type = 'square';
+                clickOsc.frequency.setValueAtTime(300, t);
+                clickOsc.frequency.exponentialRampToValueAtTime(40, t + 0.03);
+                
+                const clickGain = ctx.createGain();
+                clickGain.gain.setValueAtTime(0.6, t);
+                clickGain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
+                
+                clickOsc.connect(clickGain);
+                clickGain.connect(masterGain);
+                clickOsc.start(t);
+                clickOsc.stop(t + 0.03);
+
+                // 2. Funkrauschen (Squelch) - genau auf 450ms angepasst
+                const noiseDuration = 0.45; 
+                const bufferSize = ctx.sampleRate * noiseDuration;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                
+                const noiseSource = ctx.createBufferSource();
+                noiseSource.buffer = buffer;
+
+                // Bandpass-Filter
+                const bandpass = ctx.createBiquadFilter();
+                bandpass.type = 'bandpass';
+                bandpass.frequency.value = 2200;
+                bandpass.Q.value = 1.2;
+
+                const noiseGain = ctx.createGain();
+                noiseGain.gain.setValueAtTime(0, t);
+                noiseGain.gain.linearRampToValueAtTime(0.9, t + 0.01);
+                noiseGain.gain.setValueAtTime(0.9, t + noiseDuration - 0.02);
+                noiseGain.gain.linearRampToValueAtTime(0.01, t + noiseDuration);
+
+                noiseSource.connect(bandpass);
+                bandpass.connect(noiseGain);
+                noiseGain.connect(masterGain);
+                noiseSource.start(t + 0.01);
+                noiseSource.stop(t + noiseDuration);
+
+                // 3. Roger Beep (Zweiton-Signalierungssequenz) - ca 150ms
+                const beepStart = t + noiseDuration;
+                const beepOsc = ctx.createOscillator();
+                beepOsc.type = 'sine';
+                
+                // Erster Ton
+                beepOsc.frequency.setValueAtTime(1200, beepStart);
+                // Zweiter Ton (höher)
+                beepOsc.frequency.setValueAtTime(1600, beepStart + 0.08);
+
+                const beepGain = ctx.createGain();
+                beepGain.gain.setValueAtTime(0, beepStart);
+                // Ton 1 an
+                beepGain.gain.setValueAtTime(0.4, beepStart + 0.01);
+                beepGain.gain.setValueAtTime(0.4, beepStart + 0.07);
+                // Kurze Pause
+                beepGain.gain.setValueAtTime(0, beepStart + 0.08); 
+                // Ton 2 an
+                beepGain.gain.setValueAtTime(0.4, beepStart + 0.09);
+                beepGain.gain.setValueAtTime(0.4, beepStart + 0.15);
+                beepGain.gain.linearRampToValueAtTime(0.01, beepStart + 0.16);
+
+                beepOsc.connect(beepGain);
+                beepGain.connect(masterGain);
+                beepOsc.start(beepStart);
+                beepOsc.stop(beepStart + 0.16);
+
+                // 4. Abschließendes Klicken ("Unkeying") - ca 80ms => Gesamt ca 680ms
+                const endClickOsc = ctx.createOscillator();
+                endClickOsc.type = 'square';
+                const endClickStart = beepStart + 0.16;
+                endClickOsc.frequency.setValueAtTime(250, endClickStart);
+                endClickOsc.frequency.exponentialRampToValueAtTime(30, endClickStart + 0.08);
+                
+                const endClickGain = ctx.createGain();
+                endClickGain.gain.setValueAtTime(0.5, endClickStart);
+                endClickGain.gain.exponentialRampToValueAtTime(0.01, endClickStart + 0.08);
+                
+                endClickOsc.connect(endClickGain);
+                endClickGain.connect(masterGain);
+                endClickOsc.start(endClickStart);
+                endClickOsc.stop(endClickStart + 0.08);
+
+            } catch (e) {
+                console.warn("Audio Context sound blocked or unavailable:", e);
+            }
+        }
+
+        function showToast(title, msg) {
+            const container = document.getElementById('toast-container');
+            if(!container) return;
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-800 border-l-4 border-blue-500 text-white p-4 rounded shadow-2xl transition-all duration-300 transform translate-x-full pointer-events-auto cursor-pointer mb-2';
+            toast.onclick = () => { switchTab('tab-emails', document.querySelector('[onclick="switchTab(\'tab-emails\', this)"]')); toast.remove(); };
+            toast.innerHTML = `<h4 class="font-bold text-sm mb-1">${title}</h4><p class="text-xs text-slate-300">${msg}</p>`;
+            container.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-x-full');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+
+        window.onload = () => {
+            updateClock();
+            setInterval(updateClock, 1000);
+            renderEmails();
+            renderRoutes();
+            renderDepot();
+            renderPersonnel();
+            populateDriverSelects();
+            updateDfiStopDropdown();
+            renderIncidents();
+            renderFunk();
+
+            addEmail('CEO', 'Willkommen in der Leitstelle 2026', 'Sehr geehrte(r) Disponent(in),\n\nwillkommen im neuen Leitstellensystem. Überwachen Sie den Fuhrpark, planen Sie Routen, bearbeiten Sie eingehende Bewerbungen und behalten Sie den Funkverkehr im Auge.\n\nViel Erfolg bei Ihrer Schicht!\n\nMit freundlichen Grüßen\nDer CEO', 'general', null, null, true);
+
+            // Simulation loops
+            setInterval(() => {
+                checkAndGenerateEmails();
+                checkAndGenerateFunk();
+            }, 10000);
+
+            // Overtime & personnel simulation loop (every 10 seconds for simulation)
+            setInterval(() => {
+                let changed = false;
+                personnel.forEach(p => {
+                    if (p.status === 'Frei' && p.mode === 'Abbau') {
+                        if (p.over > 0) { p.over -= 1; changed = true; }
+                        else { p.mode = 'Normal'; changed = true; }
+                    } else if (p.status === 'Bereit' && p.mode === 'Ü-Std') {
+                        p.over += 1; changed = true;
+                    }
+                });
+                if (changed && currentActiveTab === 'tab-personnel') renderPersonnel();
+            }, 10000);
+        };
+
+        function updateClock() {
+            const now = new Date();
+            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('clock-display');
+            const ibisClock = document.getElementById('ibis-clock');
+            const dfiClock = document.getElementById('dfi-clock');
+            if(clockEl) clockEl.innerText = timeStr;
+            if(ibisClock) ibisClock.innerText = timeStr.substring(0, 5);
+            if(dfiClock) dfiClock.innerText = timeStr.substring(0, 5);
+            
+            if(now.getSeconds() === 0) {
+                renderDFI(now.getHours(), now.getMinutes());
+            }
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('bg-blue-600', 'text-white');
+                b.classList.add('bg-slate-800', 'text-slate-300');
+            });
+
+            const targetTab = document.getElementById(tabId);
+            if(targetTab) targetTab.classList.add('active');
+            
+            if(btn) {
+                btn.classList.remove('bg-slate-800', 'text-slate-300');
+                btn.classList.add('bg-blue-600', 'text-white');
+            }
+
+            currentActiveTab = tabId;
+
+            if(tabId === 'tab-emails') {
+                const badge = document.getElementById('email-badge');
+                if(badge) badge.classList.add('hidden');
+                renderEmails();
+            } else if(tabId === 'tab-funk') {
+                const badge = document.getElementById('funk-badge');
+                if(badge) badge.classList.add('hidden');
+                renderFunk();
+            } else if(tabId === 'tab-incidents') {
+                const badge = document.getElementById('incident-badge');
+                if(badge) badge.classList.add('hidden');
+                renderIncidents();
+            } else if(tabId === 'tab-fuhrpark') {
+                renderDepot();
+            } else if(tabId === 'tab-depot') {
+                renderDepot();
+            } else if(tabId === 'tab-routes') {
+                renderRoutes();
+            } else if(tabId === 'tab-personnel') {
+                renderPersonnel();
+            } else if(tabId === 'tab-dfi') {
+                updateDfiStopDropdown();
+            } else if(tabId === 'tab-driver') {
+                populateDriverSelects();
+                if(playerAssignment) populateCockpitSelects();
+            }
+        }
+
+        function addEmail(sender, subject, body, type = 'general', applicantName = null, hrData = null, isInitial = false) {
+            const now = new Date();
+            const time = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            const id = 'mail_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            
+            emails.unshift({ id, sender, subject, body, time, unread: true, type, applicantName, hrData, status: 'pending' });
+            
+            if(currentActiveTab !== 'tab-emails') {
+                const badge = document.getElementById('email-badge');
+                if(badge) badge.classList.remove('hidden');
+            }
+            renderEmails();
+            
+            if(!isInitial) {
+                showToast("Neue E-Mail: " + sender, subject);
+            }
+        }
+
+        function renderEmails() {
+            const list = document.getElementById('email-list');
+            if(!list) return;
+            list.innerHTML = '';
+
+            if(emails.length === 0) {
+                list.innerHTML = '<div class="text-center text-slate-500 py-8 text-sm">Keine Nachrichten im Postfach.</div>';
+                return;
+            }
+
+            emails.forEach(mail => {
+                let unreadDot = mail.unread ? '<div class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></div>' : '';
+                list.innerHTML += `
+                    <div onclick="readEmail('${mail.id}')" class="p-3 rounded-xl border border-slate-700/50 hover:bg-slate-800/80 cursor-pointer transition-colors flex items-center gap-3 bg-slate-900/40">
+                        ${unreadDot}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-sm text-white truncate">${mail.sender}</span>
+                                <span class="text-[10px] text-slate-400 shrink-0">${mail.time}</span>
+                            </div>
+                            <div class="text-xs text-slate-300 truncate">${mail.subject}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function readEmail(id) {
+            const mail = emails.find(m => m.id === id);
+            if(!mail) return;
+            mail.unread = false;
+            renderEmails();
+
+            const reader = document.getElementById('email-reader');
+            if(!reader) return;
+
+            let actionButtonsHTML = '';
+            if (mail.type === 'job_app') {
+                if (mail.status === 'pending') {
+                    actionButtonsHTML = `
+                        <div class="mt-6 pt-4 border-t border-slate-700 flex gap-3 flex-wrap">
+                            <button onclick="handleJobAppAction('${mail.id}', 'invite')" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow">Zum Gespräch einladen</button>
+                            <button onclick="handleJobAppAction('${mail.id}', 'processing')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow">Wird Bearbeitet</button>
+                            <button onclick="handleJobAppAction('${mail.id}', 'reject')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow">Ablehnung</button>
+                        </div>
+                    `;
+                } else if (mail.status === 'invited') {
+                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-green-400 font-medium">✓ Zum Vorstellungsgespräch eingeladen (Rückmeldung ausstehend)</div>`;
+                } else if (mail.status === 'processing') {
+                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-blue-400 font-medium">⏳ Unterlagen in Prüfung</div>`;
+                } else if (mail.status === 'rejected') {
+                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-red-400 font-medium">✗ Bewerbung abgelehnt</div>`;
+                }
+            } else if (mail.type === 'hr_feedback' && mail.hrData && !mail.hrData.processed) {
+                if (mail.hrData.hrOutcome === 'accepted') {
+                    actionButtonsHTML = `
+                        <div class="mt-6 pt-4 border-t border-slate-700 bg-slate-800/50 p-4 rounded-lg">
+                            <div class="text-sm font-bold text-amber-400 mb-2">Empfehlung der Personalabteilung: ANNAHME</div>
+                            <p class="text-xs text-slate-300 mb-4">${mail.hrData.reason}</p>
+                            <div class="flex gap-3 flex-wrap">
+                                <button onclick="handleHrDecision('${mail.id}', 'hire')" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow">Annehmen (Einstellen)</button>
+                                <button onclick="handleHrDecision('${mail.id}', 'decline')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow">Ablehnen</button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    actionButtonsHTML = `
+                        <div class="mt-6 pt-4 border-t border-slate-700 bg-slate-800/50 p-4 rounded-lg">
+                            <div class="text-sm font-bold text-red-400 mb-2">Empfehlung der Personalabteilung: ABGELEHNT</div>
+                            <p class="text-xs text-slate-300 mb-4">${mail.hrData.reason}</p>
+                            <button onclick="handleHrDecision('${mail.id}', 'decline')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow">Akte schließen</button>
+                        </div>
+                    `;
+                }
+            } else if (mail.type === 'hr_feedback' && mail.hrData && mail.hrData.processed) {
+                actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-slate-400 font-medium">Akte bearbeitet (${mail.hrData.result === 'hired' ? 'Eingestellt' : 'Abgelehnt'})</div>`;
+            }
+
+            reader.innerHTML = `
+                <div class="border-b border-slate-700 pb-4 mb-4">
+                    <h2 class="text-xl font-bold text-white mb-2">${mail.subject}</h2>
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>Von: <strong class="text-slate-300">${mail.sender}</strong></span>
+                        <span>${mail.time}</span>
+                    </div>
+                </div>
+                <div class="text-slate-300 whitespace-pre-line text-sm leading-relaxed flex-1">${mail.body}</div>
+                ${actionButtonsHTML}
+            `;
+        }
+
+        function handleJobAppAction(emailId, action) {
+            const mail = emails.find(m => m.id === emailId);
+            if (!mail) return;
+
+            if (action === 'processing') {
+                mail.status = 'processing';
+                addEmail('CEO (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte/r ${mail.applicantName},\n\nvielen Dank für Ihre Bewerbung. Ihre Unterlagen werden derzeit in unserer Personalabteilung geprüft. Wir melden uns in Kürze bei Ihnen.\n\nMit freundlichen Grüßen,\nDer CEO`, 'general');
+                readEmail(emailId);
+            } else if (action === 'reject') {
+                mail.status = 'rejected';
+                addEmail('CEO (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte/r ${mail.applicantName},\n\nvielen Dank für Ihr Interesse an einer Tätigkeit bei CTS. Leider müssen wir Ihnen mitteilen, dass wir Ihre Bewerbung für die aktuelle Stelle nicht weiter berücksichtigen können.\n\nWir wünschen Ihnen für Ihren weiteren Weg viel Erfolg.\n\nMit freundlichen Grüßen,\nDer CEO`, 'general');
+                readEmail(emailId);
+            } else if (action === 'invite') {
+                mail.status = 'invited';
+                addEmail('CEO (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte/r ${mail.applicantName},\n\nvielen Dank für Ihre Bewerbung. Wir freuen uns, Sie zu einem Vorstellungsgespräch einzuladen. Die Personalabteilung koordiniert die Termine und meldet sich in Kürze mit dem Ergebnis bei Ihnen.\n\nMit freundlichen Grüßen,\nDer CEO`, 'general');
+                readEmail(emailId);
+
+                // HR Feedback after 3 Minutes
+                setTimeout(() => {
+                    const isAccepted = Math.random() < 0.5;
+                    if (isAccepted) {
+                        const acceptReasons = [
+                            "Der Bewerber war im Vorstellungsgespräch äußerst überzeugend und bringt 5 Jahre Berufserfahrung mit.",
+                            "Das Gespräch verlief sehr positiv. Der Führerschein Klasse D ist gültig und alle Unterlagen sind vollständig.",
+                            "Bewerber hat einen sehr guten Eindruck hinterlassen und hat das Angebot sofort erfreut angenommen."
+                        ];
+                        const reason = acceptReasons[Math.floor(Math.random() * acceptReasons.length)];
+                        const bodyText = `Hallo CEO,\n\ndas Vorstellungsgespräch mit ${mail.applicantName} wurde erfolgreich durchgeführt.\n\nERGEBNIS: ZUSAGE VOM BEWERBER\nGRUND: ${reason}\n\nMöchten Sie ${mail.applicantName} jetzt offiziell als Busfahrer/in einstellen und im Personalstamm anlegen?`;
+                        
+                        addEmail('Personalabteilung', `Rückmeldung Gespräch: ${mail.applicantName}`, bodyText, 'hr_feedback', mail.applicantName, {
+                            hrOutcome: 'accepted',
+                            applicantName: mail.applicantName,
+                            reason: reason,
+                            processed: false
+                        });
+                    } else {
+                        const rejectReasons = [
+                            "Der Bewerber hat das Angebot kurzfristig abgelehnt, da er eine Stelle bei einem anderen Verkehrsunternehmen angenommen hat.",
+                            "Der Bewerber ist ohne Absage nicht zum vereinbarten Vorstellungsgespräch erschienen.",
+                            "Im Gespräch stellte sich heraus, dass die Fahrerlaubnis Klasse D abgelaufen ist und erst erneuert werden müsste.",
+                            "Der Bewerber hatte Gehaltsvorstellungen, die nicht mit dem CTS-Tarif vereinbar waren."
+                        ];
+                        const reason = rejectReasons[Math.floor(Math.random() * rejectReasons.length)];
+                        const bodyText = `Hallo CEO,\n\ndas Vorstellungsgespräch mit ${mail.applicantName} wurde abgeschlossen.\n\nERGEBNIS: ABSAGE VOM BEWERBER / ABGELEHNT\nGRUND: ${reason}\n\nDas Bewerbungsverfahren für diesen Bewerber wurde eingestellt.`;
+
+                        addEmail('Personalabteilung', `Rückmeldung Gespräch: ${mail.applicantName}`, bodyText, 'hr_feedback', mail.applicantName, {
+                            hrOutcome: 'rejected',
+                            applicantName: mail.applicantName,
+                            reason: reason,
+                            processed: true
+                        });
+                    }
+                }, 180000); 
+            }
+        }
+
+        function handleHrDecision(emailId, decision) {
+            const mail = emails.find(m => m.id === emailId);
+            if (!mail || !mail.hrData) return;
+
+            if (decision === 'hire') {
+                const maxIdNum = personnel.reduce((max, p) => {
+                    const num = parseInt(p.id.replace('P', '')) || 0;
+                    return num > max ? num : max;
+                }, 0);
+                const newPId = 'P' + String(maxIdNum + 1).padStart(2, '0');
+
+                personnel.push({
+                    id: newPId,
+                    name: mail.hrData.applicantName,
+                    status: 'Bereit',
+                    over: 0,
+                    mode: 'Normal'
+                });
+
+                mail.hrData.processed = true;
+                mail.hrData.result = 'hired';
+
+                addEmail('Personalabteilung', `Erfolgreich Eingestellt: ${mail.hrData.applicantName}`, `Der/die Mitarbeiter/in ${mail.hrData.applicantName} wurde unter Personal-ID ${newPId} in den Personalstamm aufgenommen.`, 'general');
+
+                if (currentActiveTab === 'tab-personnel') renderPersonnel();
+                renderDepot();
+            } else if (decision === 'decline') {
+                mail.hrData.processed = true;
+                mail.hrData.result = 'declined';
+
+                addEmail('Personalabteilung', `Einstellung abgelehnt: ${mail.hrData.applicantName}`, `Die Einstellung von ${mail.hrData.applicantName} wurde abgelehnt und die Akte geschlossen.`, 'general');
+            }
+
+            readEmail(emailId);
+        }
+
+        function checkAndGenerateEmails() {
+            const now = Date.now();
+            if (now - lastEmailCheck < 300000) return; // 5 Minuten Abstand
+            lastEmailCheck = now;
+
+            if (Math.random() > 0.5) {
+                const names = ["Max Mustermann", "Laura Müller", "Jan Becker", "Sophie Wagner", "Tom Schulz", "Ali Yilmaz", "Kevin Schmidt"];
+                const name = names[Math.floor(Math.random() * names.length)];
+                const subjects = ["Bewerbung als Linienbusfahrer", "Initiativbewerbung Fahrpersonal", "Stellenanzeige Busfahrer (m/w/d)"];
+                const subject = subjects[Math.floor(Math.random() * subjects.length)];
+                const body = `Sehr geehrte Damen und Herren,\n\nhiermit bewerbe ich mich als Busfahrer für Ihr Netz. Ich besitze den Führerschein Klasse D und habe bereits 5 Jahre Berufserfahrung im Linienverkehr gesammelt. Meine Personenbeförderungsscheine sind aktuell.\n\nÜber eine Einladung zu einem Vorstellungsgespräch würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\n${name}`;
+                addEmail(`${name} (Bewerber)`, subject, body, 'job_app', name);
+            } else {
+                const companies = ["MAN Truck & Bus", "EvoBus / Mercedes-Benz", "Solaris Sales Team", "VDL Bus & Coach"];
+                const company = companies[Math.floor(Math.random() * companies.length)];
+                const subjects = ["Sichern Sie sich die neuen Gelenkbusse", "Frühjahrsangebot: 10% auf Solo-Busse", "Elektrifizieren Sie Ihre Flotte", "Wartungsverträge zum Sonderpreis"];
+                const subject = subjects[Math.floor(Math.random() * subjects.length)];
+                const body = `Sehr geehrte Leitstelle,\n\nist Ihr Fuhrpark noch auf dem neuesten Stand? Wir bieten Ihnen exklusive Leasing- und Kaufangebote für unsere modernsten Stadtbusse.\n\nProfitieren Sie jetzt von unseren Sonderkonditionen für Flottenbetreiber.\n\nGerne beraten wir Sie persönlich. Besuchen Sie doch einfach Ihren Fuhrpark-Händler im System!\n\nMit besten Grüßen\nIhr ${company} Vertrieb`;
+                addEmail(company, subject, body);
+            }
+        }
+
+        function checkAndGenerateFunk() {
+            const now = Date.now();
+            if (now - lastFunkCheck < 60000) return; 
+            lastFunkCheck = now;
+            
+            if (Math.random() > 0.20) return; 
+
+            let activeBuses = vehicles.filter(v => v.status === 'Ausgefahren' && (!playerAssignment || playerAssignment.vId !== v.id));
+            
+            if(activeBuses.length > 0) {
+                let randomBus = activeBuses[Math.floor(Math.random() * activeBuses.length)];
+                const events = [
+                    { msg: "Hab hier ca. 10 Minuten Verspätung wegen Stau am Ring.", inc: null },
+                    { msg: "Tür 2 schließt extrem langsam. Behalte das im Auge.", inc: "Türstörung" },
+                    { msg: "Mir ist jemand leicht aufgefahren. Brauche Leitwagen.", inc: "Unfall" },
+                    { msg: "Fahrgast macht Ärger, weigert sich auszusteigen.", inc: "Sicherheit" }
+                ];
+                let evt = events[Math.floor(Math.random() * events.length)];
+                addFunkMessage(`Wg. ${randomBus.id}`, evt.msg, 'normal');
+                
+                if (evt.inc) addIncident(evt.inc, `Wg. ${randomBus.id}`, evt.msg, 'Mittel');
+                setTimeout(() => { addFunkMessage('Leitstelle', `Verstanden Wg. ${randomBus.id}. Ist notiert.`, 'system'); }, 3000);
+            }
+        }
+
+        function addFunkMessage(sender, text, type) {
+            const now = new Date();
+            const time = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            funkMessages.push({ sender, text, type, time });
+            
+            // 🚨 SCANNER FÜR VERSPÄTUNGEN PRO UMLAUF
+            const delayMatch = text.match(/(\d+)\s*Min(uten)?\s*Verspätung/i);
+            if (delayMatch) {
+                const mins = parseInt(delayMatch[1]);
+                const senderVehicleId = sender.match(/Wg\.\s*(\d+)/);
+                
+                if (senderVehicleId) {
+                    const vehicle = vehicles.find(v => v.id === senderVehicleId[1]);
+                    if (vehicle && vehicle.line) {
+                        // Scannt z.B. "100 (U1)" -> Sucht nach Linie und Umlauf
+                        const umlaufMatch = vehicle.line.match(/(.+?)\s*\(U(\d+)\)/);
+                        if (umlaufMatch) {
+                            const lineNum = umlaufMatch[1].trim();
+                            const umlaufNum = parseInt(umlaufMatch[2]) - 1; // System zählt ab 0
+                            const delayKey = `${lineNum}_${umlaufNum}`; // z.B. "100_0"
+                            
+                            umlaufDelays[delayKey] = mins;
+                            
+                            // Reset nach 30 Minuten
+                            setTimeout(() => {
+                                if (umlaufDelays[delayKey] === mins) delete umlaufDelays[delayKey];
+                                if(currentActiveTab === 'tab-dfi') updateDfiStopDropdown();
+                            }, 1800000);
+                            
+                            if(currentActiveTab === 'tab-dfi') updateDfiStopDropdown();
+                        }
+                    }
+                }
+            }
+            
+            playRadioNoise();
+            
+            if(currentActiveTab !== 'tab-funk' && currentActiveTab !== 'tab-driver') {
+                const badge = document.getElementById('funk-badge');
+                if(badge) badge.classList.remove('hidden');
+            }
+            renderFunk();
+        }
+
+        function renderFunk() {
+            const chat = document.getElementById('funk-chat');
+            const driverChat = document.getElementById('driver-funk-chat');
+
+            let html = '<div class="text-center text-slate-500 text-sm my-4">--- Leitstellen-Kanal geöffnet ---</div>';
+            let driverHtml = '';
+
+            funkMessages.forEach(msg => {
+                let align = msg.sender === 'Leitstelle' ? 'justify-end' : 'justify-start';
+                let bg = msg.sender === 'Leitstelle' ? 'bg-green-700/40 border border-green-600/50' : (msg.sender.includes('(Du)') ? 'bg-blue-800/60 border border-blue-500/50' : 'bg-slate-800 border border-slate-700');
+                let boxAlign = msg.sender === 'Leitstelle' ? 'items-end' : 'items-start';
+
+                if(msg.type === 'system') {
+                    html += `<div class="mb-2 text-center text-slate-400 text-sm">${msg.time} - ${msg.text}</div>`;
+                    driverHtml += `<div class="text-center text-[11px] text-slate-500 mb-2">${msg.time} - ${msg.text}</div>`;
+                } else {
+                    html += `
+                    <div class="flex ${align} mb-3 w-full">
+                        <div class="flex flex-col ${boxAlign} max-w-[80%]">
+                            <span class="text-xs text-slate-400 mb-1 ml-1">${msg.sender} • ${msg.time}</span>
+                            <div class="${bg} p-3 rounded-xl shadow-sm text-slate-300 text-sm">
+                                ${msg.text}
+                            </div>
+                        </div>
+                    </div>`;
+                    
+                    let miniColor = msg.sender === 'Leitstelle' ? 'text-green-400' : (msg.sender.includes('(Du)') ? 'text-blue-400' : 'text-slate-400');
+                    driverHtml += `
+                    <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700/50 mb-2">
+                        <div class="text-xs text-slate-400 mb-1 flex justify-between">
+                            <span class="${miniColor} font-bold">${msg.sender}</span>
+                            <span>${msg.time}</span>
+                        </div>
+                        <div class="text-sm text-slate-200 leading-snug">${msg.text}</div>
+                    </div>`;
+                }
+            });
+
+            if(chat) { chat.innerHTML = html; chat.scrollTop = chat.scrollHeight; }
+            if(driverChat) { driverChat.innerHTML = driverHtml; driverChat.scrollTop = driverChat.scrollHeight; }
+        }
+
+        function sendFunk() {
+            const input = document.getElementById('funk-input');
+            const targetSel = document.getElementById('funk-target');
+            if(!input || !targetSel) return;
+            
+            const text = input.value.trim();
+            if(text === '') return;
+            
+            const targetName = targetSel.options[targetSel.selectedIndex].text.replace('An: ', '');
+            addFunkMessage('Leitstelle', `[An ${targetName}]: ${text}`, 'normal');
+            input.value = '';
+
+            if(targetSel.value !== 'all') {
+                setTimeout(() => { addFunkMessage(targetName, `Verstanden, Leitstelle.`, 'normal'); }, 3000 + Math.random() * 2000);
+            }
+        }
+
+        function sendDriverFunk(quickText = null) {
+            const input = document.getElementById('driver-funk-input');
+            if(!playerAssignment) return;
+            
+            let text = quickText;
+            if (!text && input) { text = input.value.trim(); input.value = ''; }
+            if(!text || text === '') return;
+            
+            const senderName = `Wg. ${playerAssignment.vId} (Du)`;
+            addFunkMessage(senderName, text, 'normal');
+
+            setTimeout(() => { addFunkMessage('Leitstelle', `Verstanden ${senderName}. Ist notiert.`, 'system'); }, 3000 + Math.random() * 2000);
+        }
+
+        function addIncident(type, vehicle, description, severity) {
+            incidents.unshift({ id: Date.now(), type, vehicle, description, severity, status: 'Offen' });
+            if(currentActiveTab !== 'tab-incidents') {
+                const badge = document.getElementById('incident-badge');
+                if(badge) badge.classList.remove('hidden');
+            }
+            renderIncidents();
+        }
+
+        function resolveIncident(id) {
+            const inc = incidents.find(i => i.id === id);
+            if(inc) { inc.status = 'Erledigt'; renderIncidents(); }
+        }
+
+        function renderIncidents() {
+            const list = document.getElementById('incident-list');
+            if(!list) return;
+            list.innerHTML = '';
+            if (incidents.length === 0) {
+                list.innerHTML = '<div class="text-center text-slate-500 mt-10">Keine Störungen gemeldet.</div>';
+                return;
+            }
+            incidents.forEach(inc => {
+                const bg = inc.status === 'Offen' ? 'bg-amber-900/30 border-amber-700/50' : 'bg-slate-800/50 border-slate-700 opacity-50';
+                list.innerHTML += `
+                    <div class="p-4 rounded-lg border ${bg} flex justify-between items-center mb-2">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="font-bold text-white">${inc.type}</span>
+                                <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">${inc.vehicle}</span>
+                            </div>
+                            <div class="text-sm text-slate-400">${inc.description}</div>
+                        </div>
+                        ${inc.status === 'Offen' ? `<button onclick="resolveIncident(${inc.id})" class="bg-green-600 hover:bg-green-500 text-white px-3 py-1 rounded text-sm transition-colors shadow">Erledigen</button>` : `<span class="text-green-500 text-sm font-bold">✓ Erledigt</span>`}
+                    </div>
+                `;
+            });
+        }
+
+        function buyBus(model, type) {
+            const maxId = vehicles.length > 0 ? Math.max(...vehicles.map(v => parseInt(v.id))) : 9;
+            const newId = (maxId + 1).toString();
+            
+            vehicles.push({ id: newId, type: type, status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null });
+
+            const log = document.getElementById('fuhrpark-log');
+            if (log) {
+                if(log.innerText.includes('Noch keine')) log.innerHTML = '';
+                const now = new Date();
+                const time = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+                log.innerHTML = `<div class="border-l-2 border-indigo-500 pl-2"><strong>${time}</strong>: ${model} (Wg. ${newId}) zugelassen.</div>` + log.innerHTML;
+            }
+            renderDepot(); populateDriverSelects();
+        }
+
+        function addRoute() {
+            let line = document.getElementById('route-line').value;
+            let stopsRaw = document.getElementById('route-stops').value;
+            let time = document.getElementById('route-time').value;
+            let endTime = document.getElementById('route-time-end').value;
+            let duration = parseInt(document.getElementById('route-duration').value);
+            let umlaeufe = parseInt(document.getElementById('route-umlaeufe').value);
+
+            if(line && stopsRaw && time && endTime && duration > 0) {
+                line = line.replace(/^[lL]/, ''); 
+                let stops = stopsRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
+                if (stops.length < 2) {
+                    addEmail('CEO', 'Routenfehler', 'Eine Route muss aus mindestens 2 Haltestellen bestehen.');
+                    return;
+                }
+
+                routes.push({ id: Date.now().toString(), line, stops, startTime: time, endTime: endTime, duration, umlaeufe });
+                
+                document.getElementById('route-line').value = '';
+                document.getElementById('route-stops').value = '';
+                
+                renderRoutes(); renderDepot(); populateDriverSelects(); updateDfiStopDropdown();
+            }
+        }
+
+        function deleteRoute(id) {
+            const route = routes.find(r => r.id === id);
+            if(route) {
+                if(playerAssignment && playerAssignment.rId === id) stopDriverMode();
+
+                vehicles.forEach(v => {
+                    if (v.line && v.line.startsWith(route.line)) {
+                        v.status = 'Depot'; v.line = null; v.tempDriver = null; v.tempRoute = null;
+                        if(v.driver && v.driver !== 'DU') {
+                            let drv = personnel.find(p => p.id === v.driver);
+                            if(drv) { drv.status = 'Bereit'; drv.mode = 'Normal'; }
+                            v.driver = null;
+                        }
+                    }
+                });
+
+                routes = routes.filter(r => r.id !== id);
+                renderRoutes(); renderDepot(); renderPersonnel(); populateDriverSelects(); updateDfiStopDropdown();
+                addEmail('CEO', `Linie ${route.line} gelöscht`, `Die Linie ${route.line} wurde sicher entfernt. Alle Fahrzeuge kehrten ins Depot zurück.`);
+            }
+        }
+
+        function renderRoutes() {
+            const tbody = document.getElementById('route-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            routes.forEach(r => {
+                if (!r.stops || r.stops.length === 0) return;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/50 transition-colors">
+                        <td class="p-4 font-bold text-white">${r.line}</td>
+                        <td class="p-4 text-slate-300 truncate max-w-[200px]" title="${r.stops.join(' -> ')}">
+                            ${r.stops[0]} <span class="text-slate-500">→</span> ${r.stops[r.stops.length-1]}
+                        </td>
+                        <td class="p-4 text-slate-400">${r.startTime} - ${r.endTime}</td>
+                        <td class="p-4 text-slate-400">${r.umlaeufe}</td>
+                        <td class="p-4 text-slate-400">${r.duration} Min</td>
+                        <td class="p-4 text-right">
+                            <button onclick="deleteRoute('${r.id}')" class="text-red-400 hover:text-red-300 bg-red-900/20 hover:bg-red-900/40 px-3 py-1 rounded transition-colors text-xs font-medium">Löschen</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateDfiStopDropdown() {
+            const sel = document.getElementById('dfi-stop-select');
+            if(!sel) return;
+            
+            let allStops = new Set();
+            routes.forEach(r => r.stops.forEach(s => allStops.add(s)));
+            
+            sel.innerHTML = '';
+            let stopsArray = [...allStops].sort();
+            stopsArray.forEach(stop => {
+                sel.innerHTML += `<option value="${stop}" ${stop === selectedDfiStop ? 'selected' : ''}>${stop}</option>`;
+            });
+            if(stopsArray.length > 0 && !allStops.has(selectedDfiStop)) {
+                selectedDfiStop = stopsArray[0];
+                sel.value = selectedDfiStop;
+            }
+            const now = new Date();
+            renderDFI(now.getHours(), now.getMinutes());
+        }
+
+        function changeDfiStop(val) {
+            selectedDfiStop = val;
+            const now = new Date();
+            renderDFI(now.getHours(), now.getMinutes());
+        }
+
+        function getMinutesFromTime(timeStr) {
+            const parts = timeStr.split(':');
+            return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        }
+
+        function renderDFI(currentHour, currentMin) {
+            const container = document.getElementById('dfi-lines');
+            if(!container) return;
+            
+            const currentMins = currentHour * 60 + currentMin;
+            let departures = [];
+            
+            routes.forEach(route => {
+                const stopIndex = route.stops.indexOf(selectedDfiStop);
+                if(stopIndex === -1) return;
+                
+                const startMins = getMinutesFromTime(route.startTime);
+                const endMins = getMinutesFromTime(route.endTime);
+                
+                const isTerminus = stopIndex === route.stops.length - 1;
+                const minsPerStop = route.duration / Math.max(1, (route.stops.length - 1));
+                const offsetToStop = Math.round(stopIndex * minsPerStop);
+                
+                const takt = Math.max(5, Math.round((route.duration * 2) / route.umlaeufe));
+                
+                for(let m = startMins; m <= endMins; m += takt) {
+                    let step = Math.round((m - startMins) / takt);
+                    let currentUmlauf = step % route.umlaeufe;
+                    
+                    // 🚨 Nur Verspätungen für DIESEN Umlauf abrufen
+                    let delayKey = `${route.line}_${currentUmlauf}`;
+                    let delay = umlaufDelays[delayKey] || 0; 
+                    
+                    const arrivalTime = m + offsetToStop + delay;
+                    const waitTime = arrivalTime - currentMins;
+                    
+                    if(waitTime >= 0 && waitTime <= 60) {
+                        departures.push({ line: route.line, dest: route.stops[route.stops.length - 1], wait: waitTime, isTerminus: isTerminus, delay: delay });
+                    }
+                }
+            });
+            
+            departures.sort((a,b) => a.wait - b.wait);
+            container.innerHTML = '';
+            
+            if(departures.length === 0) {
+                container.innerHTML = '<div class="text-amber-500/50 mt-4 text-center">Keine Abfahrten in den nächsten 60 Min.</div>';
+                return;
+            }
+            
+            departures.slice(0, 6).forEach(dep => {
+                let waitText = dep.wait === 0 ? 'sofort' : `${dep.wait} Min`;
+                if(dep.isTerminus) waitText = 'Fahrt endet';
+                
+                let delayHtml = (dep.delay > 0 && !dep.isTerminus) ? `<span class="text-red-500 text-sm ml-1 font-bold">(+${dep.delay})</span>` : '';
+                
+                container.innerHTML += `
+                    <div class="flex justify-between items-center border-b border-amber-500/20 pb-2">
+                        <div class="w-16 font-bold">${dep.line}</div>
+                        <div class="flex-1 truncate pr-2">${dep.dest}</div>
+                        <div class="w-24 text-right font-bold ${dep.wait <= 3 && !dep.isTerminus ? 'animate-pulse text-amber-400' : ''}">${waitText}${delayHtml}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderDepot() {
+            const grid = document.getElementById('depot-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            let inDepot = 0; let onLine = 0; let maintenance = 0;
+
+            vehicles.forEach(v => {
+                if(v.status === 'Depot') inDepot++;
+                if(v.status === 'Ausgefahren') onLine++;
+                if(v.status === 'Wartung') maintenance++;
+
+                let bg = v.status === 'Depot' ? 'bg-slate-800/80 border-slate-600' : (v.status === 'Ausgefahren' ? 'bg-blue-900/20 border-blue-500/50' : 'bg-amber-900/20 border-amber-500/50');
+                let statusDot = v.status === 'Depot' ? 'bg-slate-400' : (v.status === 'Ausgefahren' ? 'bg-blue-500 animate-pulse' : 'bg-amber-500');
+
+                let controlsHTML = '';
+                
+                // Manual Dispatch Controls for Depot Buses
+                if (v.status === 'Depot') {
+                    // Driver Dropdown
+                    let driverOptions = `<option value="">-- Fahrer zuteilen --</option>`;
+                    personnel.filter(p => p.status === 'Bereit').forEach(p => {
+                        let selected = (v.tempDriver === p.id) ? 'selected' : '';
+                        driverOptions += `<option value="${p.id}" ${selected}>${p.name} (${p.over}h)</option>`;
+                    });
+                    
+                    // Route Dropdown
+                    let routeOptions = `<option value="">-- Linie zuteilen --</option>`;
+                    routes.forEach(r => {
+                        for(let i=0; i<r.umlaeufe; i++) {
+                            let rVal = `${r.id}_${i}`;
+                            let selected = (v.tempRoute === rVal) ? 'selected' : '';
+                            
+                            // Check if this specific route/umlauf is already driven by an active bus
+                            let isUsed = vehicles.some(activeV => activeV.status === 'Ausgefahren' && activeV.line === `${r.line} (U${i+1})`);
+                            if(!isUsed || selected) {
+                                routeOptions += `<option value="${rVal}" ${selected}>L ${r.line} (U${i+1})</option>`;
+                            }
+                        }
+                    });
+
+                    controlsHTML = `
+                        <div class="mt-2 space-y-2 border-t border-slate-700/50 pt-2">
+                            <select onchange="updateTempDriver('${v.id}', this.value)" class="w-full bg-slate-900 border border-slate-600 rounded text-xs p-1 text-slate-300 focus:border-blue-500 focus:outline-none cursor-pointer">
+                                ${driverOptions}
+                            </select>
+                            <select onchange="updateTempRoute('${v.id}', this.value)" class="w-full bg-slate-900 border border-slate-600 rounded text-xs p-1 text-slate-300 focus:border-blue-500 focus:outline-none cursor-pointer">
+                                ${routeOptions}
+                            </select>
+                            ${(v.tempDriver && v.tempRoute) ? `<button onclick="ausfahren('${v.id}')" class="w-full bg-green-600 hover:bg-green-500 text-white text-xs font-bold py-1.5 rounded shadow">Ausfahren</button>` : ''}
+                        </div>
+                    `;
+                } else if (v.status === 'Ausgefahren') {
+                    // Return to Depot Button
+                    controlsHTML = `<div class="mt-2 border-t border-slate-700/50 pt-2 flex flex-col gap-2">
+                        <div class="text-xs text-slate-400 truncate">
+                            Fahrer: ${v.driver ? (v.driver === 'DU' ? 'DU (Spieler)' : (personnel.find(p=>p.id === v.driver)?.name || 'Unbekannt')) : 'Keiner'}
+                        </div>
+                        ${v.driver !== 'DU' ? `<button onclick="einruecken('${v.id}')" class="w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold py-1.5 rounded shadow">Einrücken</button>` : ''}
+                    </div>`;
+                } else {
+                    controlsHTML = `<div class="text-xs text-slate-500 mt-2 border-t border-slate-700/50 pt-2">Fahrzeug gesperrt</div>`;
+                }
+
+                grid.innerHTML += `
+                    <div class="p-4 rounded-xl border ${bg} flex flex-col gap-2 shadow-lg hover:border-slate-500 transition-colors">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-white text-lg">Wg. ${v.id}</span>
+                            <span class="text-xs px-2 py-1 rounded bg-slate-900/50 text-slate-300 border border-slate-700">${v.type}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm text-slate-400">
+                            <div class="w-2 h-2 rounded-full ${statusDot}"></div>
+                            ${v.status} ${v.line ? `(L ${v.line})` : ''}
+                        </div>
+                        ${controlsHTML}
+                    </div>
+                `;
+            });
+
+            const statD = document.getElementById('stat-depot');
+            const statL = document.getElementById('stat-line');
+            const statM = document.getElementById('stat-maintenance');
+            if(statD) statD.innerText = inDepot;
+            if(statL) statL.innerText = onLine;
+            if(statM) statM.innerText = maintenance;
+        }
+
+        function updateTempDriver(vId, val) {
+            let v = vehicles.find(x => x.id === vId);
+            if(v) { v.tempDriver = val; renderDepot(); }
+        }
+
+        function updateTempRoute(vId, val) {
+            let v = vehicles.find(x => x.id === vId);
+            if(v) { v.tempRoute = val; renderDepot(); }
+        }
+
+        function ausfahren(vId) {
+            let v = vehicles.find(x => x.id === vId);
+            if(v && v.tempDriver && v.tempRoute) {
+                // Free previous assignment if somehow stuck
+                const otherV = vehicles.find(ov => ov.id !== vId && ov.driver === v.tempDriver);
+                if (otherV) { otherV.driver = null; }
+
+                v.driver = v.tempDriver;
+                const [rId, uIndex] = v.tempRoute.split('_');
+                const route = routes.find(r => r.id === rId);
+                
+                v.line = `${route.line} (U${parseInt(uIndex)+1})`;
+                v.status = 'Ausgefahren';
+                
+                // Set Personnel Status
+                let p = personnel.find(x => x.id === v.driver);
+                if(p) p.status = 'Auf Linie';
+
+                addFunkMessage(`Wg. ${v.id}`, `Melde mich aus dem Depot. Übernehme Linie ${route.line}.`, 'normal');
+                
+                renderDepot();
+                renderPersonnel();
+                populateDriverSelects();
+                updateDfiStopDropdown();
+            }
+        }
+
+        function einruecken(vId) {
+            let v = vehicles.find(x => x.id === vId);
+            if(v) {
+                addFunkMessage(`Wg. ${v.id}`, `Beende Fahrt. Rücken ins Depot ein.`, 'normal');
+                
+                let p = personnel.find(x => x.id === v.driver);
+                if(p) p.status = 'Bereit';
+                
+                v.status = 'Depot';
+                v.driver = null;
+                v.line = null;
+                v.tempDriver = null;
+                v.tempRoute = null;
+
+                renderDepot();
+                renderPersonnel();
+                populateDriverSelects();
+                updateDfiStopDropdown();
+            }
+        }
+
+        function autoAssign() {
+            let readyDrivers = personnel.filter(p => p.status === 'Bereit');
+            let depotBuses = vehicles.filter(v => v.status === 'Depot' && !v.line && !v.driver);
+
+            let count = 0;
+            for (let i = 0; i < Math.min(readyDrivers.length, depotBuses.length); i++) {
+                depotBuses[i].driver = readyDrivers[i].id; // Fallback simple assign
+                count++;
+            }
+            renderDepot();
+            addEmail('CEO', 'Auto-Disposition (Fallback)', `${count} Fahrer wurden automatisch verfügbaren Depot-Fahrzeugen (ohne Linie) zugeteilt.`);
+        }
+
+        function renderPersonnel() {
+            const tbody = document.getElementById('personnel-table-body');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            personnel.forEach(p => {
+                const overClass = p.over >= 15 ? 'text-amber-500 font-bold' : 'text-slate-400';
+                
+                let statusClass = 'text-green-400';
+                if (p.status === 'Krank') statusClass = 'text-red-400';
+                else if (p.status === 'Auf Linie') statusClass = 'text-blue-400';
+                else if (p.status === 'Frei') statusClass = 'text-purple-400';
+
+                let displayStatus = p.status;
+                if ((p.status === 'Auf Linie' || p.status === 'Bereit' || p.status === 'Frei') && p.mode !== 'Normal') {
+                    displayStatus += ` (${p.mode})`;
+                }
+                
+                let actionBtns = '';
+                if(p.status === 'Auf Linie') {
+                    actionBtns = `<button disabled class="bg-slate-700 text-slate-500 px-3 py-1 rounded text-xs cursor-not-allowed">Im Dienst</button>`;
+                } else if(p.status === 'Krank') {
+                    actionBtns = `<button onclick="changePersonnelStatus('${p.id}', 'gesund')" class="bg-green-900/60 hover:bg-green-800/60 text-green-300 border border-green-700 px-3 py-1 rounded text-xs transition-colors shadow">Gesundmelden</button>`;
+                } else if(p.status === 'Frei') {
+                    actionBtns = `
+                        <div class="flex gap-2 justify-end">
+                            <button onclick="changePersonnelStatus('${p.id}', 'holen_geld')" class="bg-blue-900/60 hover:bg-blue-800/60 text-blue-300 border border-blue-700 px-2 py-1 rounded text-xs transition-colors shadow" title="Arbeitet für Auszahlung">Dienst (Geld)</button>
+                            <button onclick="changePersonnelStatus('${p.id}', 'holen_zeit')" class="bg-amber-900/60 hover:bg-amber-800/60 text-amber-300 border border-amber-700 px-2 py-1 rounded text-xs transition-colors shadow" title="Arbeitet für Überstunden">Dienst (Ü-Std)</button>
+                        </div>
+                    `;
+                } else {
+                    actionBtns = `
+                        <div class="flex gap-2 justify-end">
+                            <button onclick="changePersonnelStatus('${p.id}', 'krank')" class="bg-red-900/60 hover:bg-red-800/60 text-red-300 border border-red-700 px-2 py-1 rounded text-xs transition-colors shadow">Krank</button>
+                            <button onclick="changePersonnelStatus('${p.id}', 'frei')" class="bg-purple-900/60 hover:bg-purple-800/60 text-purple-300 border border-purple-700 px-2 py-1 rounded text-xs transition-colors shadow" title="Ins Frei schicken (Abbau)">Frei (Abbau)</button>
+                        </div>
+                    `;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-800/50 transition-colors">
+                        <td class="p-4 text-white">${p.id}</td>
+                        <td class="p-4 font-bold text-white">${p.name}</td>
+                        <td class="p-4 ${statusClass}">${displayStatus}</td>
+                        <td class="p-4 ${overClass}">${p.over} Std.</td>
+                        <td class="p-4 text-right">${actionBtns}</td>
+                    </tr>
+                `;
+            });
+            const drvStat = document.getElementById('stat-drivers');
+            if(drvStat) drvStat.innerText = personnel.filter(p => p.status === 'Bereit').length;
+        }
+
+        function changePersonnelStatus(id, action) {
+            const p = personnel.find(x => x.id === id);
+            if(p && p.status !== 'Auf Linie') {
+                const assignedVehicle = vehicles.find(v => (v.tempDriver === id || v.driver === id) && v.status === 'Depot');
+                if (assignedVehicle) {
+                    assignedVehicle.driver = null;
+                    assignedVehicle.tempDriver = null;
+                }
+
+                if (action === 'krank') {
+                    p.status = 'Krank'; p.mode = 'Normal';
+                    addEmail('Personalabteilung', `Status-Update: ${p.name}`, `Der Mitarbeiter ${p.name} hat sich krankgemeldet.`);
+                } else if (action === 'gesund') {
+                    p.status = 'Bereit'; p.mode = 'Normal';
+                } else if (action === 'frei') {
+                    p.status = 'Frei'; p.mode = 'Abbau';
+                    addEmail('Personalabteilung', `Freizeitausgleich: ${p.name}`, `Der Mitarbeiter ${p.name} baut nun Überstunden ab.`);
+                } else if (action === 'holen_geld') {
+                    p.status = 'Bereit'; p.mode = 'Geld';
+                    addEmail('Personalabteilung', `Zusatzschicht: ${p.name}`, `Mitarbeiter aus dem Frei geholt. Vergütung: Auszahlung.`);
+                } else if (action === 'holen_zeit') {
+                    p.status = 'Bereit'; p.mode = 'Ü-Std';
+                    addEmail('Personalabteilung', `Zusatzschicht: ${p.name}`, `Mitarbeiter aus dem Frei geholt. Vergütung: Überstunden.`);
+                }
+                
+                renderPersonnel(); 
+                populateDriverSelects();
+                renderDepot();
+            }
+        }
+
+        function populateDriverSelects() {
+            const vSel = document.getElementById('driver-vehicle-select');
+            const rSel = document.getElementById('driver-route-select');
+            if(!vSel || !rSel) return;
+
+            vSel.innerHTML = '';
+            vehicles.filter(v => v.status === 'Depot' && !v.line && !v.tempDriver).forEach(v => {
+                vSel.innerHTML += `<option value="${v.id}">Wg. ${v.id} (${v.type})</option>`;
+            });
+
+            rSel.innerHTML = '';
+            routes.forEach(r => {
+                for(let i=0; i<r.umlaeufe; i++) {
+                    rSel.innerHTML += `<option value="${r.id}_${i}">Linie ${r.line} (Umlauf ${i+1}) - ${r.stops[0]} ➔ ${r.stops[r.stops.length-1]}</option>`;
+                }
+            });
+        }
+
+        function populateCockpitSelects() {
+            const vSel = document.getElementById('cockpit-vehicle-select');
+            const rSel = document.getElementById('cockpit-route-select');
+            if(!vSel || !rSel || !playerAssignment) return;
+
+            vSel.innerHTML = '';
+            const curV = vehicles.find(v => v.id === playerAssignment.vId);
+            if(curV) vSel.innerHTML += `<option value="${curV.id}">Wg. ${curV.id} (${curV.type})</option>`;
+            vehicles.filter(v => v.status === 'Depot' && !v.line).forEach(v => {
+                vSel.innerHTML += `<option value="${v.id}">Wg. ${v.id} (${v.type})</option>`;
+            });
+            vSel.value = playerAssignment.vId;
+
+            rSel.innerHTML = '';
+            routes.forEach(r => {
+                for(let i=0; i<r.umlaeufe; i++) {
+                    rSel.innerHTML += `<option value="${r.id}_${i}">L ${r.line} (U${i+1})</option>`;
+                }
+            });
+            rSel.value = `${playerAssignment.rId}_${playerAssignment.umlaufIndex}`;
+        }
+
+        function startDriverMode() {
+            const vId = document.getElementById('driver-vehicle-select').value;
+            const rVal = document.getElementById('driver-route-select').value;
+            if(!vId || !rVal) return;
+
+            const [rId, uIndex] = rVal.split('_');
+            const route = routes.find(r => r.id === rId);
+            const vehicle = vehicles.find(v => v.id === vId);
+            if(!route || !vehicle) return;
+
+            playerAssignment = { vId, rId, umlaufIndex: parseInt(uIndex), currentStopIndex: 0, direction: 'forward' };
+            vehicle.status = 'Ausgefahren';
+            vehicle.line = `${route.line} (U${parseInt(uIndex)+1})`;
+            vehicle.driver = 'DU';
+
+            populateCockpitSelects();
+            
+            document.getElementById('driver-start').classList.add('hidden');
+            document.getElementById('driver-cockpit').classList.remove('hidden');
+            document.getElementById('driver-cockpit').classList.add('flex');
+
+            addFunkMessage(`Wg. ${vId} (Du)`, `Melde mich auf Linie ${route.line}. Erbitte kurzen Funktest.`, 'normal');
+            
+            renderDepot(); renderIBIS(); renderFunk();
+        }
+
+        function stopDriverMode() {
+            if(!playerAssignment) return;
+            const vehicle = vehicles.find(v => v.id === playerAssignment.vId);
+            if(vehicle) {
+                vehicle.status = 'Depot'; vehicle.line = null; vehicle.driver = null;
+            }
+            
+            addFunkMessage(`Wg. ${playerAssignment.vId} (Du)`, `Beende Schicht. Rücke ein.`, 'normal');
+            playerAssignment = null;
+
+            document.getElementById('driver-start').classList.remove('hidden');
+            document.getElementById('driver-cockpit').classList.remove('flex');
+            document.getElementById('driver-cockpit').classList.add('hidden');
+            
+            renderDepot(); populateDriverSelects();
+        }
+
+        function changeCockpitVehicle(newId) {
+            if(!playerAssignment || newId === playerAssignment.vId) return;
+            const oldId = playerAssignment.vId;
+            const oldV = vehicles.find(v => v.id === oldId);
+            const newV = vehicles.find(v => v.id === newId);
+
+            if(oldV) { oldV.status = 'Depot'; oldV.line = null; oldV.driver = null; }
+            if(newV) {
+                newV.status = 'Ausgefahren';
+                newV.line = oldV ? oldV.line : '';
+                newV.driver = 'DU';
+                playerAssignment.vId = newId;
+            }
+
+            addFunkMessage(`Wg. ${newId} (Du)`, `Fahrzeugwechsel durchgeführt. Übernehme Wg. ${newId} von Wg. ${oldId}.`, 'normal');
+            populateCockpitSelects();
+            renderDepot();
+        }
+
+        function changeCockpitRoute(newVal) {
+            if(!playerAssignment) return;
+            const [rId, uIndex] = newVal.split('_');
+            if(rId === playerAssignment.rId && parseInt(uIndex) === playerAssignment.umlaufIndex) return;
+
+            const route = routes.find(r => r.id === rId);
+            const vehicle = vehicles.find(v => v.id === playerAssignment.vId);
+            if(!route || !vehicle) return;
+
+            playerAssignment.rId = rId;
+            playerAssignment.umlaufIndex = parseInt(uIndex);
+            playerAssignment.currentStopIndex = 0;
+            playerAssignment.direction = 'forward';
+
+            vehicle.line = `${route.line} (U${parseInt(uIndex)+1})`;
+
+            addFunkMessage(`Wg. ${playerAssignment.vId} (Du)`, `Wechsle auf Linie ${route.line}. Beginne Fahrt.`, 'normal');
+            
+            populateCockpitSelects();
+            renderIBIS();
+            renderDepot();
+        }
+
+        function renderIBIS() {
+            if (!playerAssignment) return;
+            const r = routes.find(x => x.id === playerAssignment.rId);
+            if (!r) return;
+            
+            const display = document.getElementById('ibis-display');
+            if(!display) return;
+            
+            const currentStops = playerAssignment.direction === 'forward' ? r.stops : [...r.stops].reverse();
+            
+            const title = document.getElementById('ibis-title');
+            if(title) title.innerText = `L ${r.line} ➔ ${currentStops[currentStops.length-1]}`;
+            
+            let html = '';
+            currentStops.forEach((stop, index) => {
+                if (index < playerAssignment.currentStopIndex) {
+                    html += `<div class="text-emerald-900/60 line-through text-xs flex items-center gap-2"><span class="w-4 text-right">${index+1}</span> <span>${stop}</span></div>`;
+                } else if (index === playerAssignment.currentStopIndex) {
+                    html += `<div class="text-black bg-emerald-500 font-bold text-base px-1 py-1 rounded flex items-center gap-2 my-2 shadow-[0_0_8px_#10b981]"><span class="w-4 text-right">${index+1}</span> <span class="truncate">${stop}</span></div>`;
+                } else {
+                    html += `<div class="text-emerald-500 text-sm flex items-center gap-2"><span class="w-4 text-right">${index+1}</span> <span class="truncate">${stop}</span></div>`;
+                }
+            });
+            
+            display.innerHTML = html;
+
+            const nextBtn = document.getElementById('ibis-next-btn');
+            if(nextBtn) {
+                const baseClasses = "flex-1 border text-sm px-2 py-3 rounded text-white font-bold transition-colors shadow-sm";
+                if(playerAssignment.currentStopIndex === currentStops.length - 1) {
+                    nextBtn.innerText = "Wenden";
+                    nextBtn.className = `${baseClasses} bg-amber-600 hover:bg-amber-500 border-amber-500`;
+                } else {
+                    nextBtn.innerText = "Nächste Hst.";
+                    nextBtn.className = `${baseClasses} bg-blue-700 hover:bg-blue-600 border-blue-500`;
+                }
+            }
+            
+            setTimeout(() => {
+                const currentActive = display.querySelector('.bg-emerald-500');
+                if(currentActive) currentActive.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 50);
+        }
+
+        function advanceStop() {
+            if (!playerAssignment) return;
+            const r = routes.find(x => x.id === playerAssignment.rId);
+            if (!r) return;
+            
+            const currentStops = playerAssignment.direction === 'forward' ? r.stops : [...r.stops].reverse();
+            
+            if (playerAssignment.currentStopIndex < currentStops.length - 1) {
+                playerAssignment.currentStopIndex++;
+                renderIBIS();
+                
+                if (playerAssignment.currentStopIndex === currentStops.length - 1) {
+                    setTimeout(() => { sendDriverFunk("Endhaltestelle erreicht. Beginne Wendezeit."); }, 1500);
+                }
+            } else {
+                playerAssignment.direction = playerAssignment.direction === 'forward' ? 'backward' : 'forward';
+                playerAssignment.currentStopIndex = 0;
+                
+                const newStops = playerAssignment.direction === 'forward' ? r.stops : [...r.stops].reverse();
+                setTimeout(() => { sendDriverFunk(`Wendezeit beendet. Beginne Fahrt Richtung ${newStops[newStops.length-1]}.`); }, 500);
+                
+                renderIBIS();
+            }
+        }
+        
+        function announceStop() {
+            if (!playerAssignment) return;
+            const r = routes.find(x => x.id === playerAssignment.rId);
+            if (!r) return;
+            
+            const currentStops = playerAssignment.direction === 'forward' ? r.stops : [...r.stops].reverse();
+            if (playerAssignment.currentStopIndex >= currentStops.length) return;
+            
+            const nextStop = currentStops[playerAssignment.currentStopIndex];
+            const isTerminus = playerAssignment.currentStopIndex === currentStops.length - 1;
+            
+            let announcementText = `Nächster Halt: ${nextStop}`;
+            if (isTerminus) {
+                announcementText += `. Endstation. Bitte alle aussteigen.`;
+            }
+            
+            // Text-to-Speech (Sprachausgabe im Bus, nicht über Funk)
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(announcementText);
+                utterance.lang = 'de-DE';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+    </script>
+</body>
+</html>
