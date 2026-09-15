@@ -296,44 +296,46 @@
 
         <div id="tab-routes" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
             <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
-                <h2 class="text-xl font-bold text-white mb-4">Neue Route planen</h2>
-                <div class="grid grid-cols-1 md:grid-cols-6 lg:grid-cols-8 gap-4 items-end">
-                    <div class="md:col-span-1 lg:col-span-1">
+                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                    Neue Linie planen
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                    <div>
                         <label class="block text-xs text-slate-400 mb-1">Typ</label>
                         <select id="route-type" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
                             <option value="bus">Bus</option>
-                            <option value="tram">Tram</option>
+                            <option value="tram">Straßenbahn</option>
                         </select>
                     </div>
-                    <div class="md:col-span-1 lg:col-span-1">
-                        <label class="block text-xs text-slate-400 mb-1">Linie</label>
-                        <input type="text" id="route-line" placeholder="z.B. 100" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Linie (z.B. 101)</label>
+                        <input type="text" id="route-line" placeholder="101" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
                     </div>
-                    <div class="md:col-span-4 lg:col-span-3">
-                        <label class="block text-xs text-slate-400 mb-1">Alle Haltestellen (mit Komma trennen)</label>
-                        <input type="text" id="route-stops" placeholder="Hauptbahnhof, Rathaus, Stadion" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs text-slate-400 mb-1">Haltestellen (mit Komma getrennt)</label>
+                        <input type="text" id="route-stops" placeholder="Hbf, Rathaus, Stadion..." class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
                     </div>
-                    <div class="md:col-span-1 lg:col-span-1">
-                        <label class="block text-xs text-slate-400 mb-1">Start (Uhr)</label>
-                        <input type="time" id="route-time" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" value="06:00">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Erste Abfahrt</label>
+                        <input type="time" id="route-time" value="06:00" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
                     </div>
-                    <div class="md:col-span-1 lg:col-span-1">
-                        <label class="block text-xs text-slate-400 mb-1">Ende (Uhr)</label>
-                        <input type="time" id="route-time-end" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none" value="23:30">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Letzte Abfahrt</label>
+                        <input type="time" id="route-time-end" value="23:30" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
                     </div>
-                    <div class="md:col-span-1 lg:col-span-1">
-                        <label class="block text-xs text-slate-400 mb-1">Umläufe</label>
-                        <input type="number" id="route-umlaeufe" min="1" max="10" value="2" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Fahrtzeit (Hinweg in Min)</label>
+                        <input type="number" id="route-duration" value="45" min="5" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
                     </div>
-                    <div class="md:col-span-1 lg:col-span-1">
-                        <label class="block text-xs text-slate-400 mb-1">Gesamtfahrtzeit (Min)</label>
-                        <input type="number" id="route-duration" value="45" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    <div class="md:col-span-2 lg:col-span-8">
-                        <button onclick="addRoute()" class="w-full bg-blue-600 hover:bg-blue-500 text-white p-2 rounded font-medium transition-colors shadow-lg">Route speichern</button>
+                    <div>
+                        <label class="block text-xs text-slate-400 mb-1">Umläufe (Fahrzeuge)</label>
+                        <input type="number" id="route-umlaeufe" value="2" min="1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
                     </div>
                 </div>
+                <button onclick="addRoute()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium transition-colors shadow">Linie speichern & aktivieren</button>
             </div>
+
             <div class="glass-panel rounded-xl overflow-hidden flex-1 min-h-[300px] shadow-xl">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -351,23 +353,29 @@
             </div>
         </div>
 
-        <div id="tab-personnel" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
-            <div class="glass-panel rounded-xl overflow-hidden min-h-[400px] shadow-xl">
+        <div id="tab-personnel" class="tab-content h-full flex-col gap-4">
+            <div class="glass-panel w-full h-full rounded-xl flex flex-col overflow-hidden shadow-xl">
                 <div class="p-4 border-b border-slate-700 bg-slate-800/80 flex justify-between items-center shrink-0">
-                    <h2 class="font-bold text-white">Personalstamm</h2>
+                    <h2 class="font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        Personalstamm
+                    </h2>
+                    <input type="text" id="personnel-search" onkeyup="renderPersonnel()" placeholder="ID oder Name suchen..." class="bg-slate-900 border border-slate-600 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-blue-500 w-64 shadow-inner">
                 </div>
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-800/80 text-slate-300 text-sm">
-                            <th class="p-4 font-semibold">ID</th>
-                            <th class="p-4 font-semibold">Name</th>
-                            <th class="p-4 font-semibold">Status</th>
-                            <th class="p-4 font-semibold">Überstunden</th>
-                            <th class="p-4 font-semibold text-right">Aktion</th>
-                        </tr>
-                    </thead>
-                    <tbody id="personnel-table-body" class="divide-y divide-slate-700/50 bg-slate-900/30"></tbody>
-                </table>
+                <div class="flex-1 overflow-y-auto custom-scrollbar bg-slate-900/30 relative">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="sticky top-0 bg-slate-800/95 backdrop-blur z-10 shadow-md border-b border-slate-700">
+                            <tr class="text-slate-300 text-sm">
+                                <th class="p-4 font-semibold">ID</th>
+                                <th class="p-4 font-semibold">Name</th>
+                                <th class="p-4 font-semibold">Status</th>
+                                <th class="p-4 font-semibold">Überstunden</th>
+                                <th class="p-4 font-semibold text-right">Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personnel-table-body" class="divide-y divide-slate-700/50"></tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
@@ -799,15 +807,15 @@
 
             if (action === 'processing') {
                 mail.status = 'processing';
-                addEmail('CEO (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte/r ${mail.applicantName},\n\nvielen Dank für Ihre Bewerbung. Wir prüfen derzeit Ihre Unterlagen.`, 'general');
+                addEmail('Leitstelle (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte(r) ${mail.applicantName},\n\nvielen Dank für das Einreichen Ihrer Bewerbungsunterlagen und Ihr Interesse an einer Mitarbeit bei den Stadtwerken Tramau.\n\nWir haben Ihre Bewerbung erfolgreich in unserem System erfasst. Unsere Personalabteilung wird Ihre Unterlagen nun sorgfältig prüfen. Dies kann einige Zeit in Anspruch nehmen, weshalb wir um etwas Geduld bitten. Wir werden uns unaufgefordert wieder bei Ihnen melden.\n\nMit freundlichen Grüßen\nIhre Leitstelle / Personalabteilung`, 'general');
                 readEmail(emailId);
             } else if (action === 'reject') {
                 mail.status = 'rejected';
-                addEmail('CEO (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte/r ${mail.applicantName},\n\nleider müssen wir Ihnen mitteilen, dass wir Ihre Bewerbung nicht berücksichtigen können.`, 'general');
+                addEmail('Leitstelle (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte(r) ${mail.applicantName},\n\nvielen Dank für Ihre Bewerbung und das damit verbundene Interesse an unserem Unternehmen.\n\nNach eingehender Prüfung Ihrer Unterlagen müssen wir Ihnen heute leider mitteilen, dass wir Sie für die ausgeschriebene Position nicht berücksichtigen können. Andere Mitbewerber brachten Qualifikationen mit, die noch genauer auf unser aktuelles Anforderungsprofil zugeschnitten waren.\n\nWir danken Ihnen für Ihr Engagement und wünschen Ihnen für Ihren weiteren beruflichen und privaten Lebensweg alles erdenklich Gute.\n\nMit freundlichen Grüßen\nIhre Leitstelle / Personalabteilung`, 'general');
                 readEmail(emailId);
             } else if (action === 'invite') {
                 mail.status = 'invited';
-                addEmail('CEO (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte/r ${mail.applicantName},\n\nwir laden Sie hiermit zu einem Vorstellungsgespräch ein. HR meldet sich.`, 'general');
+                addEmail('Leitstelle (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte(r) ${mail.applicantName},\n\nvielen Dank für Ihre aussagekräftige Bewerbung.\n\nIhr Werdegang und Ihre genannten Qualifikationen haben uns sehr angesprochen. Wir möchten Sie daher gerne in einem persönlichen Gespräch näher kennenlernen und laden Sie hiermit herzlich zu einem Vorstellungsgespräch ein.\n\nUnsere Personalabteilung (HR) wird sich in Kürze mit Ihnen in Verbindung setzen, um einen konkreten Termin abzustimmen. Wir freuen uns darauf, Sie kennenzulernen.\n\nMit freundlichen Grüßen\nIhre Leitstelle / Personalabteilung`, 'general');
                 readEmail(emailId);
 
                 setTimeout(() => {
@@ -842,37 +850,135 @@
 
         function checkAndGenerateEmails() {
             const now = Date.now();
+            // E-Mails generieren (Alle 5 Minuten = 300000ms. Für schnelleres Testen kann der Wert verkleinert werden)
             if (now - lastEmailCheck < 300000) return;
             lastEmailCheck = now;
 
-            if (Math.random() > 0.5) {
-                const names = ["Max Mustermann", "Laura Müller", "Jan Becker", "Sophie Wagner"];
+            const rand = Math.random();
+
+            if (rand < 0.35) {
+                // 35% Chance: Job-Bewerbung
+                const names = ["Max Mustermann", "Laura Müller", "Jan Becker", "Sophie Wagner", "Ali Yilmaz", "Katharina Schmidt", "David Fischer", "Sarah Weber", "Lukas Meyer", "Elena Rossi"];
                 const name = names[Math.floor(Math.random() * names.length)];
-                addEmail(`${name} (Bewerber)`, "Bewerbung als Busfahrer", `Sehr geehrte Damen und Herren,\nhiermit bewerbe ich mich...\nGruß, ${name}`, 'job_app', name);
+                const companies = ["DB Regio Bus NRW", "Vestischen Straßenbahnen GmbH", "Rheinbahn AG", "Ruhrbahn GmbH", "Stadtwerke Münster", "NIAG", "Verkehrsgesellschaft Rhein-Sieg", "Bogestra"];
+                const company = companies[Math.floor(Math.random() * companies.length)];
+                
+                const templates = [
+                    `Sehr geehrte Damen und Herren,\n\nmit großem Interesse bewerbe ich mich hiermit um eine Stelle als Fahrpersonal in Ihrem Unternehmen.\n\nIch besitze den Führerschein der Klassen D und DE sowie einen gültigen Personenbeförderungsschein (P-Schein) seit nunmehr über 5 Jahren. Zuvor war ich bei der ${company} im Regional- und Stadtverkehr tätig und kenne mich mit großen Fahrzeugen, insbesondere auch mit 18m-Gelenkbussen, bestens aus. Ich bin Schichtarbeit gewohnt, absolut zuverlässig und behalte auch im stressigen Stadtverkehr stets einen kühlen Kopf.\n\nGerne würde ich mich bei Ihnen in einem persönlichen Gespräch vorstellen und Sie von meinen Qualitäten überzeugen.\n\nMit freundlichen Grüßen\n${name}`,
+                    `Sehr geehrte Leitstelle,\n\nhiermit möchte ich mich initiativ als Fahrer für Ihren städtischen Fuhrpark bewerben.\n\nIch habe im vergangenen Monat meine Weiterbildung zum Berufskraftfahrer (Personenverkehr) inklusive der IHK-Prüfung erfolgreich abgeschlossen. Während meiner Ausbildung konnte ich bereits im Rahmen eines mehrmonatigen Praktikums bei der ${company} erste praktische Erfahrungen im Liniendienst sammeln. Auch wenn ich beruflich noch frisch hinter dem Steuer sitze, bringe ich ein Höchstmaß an Motivation, Pünktlichkeit und technischem Verständnis mit. Der tägliche Kontakt mit den Fahrgästen bereitet mir große Freude.\n\nIch stehe Ihnen ab sofort zur Verfügung und freue mich auf Ihre positive Rückmeldung.\n\nMit freundlichen Grüßen\n${name}`,
+                    `Guten Tag,\n\nauf der Suche nach einer neuen beruflichen Herausforderung bin ich auf Ihre Verkehrsbetriebe aufmerksam geworden.\n\nIn meiner bisherigen Laufbahn habe ich über mehrere Jahre hinweg umfassende Erfahrung im Schienenverkehr bei der ${company} gesammelt und bin auf verschiedene Straßenbahn-Typen geschult (unter anderem Niederflurfahrzeuge und ältere Modelle). Das vorausschauende Fahren und die Sicherheit der Fahrgäste stehen für mich an oberster Stelle. Ein späterer Wechsel in den Bus-Bereich wäre für mich nach kurzer Einweisung ebenfalls denkbar.\n\nIch würde mich sehr freuen, Teil Ihres Teams zu werden.\n\nFreundliche Grüße\n${name}`
+                ];
+                const selectedBody = templates[Math.floor(Math.random() * templates.length)];
+                const subject = selectedBody.includes("Schienenverkehr") ? "Bewerbung als Straßenbahnfahrer/in" : "Bewerbung als Busfahrer/in";
+
+                addEmail(`${name} (Bewerber)`, subject, selectedBody, 'job_app', name);
+
+            } else if (rand < 0.60) {
+                // 25% Chance: Krankmeldung eines aktiven Fahrers
+                let availableDrivers = personnel.filter(p => p.status === 'Bereit' && p.mode === 'Normal');
+                let activeDriverIds = vehicles.map(v => v.driver).filter(id => id);
+                let tempDriverIds = vehicles.map(v => v.tempDriver).filter(id => id);
+                // Nur Fahrer nehmen, die gerade NICHT in einem Bus sitzen
+                let safeDrivers = availableDrivers.filter(p => !activeDriverIds.includes(p.id) && !tempDriverIds.includes(p.id));
+
+                if (safeDrivers.length > 0) {
+                    let driver = safeDrivers[Math.floor(Math.random() * safeDrivers.length)];
+                    driver.status = 'Krank'; // Status automatisch anpassen
+                    
+                    const subjects = ["Krankmeldung für heute", "Falle heute aus", "Krankheitsbedingter Ausfall"];
+                    const subject = subjects[Math.floor(Math.random() * subjects.length)];
+                    const bodies = [
+                        `Hallo Leitstelle,\n\nleider hat es mich heute Nacht erwischt. Ich liege mit Fieber und starker Erkältung flach und kann meine heutige Schicht nicht antreten. Die AU-Bescheinigung lade ich später im Portal hoch.\n\nGruß,\n${driver.name}`,
+                        `Guten Morgen,\n\nich muss mich für heute leider krankmelden. Mich plagen starke Magen-Darm-Beschwerden. Ich hoffe, dass ich in ein paar Tagen wieder einsatzbereit bin.\n\nViele Grüße\n${driver.name} (ID: ${driver.id})`
+                    ];
+                    
+                    addEmail(`${driver.name} (Fahrer)`, subject, bodies[Math.floor(Math.random() * bodies.length)], 'general');
+                    if (currentActiveTab === 'tab-personnel') renderPersonnel();
+                    renderDepot();
+                }
+
+            } else if (rand < 0.85) {
+                // 25% Chance: Gesundmeldung eines kranken Fahrers
+                let sickDrivers = personnel.filter(p => p.status === 'Krank');
+                if (sickDrivers.length > 0) {
+                    let driver = sickDrivers[Math.floor(Math.random() * sickDrivers.length)];
+                    let isAutoDispo = currentActiveTab === 'tab-driver';
+                    
+                    if (isAutoDispo) {
+                        driver.status = 'Bereit';
+                        if (currentActiveTab === 'tab-personnel') renderPersonnel();
+                        renderDepot();
+                    }
+                    
+                    const subject = "Wieder einsatzbereit";
+                    const body = `Hallo Leitstelle,\n\nmeine Krankschreibung ist abgelaufen. Ich bin wieder voll fit und stehe ab sofort wieder für Dienste zur Verfügung. Teilt mich gerne wieder ein!\n\nBis später,\n${driver.name} (ID: ${driver.id})`;
+                    
+                    addEmail(`${driver.name} (Fahrer)`, subject, body, 'recovery_note', driver.name, { driverId: driver.id, processed: isAutoDispo });
+                }
+
             } else {
-                addEmail("EvoBus Vertrieb", "Frühjahrsangebot auf C2", "Sehr geehrte Leitstelle,\nsichern Sie sich 10% Rabatt auf unsere neuen Modelle!");
+                // 15% Chance: Allgemeine Info / Werbung
+                addEmail("EvoBus Vertrieb", "Frühjahrsangebot auf C2", "Sehr geehrte Leitstelle,\n\nsichern Sie sich jetzt 10% Rabatt auf unsere brandneuen C2-Gelenkbus-Modelle! Kontaktieren Sie Ihren Vertriebsbetreuer für ein individuelles Angebot bezüglich Ihres Fuhrparks.\n\nIhr EvoBus-Team");
             }
         }
 
         function checkAndGenerateFunk() {
             const now = Date.now();
-            if (now - lastFunkCheck < 60000) return; 
+            // Prüft alle 45 Sekunden (statt 60), ob jemand funkt
+            if (now - lastFunkCheck < 45000) return; 
             lastFunkCheck = now;
             
-            if (Math.random() > 0.20) return; 
             let activeBuses = vehicles.filter(v => v.status === 'Ausgefahren' && (!playerAssignment || playerAssignment.vId !== v.id));
+            if(activeBuses.length === 0) return;
+
+            // Die Wahrscheinlichkeit steigt, je mehr Fahrzeuge auf der Linie sind (Grundchance 30%)
+            let chance = 0.30 + (activeBuses.length * 0.05);
+            if (Math.random() > chance) return; 
             
-            if(activeBuses.length > 0) {
-                let randomBus = activeBuses[Math.floor(Math.random() * activeBuses.length)];
-                const events = [
-                    { msg: "Hab hier ca. 5 Minuten Verspätung wegen Stau am Ring.", inc: null },
-                    { msg: "Tür 2 schließt extrem langsam. Behalte das im Auge.", inc: "Türstörung" }
-                ];
-                let evt = events[Math.floor(Math.random() * events.length)];
-                addFunkMessage(`Wg. ${randomBus.id}`, evt.msg, 'normal');
-                if (evt.inc) addIncident(evt.inc, `Wg. ${randomBus.id}`, evt.msg, 'Mittel');
-                setTimeout(() => { addFunkMessage('Leitstelle', `Verstanden Wg. ${randomBus.id}. Ist notiert.`, 'system'); }, 3000);
+            let randomBus = activeBuses[Math.floor(Math.random() * activeBuses.length)];
+            let isTram = randomBus.type === 'Tram';
+
+            // Allgemeine Ereignisse (Bus & Tram)
+            const events = [
+                { msg: "Hänge im Verkehr fest, ca. 5 Minuten Verspätung.", inc: null },
+                { msg: "Viel Fahrgastaufkommen heute, habe ca. 3 Minuten Verspätung.", inc: null },
+                { msg: "Der Ticketdrucker spinnt etwas, muss ihn an der Endhaltestelle neustarten.", inc: "Ticketdrucker defekt", sev: "Niedrig" },
+                { msg: "Tür 2 schließt extrem langsam, dauert ewig beim Fahrgastwechsel.", inc: "Türstörung", sev: "Mittel" },
+                { msg: "Ein Fahrgast hat sich übergeben, brauche Reinigungspersonal an der Endhaltestelle.", inc: "Fahrzeug verschmutzt", sev: "Mittel" },
+                { msg: "Kühlwasseranzeige leuchtet rot! Ich fahre die Linie noch zu Ende, brauche dann aber einen Tauschwagen.", inc: "Motorproblem", sev: "Hoch" },
+                { msg: "Fahrgast randaliert im Fahrzeug! Habe die Polizei gerufen, stehe an der Haltestelle.", inc: "Polizeieinsatz", sev: "Hoch" }
+            ];
+
+            // Fahrzeugspezifische Ereignisse
+            if (isTram) {
+                events.push(
+                    { msg: "Weiche 4 lässt sich nicht per Funk stellen. Muss manuell umstellen, kostet 2 Minuten Verspätung.", inc: null },
+                    { msg: "Falschparker im Gleisbereich! Komme nicht durch. Habe geklingelt, rufe jetzt Polizei.", inc: "Gleis blockiert", sev: "Hoch" },
+                    { msg: "Stromabnehmer hat gefunkt, fahre mit reduzierter Leistung weiter.", inc: "Störung Stromabnehmer", sev: "Mittel" }
+                );
+            } else {
+                events.push(
+                    { msg: "Ein PKW hat mir die Vorfahrt genommen, musste stark bremsen. Niemand verletzt, aber 4 Minuten Verspätung.", inc: null },
+                    { msg: "Druckluft baut sich nur sehr langsam auf. Bitte Werkstatt informieren.", inc: "Druckluft-Verlust", sev: "Hoch" },
+                    { msg: "Klimaanlage ist komplett ausgefallen, die Fahrgäste beschweren sich schon.", inc: "Klimaausfall", sev: "Niedrig" }
+                );
             }
+
+            let evt = events[Math.floor(Math.random() * events.length)];
+            
+            // Funkspruch des Fahrers absetzen
+            addFunkMessage(`Wg. ${randomBus.id}`, evt.msg, 'normal');
+            
+            // Wenn es eine Störung ist, ins System eintragen
+            if (evt.inc) {
+                addIncident(evt.inc, `Wg. ${randomBus.id}`, evt.msg, evt.sev);
+            }
+            
+            // Automatische Antwort deiner Leitstelle (spart dir Tipparbeit)
+            setTimeout(() => { 
+                let antwort = evt.inc ? `Verstanden Wg. ${randomBus.id}. Störung ist im System aufgenommen, wir kümmern uns.` : `Verstanden Wg. ${randomBus.id}. Ist notiert, gute Weiterfahrt.`;
+                addFunkMessage('Leitstelle', antwort, 'system'); 
+            }, 3000);
         }
 
         function addFunkMessage(sender, text, type) {
@@ -1190,6 +1296,9 @@
             if(v) {
                 const p = personnel.find(p => p.id === v.driver);
                 if(p) p.status = 'Bereit';
+                
+                addFunkMessage(`Wg. ${v.id}`, `Schicht beendet, rücke ein zum Betriebshof.`, 'normal');
+                
                 v.driver = null; v.line = null; v.status = 'Depot';
                 renderDepot(); renderPersonnel();
             }
@@ -1408,12 +1517,47 @@
             }
         }
 
+        // NEU: Wandelt die Stunden (z.B. 12.5) in Echtzeit HH:MM:SS um
+        function formatOvertime(hours) {
+            if(hours < 0) hours = 0;
+            const totalSeconds = Math.floor(hours * 3600);
+            const h = Math.floor(totalSeconds / 3600);
+            const m = Math.floor((totalSeconds % 3600) / 60);
+            const s = totalSeconds % 60;
+            return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+        }
+
+        // NEU: Aktualisiert flüssig nur die Zahlen in der Tabelle (ohne Flackern)
+        function updatePersonnelTimers() {
+            personnel.forEach(p => {
+                const timerEl = document.getElementById(`timer-${p.id}`);
+                if (timerEl) {
+                    timerEl.innerText = formatOvertime(p.over);
+                    if (p.mode === 'Abbau' && p.status === 'Frei' && p.over > 0) {
+                        timerEl.className = 'p-4 text-green-400 font-bold font-mono animate-pulse';
+                    } else if (p.over >= 15) {
+                        timerEl.className = 'p-4 text-amber-500 font-bold font-mono';
+                    } else {
+                        timerEl.className = 'p-4 text-slate-400 font-mono';
+                    }
+                }
+            });
+        }
+
         function renderPersonnel() {
             const tbody = document.getElementById('personnel-table-body');
             if(!tbody) return;
             tbody.innerHTML = '';
+            
+            const searchInput = document.getElementById('personnel-search');
+            const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+
             personnel.forEach(p => {
-                const overClass = p.over >= 15 ? 'text-amber-500 font-bold' : 'text-slate-400';
+                if (searchTerm && !p.id.toLowerCase().includes(searchTerm) && !p.name.toLowerCase().includes(searchTerm)) return;
+
+                let overClass = p.over >= 15 ? 'text-amber-500 font-bold font-mono' : 'text-slate-400 font-mono';
+                if (p.mode === 'Abbau' && p.status === 'Frei' && p.over > 0) overClass = 'text-green-400 font-bold font-mono animate-pulse';
+                
                 let statusClass = 'text-green-400';
                 if (p.status === 'Krank') statusClass = 'text-red-400';
                 else if (p.status === 'Auf Linie') statusClass = 'text-blue-400';
@@ -1431,7 +1575,8 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-800/50 transition-colors">
                         <td class="p-4 text-white">${p.id}</td><td class="p-4 font-bold text-white">${p.name}</td>
-                        <td class="p-4 ${statusClass}">${displayStatus}</td><td class="p-4 ${overClass}">${p.over.toFixed(1)} Std.</td>
+                        <td class="p-4 ${statusClass}">${displayStatus}</td>
+                        <td class="p-4 ${overClass}" id="timer-${p.id}">${formatOvertime(p.over)}</td>
                         <td class="p-4 text-right">${actionBtns}</td>
                     </tr>`;
             });
@@ -1450,12 +1595,29 @@
         }
 
         function updateOvertime() {
+            if (!window.lastOvertimeTick) window.lastOvertimeTick = Date.now();
+            const now = Date.now();
+            const deltaMs = now - window.lastOvertimeTick;
+            window.lastOvertimeTick = now;
+            
+            const deltaHours = deltaMs / 3600000; // Millisekunden in Stunden umrechnen
             let changed = false;
+
             personnel.forEach(p => {
-                if (p.mode === 'Abbau' && p.status === 'Frei' && p.over > 0) { p.over -= 0.1; changed = true; if(p.over < 0) p.over = 0; }
-                if (p.mode === 'Ü-Std' && (p.status === 'Bereit' || p.status === 'Auf Linie')) { p.over += 0.1; changed = true; }
+                if (p.mode === 'Abbau' && p.status === 'Frei' && p.over > 0) { 
+                    p.over -= deltaHours; 
+                    changed = true; 
+                    if(p.over < 0) p.over = 0; 
+                }
+                if (p.mode === 'Ü-Std' && (p.status === 'Bereit' || p.status === 'Auf Linie')) { 
+                    p.over += deltaHours; 
+                    changed = true; 
+                }
             });
-            if (changed && currentActiveTab === 'tab-personnel') renderPersonnel();
+            
+            if (changed && currentActiveTab === 'tab-personnel') {
+                updatePersonnelTimers(); // Zahlen flüssig ändern, ohne Tabelle neu zu laden
+            }
         }
 
         function populateDriverSelects() {
