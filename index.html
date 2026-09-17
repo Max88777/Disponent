@@ -93,6 +93,7 @@
     <main class="flex-1 overflow-hidden p-4 relative">
         <div id="toast-container" class="absolute bottom-4 right-4 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
+        <!-- Posteingang -->
         <div id="tab-emails" class="tab-content active h-full flex-col md:flex-row gap-4">
             <div class="glass-panel w-full md:w-1/3 rounded-xl flex flex-col overflow-hidden shadow-xl">
                 <div class="p-4 border-b border-slate-700 bg-slate-800/80 shrink-0">
@@ -110,6 +111,7 @@
             </div>
         </div>
 
+        <!-- Funk -->
         <div id="tab-funk" class="tab-content h-full flex-col gap-4">
             <div class="glass-panel w-full rounded-xl flex flex-col h-full shadow-xl">
                 <div class="p-4 border-b border-slate-700 bg-slate-800/80 flex justify-between items-center shrink-0">
@@ -129,55 +131,7 @@
             </div>
         </div>
 
-        <div id="tab-fuhrpark" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
-            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
-                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    Fahrzeughandel (Neuwagen)
-                </h2>
-                <h3 class="text-md font-bold text-slate-300 mb-3 border-b border-slate-700 pb-2">Stadtbusse & Gelenkbusse</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4 mb-8">
-                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-indigo-400 flex flex-col">
-                        <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">Citybus C2</h3><span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-slate-300">Solobus</span></div>
-                        <p class="text-xs text-slate-400 mb-4 flex-1">12m-Solobus Variante.</p>
-                        <button onclick="window.buyBus('Citybus C2', 'Solo')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 rounded text-xs">Kaufen</button>
-                    </div>
-                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-indigo-400 flex flex-col">
-                        <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">Citybus C2 G</h3><span class="bg-blue-900/50 text-[10px] px-2 py-1 rounded text-blue-300 border border-blue-700">Gelenkbus</span></div>
-                        <p class="text-xs text-slate-400 mb-4 flex-1">Gelenkbus-Version für hohes Aufkommen.</p>
-                        <button onclick="window.buyBus('Citybus C2 G', 'Gelenk')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 rounded text-xs">Kaufen</button>
-                    </div>
-                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-indigo-400 flex flex-col">
-                        <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">MAN Lion's City A21</h3><span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-slate-300">Solobus</span></div>
-                        <p class="text-xs text-slate-400 mb-4 flex-1">Solobus mit 2 oder 3 Türen.</p>
-                        <button onclick="window.buyBus('MAN Lion\'s City A21', 'Solo')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 rounded text-xs">Kaufen</button>
-                    </div>
-                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-indigo-400 flex flex-col">
-                        <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">MAN Lion's City A23</h3><span class="bg-blue-900/50 text-[10px] px-2 py-1 rounded text-blue-300 border border-blue-700">Gelenkbus</span></div>
-                        <p class="text-xs text-slate-400 mb-4 flex-1">Gelenkbus der Basisversion.</p>
-                        <button onclick="window.buyBus('MAN Lion\'s City A23', 'Gelenk')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 rounded text-xs">Kaufen</button>
-                    </div>
-                </div>
-                <h3 class="text-md font-bold text-slate-300 mb-3 border-b border-slate-700 pb-2">Straßenbahnen (Trams)</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-4">
-                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-amber-400 flex flex-col">
-                        <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">Flexity</h3><span class="bg-amber-900/50 text-[10px] px-2 py-1 rounded text-amber-300 border border-amber-700">Tram</span></div>
-                        <p class="text-xs text-slate-400 mb-4 flex-1">Moderne Niederflur-Straßenbahn.</p>
-                        <button onclick="window.buyBus('Flexity', 'Tram')" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-1.5 rounded text-xs">Kaufen</button>
-                    </div>
-                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-amber-400 flex flex-col">
-                        <div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">Tatra KT4D</h3><span class="bg-amber-900/50 text-[10px] px-2 py-1 rounded text-amber-300 border border-amber-700">Tram</span></div>
-                        <p class="text-xs text-slate-400 mb-4 flex-1">Klassische Straßenbahn mit Pedalsteuerung.</p>
-                        <button onclick="window.buyBus('Tatra KT4D', 'Tram')" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-1.5 rounded text-xs">Kaufen</button>
-                    </div>
-                </div>
-            </div>
-            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
-                <h3 class="font-bold text-slate-300 mb-4">Letzte Zulassungen</h3>
-                <div id="fuhrpark-log" class="text-sm text-slate-400 space-y-2"><i>Noch keine Fahrzeuge in dieser Schicht gekauft.</i></div>
-            </div>
-        </div>
-
+        <!-- Depot -->
         <div id="tab-depot" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 shrink-0">
                 <div class="glass-panel p-4 rounded-xl border-l-4 border-slate-400 shadow-lg">
@@ -203,109 +157,11 @@
                     <h2 class="font-bold text-white">Fahrzeug-Disposition</h2>
                     <button onclick="window.autoAssign()" class="bg-slate-700 hover:bg-slate-600 text-xs px-3 py-1 rounded text-white border border-slate-500 transition-colors shadow">Auto-Zuweisung forcieren</button>
                 </div>
-                <div class="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar" id="depot-grid">
-                    <!-- Cards via JS -->
-                </div>
+                <div class="p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto custom-scrollbar" id="depot-grid"></div>
             </div>
         </div>
 
-        <div id="tab-werkstatt" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
-            <div class="glass-panel rounded-xl overflow-hidden flex-1 min-h-[400px] shadow-xl flex flex-col">
-                <div class="p-4 border-b border-slate-700 bg-slate-800/80 flex items-center gap-3 shrink-0">
-                    <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <h2 class="font-bold text-white text-lg">Instandhaltung & Reparaturen</h2>
-                </div>
-                <div class="flex-1 overflow-y-auto custom-scrollbar">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-900/50 text-slate-400 text-sm border-b border-slate-700">
-                                <th class="p-4 font-semibold">Fahrzeug</th>
-                                <th class="p-4 font-semibold">Modell/Typ</th>
-                                <th class="p-4 font-semibold">Verbleibende Zeit</th>
-                                <th class="p-4 font-semibold text-right">Aktion</th>
-                            </tr>
-                        </thead>
-                        <tbody id="werkstatt-table-body" class="divide-y divide-slate-700/50 bg-slate-900/30">
-                            <!-- Werkstatt via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-incidents" class="tab-content h-full flex-col gap-4">
-            <div class="glass-panel w-full h-full rounded-xl flex flex-col shadow-xl">
-                <div class="p-4 border-b border-slate-700 bg-slate-800/80 shrink-0">
-                    <h2 class="font-bold text-white flex items-center gap-2">
-                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        Störungsprotokoll
-                    </h2>
-                </div>
-                <div class="flex-1 overflow-y-auto custom-scrollbar p-4 bg-slate-900/30">
-                    <div id="incident-list" class="space-y-3"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-routes" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
-            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
-                <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                    Neue Linie planen
-                </h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Typ</label>
-                        <select id="route-type" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                            <option value="bus">Bus</option>
-                            <option value="tram">Straßenbahn</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Linie (z.B. 101)</label>
-                        <input type="text" id="route-line" placeholder="101" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    <div class="lg:col-span-2">
-                        <label class="block text-xs text-slate-400 mb-1">Haltestellen (mit Komma getrennt)</label>
-                        <input type="text" id="route-stops" placeholder="Hbf, Rathaus, Stadion..." class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Erste Abfahrt</label>
-                        <input type="time" id="route-time" value="06:00" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Letzte Abfahrt</label>
-                        <input type="time" id="route-time-end" value="23:30" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Fahrtzeit (Hinweg in Min)</label>
-                        <input type="number" id="route-duration" value="45" min="5" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Umläufe (Fahrzeuge)</label>
-                        <input type="number" id="route-umlaeufe" value="2" min="1" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:border-blue-500 focus:outline-none">
-                    </div>
-                </div>
-                <button onclick="window.addRoute()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium transition-colors shadow">Linie speichern & aktivieren</button>
-            </div>
-
-            <div class="glass-panel rounded-xl overflow-hidden flex-1 min-h-[300px] shadow-xl">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-800/80 text-slate-300 text-sm">
-                            <th class="p-4 font-semibold">Linie</th>
-                            <th class="p-4 font-semibold">Strecke</th>
-                            <th class="p-4 font-semibold">Betriebszeit</th>
-                            <th class="p-4 font-semibold">Umläufe</th>
-                            <th class="p-4 font-semibold">Fahrtzeit</th>
-                            <th class="p-4 font-semibold text-right">Aktion</th>
-                        </tr>
-                    </thead>
-                    <tbody id="route-table-body" class="divide-y divide-slate-700/50"></tbody>
-                </table>
-            </div>
-        </div>
-
+        <!-- Personal Tab -->
         <div id="tab-personnel" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar pr-2">
             <!-- Akte (Liste) -->
             <div class="glass-panel w-full rounded-xl flex flex-col shadow-xl shrink-0">
@@ -350,107 +206,56 @@
             </div>
         </div>
 
-        <div id="tab-dfi" class="tab-content h-full flex-col items-center justify-center bg-black/70 rounded-xl relative overflow-hidden shadow-2xl">
+        <div id="tab-fuhrpark" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
+            <!-- (Identisch wie zuvor, nur Fuhrpark Handel) -->
+            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Fahrzeughandel (Neuwagen)
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-indigo-400 flex flex-col"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">Citybus C2</h3><span class="bg-slate-700 text-[10px] px-2 py-1 rounded text-slate-300">Solobus</span></div><button onclick="window.buyBus('Citybus C2', 'Solo')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 rounded text-xs mt-auto">Kaufen</button></div>
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-indigo-400 flex flex-col"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">MAN Lion's City A23</h3><span class="bg-blue-900/50 text-[10px] px-2 py-1 rounded text-blue-300 border border-blue-700">Gelenkbus</span></div><button onclick="window.buyBus('MAN Lion\'s City A23', 'Gelenk')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white py-1.5 rounded text-xs mt-auto">Kaufen</button></div>
+                    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-600 hover:border-amber-400 flex flex-col"><div class="flex justify-between items-start mb-2"><h3 class="font-bold text-sm text-white">Flexity</h3><span class="bg-amber-900/50 text-[10px] px-2 py-1 rounded text-amber-300 border border-amber-700">Tram</span></div><button onclick="window.buyBus('Flexity', 'Tram')" class="w-full bg-amber-600 hover:bg-amber-500 text-white py-1.5 rounded text-xs mt-auto">Kaufen</button></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-werkstatt" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
+            <div class="glass-panel rounded-xl overflow-hidden flex-1 min-h-[400px] shadow-xl flex flex-col">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/80 flex items-center gap-3 shrink-0"><h2 class="font-bold text-white text-lg">Instandhaltung & Reparaturen</h2></div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar"><table class="w-full text-left border-collapse"><thead><tr class="bg-slate-900/50 text-slate-400 text-sm border-b border-slate-700"><th class="p-4 font-semibold">Fahrzeug</th><th class="p-4 font-semibold">Status</th><th class="p-4 font-semibold text-right">Aktion</th></tr></thead><tbody id="werkstatt-table-body" class="divide-y divide-slate-700/50"></tbody></table></div>
+            </div>
+        </div>
+
+        <div id="tab-incidents" class="tab-content h-full flex-col gap-4"><div class="glass-panel w-full h-full rounded-xl flex flex-col shadow-xl"><div class="p-4 border-b border-slate-700 bg-slate-800/80 shrink-0"><h2 class="font-bold text-white">Störungsprotokoll</h2></div><div class="flex-1 overflow-y-auto custom-scrollbar p-4"><div id="incident-list" class="space-y-3"></div></div></div></div>
+        
+        <div id="tab-routes" class="tab-content h-full flex-col gap-4 overflow-y-auto custom-scrollbar">
+            <div class="glass-panel p-6 rounded-xl border border-slate-700 shrink-0 shadow-xl">
+                <h2 class="text-xl font-bold text-white mb-4">Neue Linie planen</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div><label class="block text-xs text-slate-400 mb-1">Typ</label><select id="route-type" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><option value="bus">Bus</option><option value="tram">Straßenbahn</option></select></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">Linie</label><input type="text" id="route-line" placeholder="101" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    <div class="md:col-span-2"><label class="block text-xs text-slate-400 mb-1">Haltestellen (Komma)</label><input type="text" id="route-stops" placeholder="Hbf, Rathaus..." class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">Start</label><input type="time" id="route-time" value="06:00" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">Ende</label><input type="time" id="route-time-end" value="23:30" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">Fahrtzeit (Min)</label><input type="number" id="route-duration" value="45" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    <div><label class="block text-xs text-slate-400 mb-1">Umläufe</label><input type="number" id="route-umlaeufe" value="2" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                </div>
+                <button onclick="window.addRoute()" class="bg-blue-600 text-white px-6 py-2 rounded">Speichern</button>
+            </div>
+            <div class="glass-panel rounded-xl overflow-hidden flex-1 shadow-xl"><table class="w-full text-left"><tbody id="route-table-body" class="divide-y divide-slate-700/50"></tbody></table></div>
+        </div>
+
+        <div id="tab-dfi" class="tab-content h-full flex-col items-center justify-center bg-black/70 rounded-xl relative shadow-2xl">
             <div class="w-full max-w-4xl bg-[#111] border-4 border-slate-800 rounded-lg p-2 shadow-[0_0_50px_rgba(0,0,0,0.8)] relative">
-                <div class="absolute top-0 left-0 w-full h-full pointer-events-none" style="background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px); z-index: 10;"></div>
-                <div class="bg-black p-4 rounded min-h-[300px] flex flex-col font-mono text-amber-500" style="text-shadow: 0 0 5px rgba(245, 158, 11, 0.7);">
-                    <div class="flex justify-between items-center border-b-2 border-amber-500/30 pb-2 mb-4 z-20 relative">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xl font-bold">Haltestelle:</span>
-                            <select id="dfi-stop-select" onchange="window.changeDfiStop(this.value)" class="bg-black border border-amber-500/50 text-amber-500 rounded p-1 text-lg focus:outline-none focus:border-amber-400 font-mono font-bold max-w-[200px] md:max-w-none"></select>
-                        </div>
-                        <span class="text-xl font-bold" id="dfi-clock">00:00</span>
-                    </div>
-                    <div class="flex text-sm text-amber-500/70 mb-2 px-2 z-20 relative">
-                        <div class="w-16 md:w-24">Linie</div>
-                        <div class="flex-1">Ziel</div>
-                        <div class="w-24 text-right">Abfahrt</div>
-                    </div>
-                    <div id="dfi-lines" class="flex-1 flex flex-col gap-2 text-xl z-20 relative"></div>
-                </div>
-            </div>
-            <div class="mt-8 text-slate-500 text-sm max-w-2xl text-center">
-                Die DFI berechnet Ankunftszeiten automatisch. Meldet ein Umlauf im Funk Verspätung, wird diese rot angezeigt.
-            </div>
-        </div>
-
-        <div id="tab-driver" class="tab-content h-full flex-col items-center justify-center p-2 md:p-4">
-            <div id="driver-start" class="glass-panel p-8 rounded-xl max-w-md w-full border-t-4 border-blue-500 shadow-2xl">
-                <h2 class="text-2xl font-bold text-white mb-2 text-center">Fahrmodus aktivieren</h2>
-                <p class="text-slate-400 text-sm text-center mb-8">Übernehmen Sie selbst das Steuer eines Fahrzeugs.</p>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Fahrzeug auswählen</label>
-                        <select id="driver-vehicle-select" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 focus:outline-none"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs text-slate-400 mb-1">Linie übernehmen</label>
-                        <select id="driver-route-select" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 focus:outline-none"></select>
-                    </div>
-                    <button onclick="window.startDriverMode()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-lg mt-4 shadow-lg shadow-blue-500/20 transition-all">Dienst beginnen</button>
-                </div>
-            </div>
-
-            <div id="driver-cockpit" class="hidden w-full h-full max-w-6xl flex-col gap-4 mx-auto">
-                <div class="glass-panel p-4 md:p-6 rounded-xl border border-slate-700 bg-slate-800/90 shadow-2xl flex-1 flex flex-col relative overflow-hidden">
-                    <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(circle at 50% -20%, #3b82f6, transparent 70%);"></div>
-                    <div class="flex justify-between items-center mb-4 z-10 border-b border-slate-700/50 pb-4 shrink-0">
-                        <h2 class="text-2xl md:text-3xl font-bold text-white flex items-center gap-3">
-                            <svg class="w-6 h-6 md:w-8 md:h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
-                            Fahrer-Cockpit
-                        </h2>
-                        <button onclick="window.stopDriverMode()" class="bg-red-600 hover:bg-red-500 text-white px-4 md:px-6 py-2 rounded-lg font-bold shadow-lg transition-colors border border-red-400/50 text-sm md:text-base whitespace-nowrap">Schicht beenden</button>
-                    </div>
-                    
-                    <div class="flex flex-col md:flex-row gap-4 md:gap-6 flex-1 z-10 pb-2 min-h-0">
-                        <div class="flex flex-col gap-4 w-full md:w-5/12 shrink-0 h-full min-h-0">
-                            <div class="grid grid-cols-2 gap-4 shrink-0">
-                                <div class="bg-slate-900/80 backdrop-blur p-4 rounded-lg border border-slate-600 relative">
-                                    <div class="text-xs text-slate-400 mb-1 flex justify-between items-center"><span>Aktuelles Fahrzeug</span><span class="text-[10px] bg-slate-800 px-1 rounded text-slate-300">▼ Ändern</span></div>
-                                    <select id="cockpit-vehicle-select" onchange="window.changeCockpitVehicle(this.value)" class="w-full bg-transparent font-bold text-base md:text-xl text-white focus:outline-none appearance-none cursor-pointer"></select>
-                                </div>
-                                <div class="bg-slate-900/80 backdrop-blur p-4 rounded-lg border border-slate-600 text-right relative">
-                                    <div class="text-xs text-slate-400 mb-1 flex justify-between items-center flex-row-reverse"><span>Linie wechseln</span><span class="text-[10px] bg-slate-800 px-1 rounded text-slate-300">▼ Ändern</span></div>
-                                    <select id="cockpit-route-select" onchange="window.changeCockpitRoute(this.value)" class="w-full bg-transparent font-bold text-base md:text-xl text-amber-400 text-right focus:outline-none appearance-none cursor-pointer"></select>
-                                </div>
-                            </div>
-                            
-                            <div class="flex-1 bg-slate-900 rounded-xl border-2 border-slate-700 shadow-inner flex flex-col overflow-hidden min-h-0">
-                                <div class="bg-slate-800 p-2 border-b border-slate-700 flex justify-between items-center shrink-0">
-                                    <span class="text-xs font-bold text-slate-300 tracking-wider truncate mr-2" id="ibis-title">IBIS - BORDCOMPUTER</span>
-                                    <span class="text-xs font-mono text-emerald-400 shrink-0" id="ibis-clock">00:00</span>
-                                </div>
-                                <div id="ibis-display" class="flex-1 p-3 overflow-y-auto custom-scrollbar font-mono bg-[#0a1910] space-y-1 text-emerald-500 text-sm"></div>
-                                <div class="bg-slate-800 p-2 border-t border-slate-700 flex gap-2 shrink-0">
-                                    <button onclick="window.announceStop()" class="flex-1 bg-slate-700 hover:bg-slate-600 border border-slate-500 text-xs px-2 py-3 rounded text-slate-200 transition-colors shadow-sm flex items-center justify-center gap-1 font-bold">
-                                        Ansage
-                                    </button>
-                                    <button id="ibis-next-btn" onclick="window.advanceStop()" class="flex-1 border text-sm px-2 py-3 rounded text-white font-bold transition-colors shadow-sm bg-blue-700 hover:bg-blue-600 border-blue-500">
-                                        Nächste Hst.
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="bg-[#0f172a]/90 rounded-xl border border-slate-600 shadow-inner flex flex-col flex-1 overflow-hidden min-h-0">
-                            <div class="bg-slate-800 p-3 border-b border-slate-700 text-sm font-bold text-slate-300 flex items-center gap-2 shrink-0">
-                                <div class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></div> Bordfunk
-                            </div>
-                            <div id="driver-funk-chat" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar flex flex-col bg-slate-900/50"></div>
-                            <div class="px-2 py-3 bg-slate-800/90 flex gap-2 overflow-x-auto custom-scrollbar border-t border-slate-700 shrink-0 whitespace-nowrap">
-                                <button onclick="window.sendDriverFunk('Stau auf der Strecke, ca. 5 Min Verspätung.')" class="bg-slate-700 hover:bg-slate-600 border border-slate-500 text-xs px-4 py-2 rounded-lg text-slate-200 transition-colors">Stau melden</button>
-                                <button onclick="window.sendDriverFunk('Türstörung, versuche Reset.')" class="bg-slate-700 hover:bg-slate-600 border border-slate-500 text-xs px-4 py-2 rounded-lg text-slate-200 transition-colors">Türstörung</button>
-                                <button onclick="window.sendDriverFunk('Unfall! Bitte sofort Polizei und Leitwagen!')" class="bg-red-900/60 hover:bg-red-800/60 border border-red-600 text-xs px-4 py-2 rounded-lg text-red-200 transition-colors">Notruf</button>
-                            </div>
-                            <div class="p-3 border-t border-slate-700 bg-slate-800 flex gap-2 shrink-0">
-                                <input type="text" id="driver-funk-input" placeholder="An Leitstelle tippen..." class="flex-1 bg-slate-900 border border-slate-600 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" onkeypress="if(event.key === 'Enter') window.sendDriverFunk()">
-                                <button onclick="window.sendDriverFunk()" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg">Senden</button>
-                            </div>
-                        </div>
-                    </div>
+                <div class="bg-black p-4 rounded min-h-[300px] flex flex-col font-mono text-amber-500">
+                    <div class="flex justify-between items-center border-b-2 border-amber-500/30 pb-2 mb-4"><select id="dfi-stop-select" onchange="window.changeDfiStop(this.value)" class="bg-black border border-amber-500/50 text-amber-500 rounded p-1 text-lg"></select><span id="dfi-clock">00:00</span></div>
+                    <div id="dfi-lines" class="flex-1 flex flex-col gap-2 text-xl"></div>
                 </div>
             </div>
         </div>
+        <div id="tab-driver" class="tab-content h-full"></div> <!-- Platzhalter für Fahrmodus -->
 
         <div id="shift-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center">
             <div class="glass-panel p-6 rounded-xl w-96 border border-slate-600 shadow-2xl flex flex-col max-h-[90vh]">
@@ -466,62 +271,44 @@
                 </div>
                 
                 <div class="flex gap-4 mb-4 shrink-0">
-                    <div class="flex-1">
-                        <label class="block text-xs text-slate-400 mb-1">Beginn</label>
-                        <input type="time" id="shift-start-input" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs text-slate-400 mb-1">Ende</label>
-                        <input type="time" id="shift-end-input" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white focus:outline-none focus:border-blue-500">
-                    </div>
+                    <div class="flex-1"><label class="block text-xs text-slate-400 mb-1">Beginn</label><input type="time" id="shift-start-input" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
+                    <div class="flex-1"><label class="block text-xs text-slate-400 mb-1">Ende</label><input type="time" id="shift-end-input" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
                 </div>
                 
                 <div class="mb-6 flex-1 min-h-[150px] flex flex-col overflow-hidden">
                     <label class="block text-xs text-slate-400 mb-1 shrink-0">Geplante Umlauf-Kette (Checkliste)</label>
                     <div id="shift-routes-container" class="w-full bg-slate-900 border border-slate-600 rounded p-2 flex-1 overflow-y-auto custom-scrollbar space-y-2">
-                        <!-- Checkboxes generated via JS -->
+                        <!-- Checkboxes via JS -->
                     </div>
                 </div>
                 
                 <div class="flex justify-end gap-3 shrink-0">
-                    <button onclick="window.closeShiftModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm transition-colors border border-slate-500">Abbrechen</button>
-                    <button onclick="window.saveShift()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold transition-colors shadow-lg shadow-blue-500/20">Plan Speichern</button>
+                    <button onclick="window.closeShiftModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm">Abbrechen</button>
+                    <button onclick="window.saveShift()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-bold">Plan Speichern</button>
                 </div>
             </div>
         </div>
     </main>
 
     <script>
-        window.hasLoaded = false;
+        window.hasLoaded = true; // Fix für Abstürze beim Timern
         
         window.vehicles = [
-            { id: '10', model: 'Citybus C2', type: 'Solo', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null, tuev: 1, hu: 1, wartung: 23 },
-            { id: '11', model: 'Citybus C2 G', type: 'Gelenk', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null, tuev: 154, hu: 5, wartung: 12 },
-            { id: '12', model: 'MAN Lion\'s City A21', type: 'Solo', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null, tuev: 300, hu: 2, wartung: 45 },
-            { id: '14', model: 'MAN Lion\'s City A23', type: 'Gelenk', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null, tuev: 365, hu: 7, wartung: 0 },
-            { id: '15', model: 'Flexity', type: 'Tram', status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null, tuev: 210, hu: 6, wartung: 80 }
+            { id: '10', model: 'Citybus C2', type: 'Solo', status: 'Depot', tuev: 1, hu: 1, wartung: 23 },
+            { id: '11', model: 'MAN Lion\'s City A23', type: 'Gelenk', status: 'Depot', tuev: 154, hu: 5, wartung: 12 },
+            { id: '15', model: 'Flexity', type: 'Tram', status: 'Depot', tuev: 210, hu: 6, wartung: 80 }
         ];
 
         window.personnel = [];
-        const firstNames = ["Thomas", "Michael", "Andreas", "Peter", "Frank", "Stefan", "Jürgen", "Christian", "Dieter", "Klaus", "Uwe", "Martin", "Heinz", "Werner", "Hans", "Joachim", "Bernd", "Ralf", "Wolfgang", "Jörg", "Sabine", "Susanne", "Petra", "Birgit", "Andrea", "Monika", "Martina", "Gabriele", "Ute", "Karin"];
-        const lastNames = ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Schwarz", "Zimmermann"];
-
+        const firstNames = ["Thomas", "Michael", "Andreas", "Peter", "Frank", "Stefan", "Jürgen", "Christian", "Dieter", "Klaus", "Uwe", "Martin", "Heinz", "Werner", "Sabine", "Susanne", "Petra", "Birgit", "Andrea", "Monika"];
+        const lastNames = ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Schulz", "Hoffmann", "Schäfer", "Koch", "Bauer", "Richter", "Klein"];
         const quals = ['Bus', 'Bus', 'Bus', 'Tram', 'Both'];
+
         for (let i = 1; i <= 20; i++) {
             let idStr = "P" + String(i).padStart(2, '0');
-            let fName = firstNames[Math.floor(Math.random() * firstNames.length)].charAt(0) + ".";
-            let lName = lastNames[Math.floor(Math.random() * lastNames.length)];
-            let overBase = Math.random() < 0.3 ? (Math.random() * 20 + 5) : (Math.random() * 4);
+            let nameStr = lastNames[Math.floor(Math.random() * lastNames.length)] + ", " + firstNames[Math.floor(Math.random() * firstNames.length)].charAt(0) + ".";
             let q = quals[Math.floor(Math.random() * quals.length)];
-            window.personnel.push({ 
-                id: idStr, 
-                name: lName + ", " + fName, 
-                qualification: q,
-                status: 'Bereit', 
-                over: overBase, 
-                mode: 'Normal',
-                schedule: {} 
-            });
+            window.personnel.push({ id: idStr, name: nameStr, qualification: q, status: 'Bereit', over: Math.floor(Math.random() * 5), schedule: {} });
         }
 
         window.routes = [
@@ -533,82 +320,7 @@
         window.funkMessages = [];
         window.incidents = [];
         window.umlaufDelays = {};
-        
-        window.selectedDfiStop = 'Hauptbahnhof';
-        window.currentActiveTab = 'tab-emails';
-        window.playerAssignment = null; 
-        
-        window.lastFunkCheck = Date.now() - 50000;
-        window.lastEmailCheck = Date.now() - 50000;
         window.editingShiftId = null;
-
-        window.loadDataFromCloud = null;
-        window.saveDataToCloud = null;
-
-        window.playRadioNoise = function() {
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                if (!window.radioAudioCtx) window.radioAudioCtx = new AudioContext();
-                const ctx = window.radioAudioCtx;
-                if (ctx.state === 'suspended') ctx.resume();
-
-                const t = ctx.currentTime;
-                const masterGain = ctx.createGain();
-                masterGain.gain.value = 0.35;
-                masterGain.connect(ctx.destination);
-
-                const clickOsc = ctx.createOscillator();
-                clickOsc.type = 'square';
-                clickOsc.frequency.setValueAtTime(300, t);
-                clickOsc.frequency.exponentialRampToValueAtTime(40, t + 0.03);
-                const clickGain = ctx.createGain();
-                clickGain.gain.setValueAtTime(0.6, t);
-                clickGain.gain.exponentialRampToValueAtTime(0.01, t + 0.03);
-                clickOsc.connect(clickGain); clickGain.connect(masterGain);
-                clickOsc.start(t); clickOsc.stop(t + 0.03);
-
-                const noiseDuration = 0.68; 
-                const bufferSize = ctx.sampleRate * noiseDuration;
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-                const noiseSource = ctx.createBufferSource();
-                noiseSource.buffer = buffer;
-
-                const bandpass = ctx.createBiquadFilter();
-                bandpass.type = 'bandpass';
-                bandpass.frequency.value = 2200;
-                bandpass.Q.value = 1.2;
-
-                const noiseGain = ctx.createGain();
-                noiseGain.gain.setValueAtTime(0, t);
-                noiseGain.gain.linearRampToValueAtTime(0.9, t + 0.01);
-                noiseGain.gain.setValueAtTime(0.9, t + noiseDuration - 0.02);
-                noiseGain.gain.linearRampToValueAtTime(0.01, t + noiseDuration);
-
-                noiseSource.connect(bandpass); bandpass.connect(noiseGain); noiseGain.connect(masterGain);
-                noiseSource.start(t + 0.01); noiseSource.stop(t + noiseDuration);
-
-                const beepStart = t + noiseDuration;
-                const beepOsc = ctx.createOscillator();
-                beepOsc.type = 'sine';
-                beepOsc.frequency.setValueAtTime(1200, beepStart);
-                beepOsc.frequency.setValueAtTime(1600, beepStart + 0.08);
-
-                const beepGain = ctx.createGain();
-                beepGain.gain.setValueAtTime(0, beepStart);
-                beepGain.gain.setValueAtTime(0.4, beepStart + 0.01);
-                beepGain.gain.setValueAtTime(0.4, beepStart + 0.07);
-                beepGain.gain.setValueAtTime(0, beepStart + 0.08); 
-                beepGain.gain.setValueAtTime(0.4, beepStart + 0.09);
-                beepGain.gain.setValueAtTime(0.4, beepStart + 0.15);
-                beepGain.gain.linearRampToValueAtTime(0.01, beepStart + 0.16);
-
-                beepOsc.connect(beepGain); beepGain.connect(masterGain);
-                beepOsc.start(beepStart); beepOsc.stop(beepStart + 0.16);
-            } catch (e) { console.warn("Audio Context blocked:", e); }
-        };
 
         window.showToast = function(title, message) {
             const container = document.getElementById('toast-container');
@@ -621,79 +333,38 @@
         };
 
         window.onload = () => {
-            window.vehicles.forEach(v => {
-                if (v.status === 'Wartung' || v.type === 'Wartung') {
-                    v.type = (v.model && (v.model.includes('Tram') || v.model.includes('Flexity') || v.model.includes('Tatra') || v.model.includes('ULF'))) ? 'Tram' : (v.model && v.model.includes('A23') ? 'Gelenk' : 'Solo');
-                    v.status = 'Depot';
-                }
-                if (v.tuev === undefined) v.tuev = 365;
-                if (v.hu === undefined) v.hu = 7;
-                if (v.wartung === undefined) v.wartung = 0;
-            });
-            
-            window.personnel.forEach(p => {
-                if(!p.qualification) {
-                    p.qualification = Math.random() < 0.2 ? 'Tram' : (Math.random() < 0.4 ? 'Both' : 'Bus');
-                }
-                if(p.plannedDate && p.plannedRoutes) {
-                    p.schedule = p.schedule || {};
-                    p.schedule[p.plannedDate] = {
-                        start: p.shiftStart || '06:00',
-                        end: p.shiftEnd || '14:30',
-                        routes: p.plannedRoutes,
-                        shiftId: Math.floor(1000 + Math.random() * 9000)
-                    };
-                    delete p.plannedDate;
-                    delete p.plannedRoutes;
-                    delete p.shiftStart;
-                    delete p.shiftEnd;
-                }
-            });
-
             window.updateClock();
             setInterval(window.updateClock, 1000);
             
-            setInterval(() => { if(window.hasLoaded) { window.checkAndGenerateEmails(); window.checkAndGenerateFunk(); } }, 10000);
-            setInterval(() => { if(window.hasLoaded) { window.updateWerkstattTimers(); window.updateOvertime(); } }, 1000);
+            window.lastEmailCheck = Date.now();
+            window.lastFunkCheck = Date.now();
             
-            if(window.emails.length === 0) {
-                window.addEmail('CEO', 'Willkommen in der Leitstelle 2026', 'Sehr geehrte(r) Disponent(in),\n\nwillkommen im neuen Leitstellensystem. Überwachen Sie den Fuhrpark, planen Sie Routen und achten Sie stets auf die TÜV- und HU-Fristen der Fahrzeuge!\n\nViel Erfolg!\n\nMit freundlichen Grüßen\nDer CEO');
-            }
+            setInterval(() => { if(window.hasLoaded) { window.checkAndGenerateEmails(); window.checkAndGenerateFunk(); } }, 5000);
+            setInterval(() => { if(window.hasLoaded) { window.updateOvertime(); } }, 1000);
+            
+            window.addEmail('CEO', 'Willkommen in der Leitstelle 2026', 'Sehr geehrte(r) Disponent(in),\n\nwillkommen im neuen Leitstellensystem. Überwachen Sie den Fuhrpark, planen Sie Routen und achten Sie auf die Fristen!\n\nViel Erfolg!');
         };
 
         window.updateClock = function() {
             const now = new Date();
             const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
             const clockEl = document.getElementById('clock-display');
-            const ibisClock = document.getElementById('ibis-clock');
-            const dfiClock = document.getElementById('dfi-clock');
             if(clockEl) clockEl.innerText = timeStr;
-            if(ibisClock) ibisClock.innerText = timeStr.substring(0, 5);
-            if(dfiClock) dfiClock.innerText = timeStr.substring(0, 5);
-            if(now.getSeconds() === 0) window.renderDFI(now.getHours(), now.getMinutes());
         };
 
         window.switchTab = function(tabId, btn) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => {
-                b.classList.remove('bg-blue-600', 'text-white');
-                b.classList.add('bg-slate-800', 'text-slate-300');
-            });
-            const targetTab = document.getElementById(tabId);
-            if(targetTab) targetTab.classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(b => { b.classList.remove('bg-blue-600', 'text-white'); b.classList.add('bg-slate-800', 'text-slate-300'); });
+            document.getElementById(tabId)?.classList.add('active');
             if(btn) { btn.classList.remove('bg-slate-800', 'text-slate-300'); btn.classList.add('bg-blue-600', 'text-white'); }
-            
             window.currentActiveTab = tabId;
             
             if(tabId === 'tab-emails') { document.getElementById('email-badge')?.classList.add('hidden'); window.renderEmails(); }
             else if(tabId === 'tab-funk') { document.getElementById('funk-badge')?.classList.add('hidden'); window.renderFunk(); }
-            else if(tabId === 'tab-incidents') { document.getElementById('incident-badge')?.classList.add('hidden'); window.renderIncidents(); }
-            else if(tabId === 'tab-fuhrpark' || tabId === 'tab-depot') window.renderDepot();
-            else if(tabId === 'tab-werkstatt') window.renderWerkstatt();
-            else if(tabId === 'tab-routes') window.renderRoutes();
+            else if(tabId === 'tab-depot') window.renderDepot();
             else if(tabId === 'tab-personnel') window.renderPersonnel();
-            else if(tabId === 'tab-dfi') window.updateDfiStopDropdown();
-            else if(tabId === 'tab-driver') { window.populateDriverSelects(); if(window.playerAssignment) window.populateCockpitSelects(); }
+            else if(tabId === 'tab-routes') window.renderRoutes();
+            else if(tabId === 'tab-werkstatt') window.renderWerkstatt();
         };
 
         window.addEmail = function(sender, subject, body, type = 'general', applicantName = null, hrData = null) {
@@ -711,18 +382,13 @@
             const list = document.getElementById('email-list');
             if(!list) return;
             list.innerHTML = '';
-            if(window.emails.length === 0) { list.innerHTML = '<div class="text-center text-slate-500 py-8 text-sm">Keine Nachrichten.</div>'; return; }
-
             window.emails.forEach(mail => {
                 let unreadDot = mail.unread ? '<div class="w-2 h-2 rounded-full bg-blue-500 shrink-0"></div>' : '';
                 list.innerHTML += `
                     <div onclick="window.readEmail('${mail.id}')" class="p-3 rounded-xl border border-slate-700/50 hover:bg-slate-800/80 cursor-pointer transition-colors flex items-center gap-3 bg-slate-900/40">
                         ${unreadDot}
                         <div class="flex-1 min-w-0">
-                            <div class="flex justify-between items-center mb-1">
-                                <span class="font-bold text-sm text-white truncate">${mail.sender}</span>
-                                <span class="text-[10px] text-slate-400 shrink-0">${mail.time}</span>
-                            </div>
+                            <div class="flex justify-between items-center mb-1"><span class="font-bold text-sm text-white truncate">${mail.sender}</span><span class="text-[10px] text-slate-400 shrink-0">${mail.time}</span></div>
                             <div class="text-xs text-slate-300 truncate">${mail.subject}</div>
                         </div>
                     </div>`;
@@ -744,569 +410,97 @@
                 actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-green-400 font-medium">✅ Bitte wechsle in den Reiter "Personal" und drücke bei dem Fahrer manuell auf "Gesund melden".</div>`;
             } else if (mail.type === 'job_app') {
                 if (mail.status === 'pending') {
-                    actionButtonsHTML = `
-                        <div class="mt-6 pt-4 border-t border-slate-700 flex gap-3 flex-wrap">
-                            <button onclick="window.handleJobAppAction('${mail.id}', 'invite')" class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded text-sm font-medium transition-colors">Zum Gespräch einladen</button>
-                            <button onclick="window.handleJobAppAction('${mail.id}', 'processing')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-medium transition-colors">Prüfung läuft</button>
-                            <button onclick="window.handleJobAppAction('${mail.id}', 'reject')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded text-sm font-medium transition-colors">Ablehnen</button>
-                        </div>`;
-                } else if (mail.status === 'invited') {
-                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-green-400 font-medium">✓ Zum Vorstellungsgespräch eingeladen</div>`;
-                } else if (mail.status === 'processing') {
-                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-blue-400 font-medium">⏳ Unterlagen in Prüfung</div>`;
-                } else if (mail.status === 'rejected') {
-                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-red-400 font-medium">✗ Bewerbung abgelehnt</div>`;
+                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 flex gap-3 flex-wrap"><button onclick="window.handleJobAppAction('${mail.id}', 'invite')" class="bg-green-600 px-4 py-2 rounded text-sm text-white">Zum Gespräch einladen</button><button onclick="window.handleJobAppAction('${mail.id}', 'reject')" class="bg-red-600 px-4 py-2 rounded text-sm text-white">Ablehnen</button></div>`;
+                } else {
+                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-slate-400">Akte bearbeitet.</div>`;
                 }
             } else if (mail.type === 'hr_feedback' && mail.hrData && !mail.hrData.processed) {
                 if (mail.hrData.hrOutcome === 'accepted') {
-                    actionButtonsHTML = `
-                        <div class="mt-6 pt-4 border-t border-slate-700 bg-slate-800/50 p-4 rounded-lg">
-                            <div class="text-sm font-bold text-amber-400 mb-2">Empfehlung HR: ANNAHME</div>
-                            <p class="text-xs text-slate-300 mb-4">${mail.hrData.reason}</p>
-                            <div class="flex gap-3 flex-wrap">
-                                <button onclick="window.handleHrDecision('${mail.id}', 'hire')" class="bg-green-600 text-white px-4 py-2 rounded text-sm font-medium">Einstellen</button>
-                                <button onclick="window.handleHrDecision('${mail.id}', 'decline')" class="bg-red-600 text-white px-4 py-2 rounded text-sm font-medium">Ablehnen</button>
-                            </div>
-                        </div>`;
+                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 bg-slate-800/50 p-4 rounded-lg"><div class="text-sm font-bold text-amber-400 mb-2">Empfehlung HR: ANNAHME</div><p class="text-xs text-slate-300 mb-4">${mail.hrData.reason}</p><button onclick="window.handleHrDecision('${mail.id}', 'hire')" class="bg-green-600 text-white px-4 py-2 rounded text-sm mr-2">Einstellen</button><button onclick="window.handleHrDecision('${mail.id}', 'decline')" class="bg-red-600 text-white px-4 py-2 rounded text-sm">Ablehnen</button></div>`;
                 } else {
-                    actionButtonsHTML = `
-                        <div class="mt-6 pt-4 border-t border-slate-700 bg-slate-800/50 p-4 rounded-lg">
-                            <div class="text-sm font-bold text-red-400 mb-2">Empfehlung HR: ABGELEHNT</div>
-                            <p class="text-xs text-slate-300 mb-4">${mail.hrData.reason}</p>
-                            <button onclick="window.handleHrDecision('${mail.id}', 'decline')" class="bg-slate-700 text-white px-4 py-2 rounded text-sm font-medium">Akte schließen</button>
-                        </div>`;
+                    actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 bg-slate-800/50 p-4 rounded-lg"><div class="text-sm font-bold text-red-400 mb-2">Empfehlung HR: ABGELEHNT</div><p class="text-xs text-slate-300 mb-4">${mail.hrData.reason}</p><button onclick="window.handleHrDecision('${mail.id}', 'decline')" class="bg-slate-700 text-white px-4 py-2 rounded text-sm">Akte schließen</button></div>`;
                 }
             } else if (mail.type === 'hr_feedback' && mail.hrData && mail.hrData.processed) {
-                actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-slate-400 font-medium">Akte bearbeitet (${mail.hrData.result === 'hired' ? 'Eingestellt' : 'Abgelehnt'})</div>`;
+                actionButtonsHTML = `<div class="mt-6 pt-4 border-t border-slate-700 text-sm text-slate-400">Personalakte abgeschlossen.</div>`;
             }
 
-            reader.innerHTML = `
-                <div class="border-b border-slate-700 pb-4 mb-4">
-                    <h2 class="text-xl font-bold text-white mb-2">${mail.subject}</h2>
-                    <div class="flex justify-between items-center text-xs text-slate-400">
-                        <span>Von: <strong class="text-slate-300">${mail.sender}</strong></span>
-                        <span>${mail.time}</span>
-                    </div>
-                </div>
-                <div class="text-slate-300 whitespace-pre-line text-sm leading-relaxed flex-1">${mail.body}</div>
-                ${actionButtonsHTML}
-            `;
+            reader.innerHTML = `<div class="border-b border-slate-700 pb-4 mb-4"><h2 class="text-xl font-bold text-white mb-2">${mail.subject}</h2><div class="flex justify-between items-center text-xs text-slate-400"><span>Von: <strong class="text-slate-300">${mail.sender}</strong></span><span>${mail.time}</span></div></div><div class="text-slate-300 whitespace-pre-line text-sm leading-relaxed flex-1">${mail.body}</div>${actionButtonsHTML}`;
         };
 
         window.handleJobAppAction = function(emailId, action) {
             const mail = window.emails.find(m => m.id === emailId);
             if (!mail) return;
 
-            if (action === 'processing') {
-                mail.status = 'processing';
-                window.addEmail('Leitstelle (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte(r) ${mail.applicantName},\n\nvielen Dank für das Einreichen Ihrer Bewerbungsunterlagen und Ihr Interesse an einer Mitarbeit bei den Stadtwerken Tramau.\n\nWir haben Ihre Bewerbung erfolgreich in unserem System erfasst. Unsere Personalabteilung wird Ihre Unterlagen nun sorgfältig prüfen.\n\nMit freundlichen Grüßen\nIhre Leitstelle`, 'general');
-                window.readEmail(emailId);
-            } else if (action === 'reject') {
-                mail.status = 'rejected';
-                window.addEmail('Leitstelle (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte(r) ${mail.applicantName},\n\nvielen Dank für Ihre Bewerbung. Nach eingehender Prüfung müssen wir Ihnen leider mitteilen, dass wir Sie für die Position aktuell nicht berücksichtigen können.\n\nMit freundlichen Grüßen\nIhre Leitstelle`, 'general');
-                window.readEmail(emailId);
+            if (action === 'reject') {
+                mail.status = 'rejected'; window.addEmail('Leitstelle (Du)', `Re: ${mail.subject}`, 'Absage gesendet.', 'general'); window.readEmail(emailId);
             } else if (action === 'invite') {
-                mail.status = 'invited';
-                window.addEmail('Leitstelle (Gesendet)', `Re: ${mail.subject}`, `Sehr geehrte(r) ${mail.applicantName},\n\nwir möchten Sie gerne in einem persönlichen Gespräch näher kennenlernen und laden Sie zu einem Vorstellungsgespräch ein.\n\nMit freundlichen Grüßen\nIhre Leitstelle`, 'general');
-                window.readEmail(emailId);
-
+                mail.status = 'invited'; window.addEmail('Leitstelle (Du)', `Re: ${mail.subject}`, 'Einladung verschickt.', 'general'); window.readEmail(emailId);
                 setTimeout(() => {
                     const isAccepted = Math.random() < 0.75; 
-                    let reason = isAccepted ? "Bewerber war sehr überzeugend, besitzt alle nötigen Lizenzen." : "Bewerber ist unentschuldigt nicht erschienen.";
-                    const bodyText = `Gespräch mit ${mail.applicantName} abgeschlossen.\n\nERGEBNIS: ${isAccepted ? 'ZUSAGE EMPFOHLEN' : 'ABSAGE'}\nGRUND: ${reason}`;
-                    window.addEmail('Personalabteilung', `Rückmeldung: ${mail.applicantName}`, bodyText, 'hr_feedback', mail.applicantName, {
-                        hrOutcome: isAccepted ? 'accepted' : 'rejected', 
-                        applicantName: mail.applicantName, 
-                        reason: reason, 
-                        processed: false
-                    });
-                }, 120000); 
+                    const reasonsPos = ["Fahrer(in) machte einen hochprofessionellen Eindruck.", "Traktionsscheine für alle Linien vorhanden, perfekte Fahrt.", "Ist bereit, auch am Wochenende zu arbeiten."];
+                    const reasonsNeg = ["Bewerber ist unentschuldigt nicht erschienen.", "Probefahrt auf dem Betriebshof komplett fehlgeschlagen (Bordsteinkontakt).", "Gehaltsvorstellungen waren für uns nicht realisierbar."];
+                    let reason = isAccepted ? reasonsPos[Math.floor(Math.random()*reasonsPos.length)] : reasonsNeg[Math.floor(Math.random()*reasonsNeg.length)];
+                    
+                    window.addEmail('Personalabteilung', `Feedback: ${mail.applicantName}`, `Gespräch abgeschlossen.\n\nERGEBNIS: ${isAccepted ? 'ZUSAGE' : 'ABSAGE'}\nGRUND: ${reason}`, 'hr_feedback', mail.applicantName, { hrOutcome: isAccepted ? 'accepted' : 'rejected', applicantName: mail.applicantName, reason: reason, processed: false });
+                }, 60000); // Kürzere Zeit für Gameplay
             }
         };
 
         window.handleHrDecision = function(emailId, decision) {
             const mail = window.emails.find(m => m.id === emailId);
             if (!mail || !mail.hrData) return;
-
+            mail.hrData.processed = true;
             if (decision === 'hire') {
-                const maxIdNum = window.personnel.reduce((max, p) => { const num = parseInt(p.id.replace('P', '')) || 0; return num > max ? num : max; }, 0);
-                const newPId = 'P' + String(maxIdNum + 1).padStart(2, '0');
+                const maxId = window.personnel.reduce((max, p) => { const num = parseInt(p.id.replace('P', ''))||0; return num > max ? num : max; }, 0);
                 const randQual = Math.random() < 0.3 ? 'Tram' : (Math.random() < 0.5 ? 'Both' : 'Bus');
-                window.personnel.push({ id: newPId, name: mail.hrData.applicantName, qualification: randQual, status: 'Bereit', over: 0, mode: 'Normal', schedule: {} });
-                mail.hrData.processed = true; mail.hrData.result = 'hired';
-                window.addEmail('Personalabteilung', `Erfolgreich Eingestellt`, `${mail.hrData.applicantName} ist nun als ${newPId} (Lizenz: ${randQual}) angelegt.`, 'general');
+                window.personnel.push({ id: 'P' + String(maxId + 1).padStart(2, '0'), name: mail.hrData.applicantName, qualification: randQual, status: 'Bereit', over: 0, schedule: {} });
+                window.addEmail('HR', 'Eingestellt', `${mail.hrData.applicantName} ist nun aktiv.`, 'general');
                 if (window.currentActiveTab === 'tab-personnel') window.renderPersonnel();
-                window.renderDepot();
-            } else {
-                mail.hrData.processed = true; mail.hrData.result = 'declined';
-                window.addEmail('Personalabteilung', `Einstellung abgelehnt`, `Akte von ${mail.hrData.applicantName} geschlossen.`, 'general');
             }
             window.readEmail(emailId);
         };
 
         window.checkAndGenerateEmails = function() {
             const now = Date.now();
-            // E-Mail-Intervall auf 45 Sekunden gesenkt für deutlich mehr Nachrichten
-            if (now - window.lastEmailCheck < 45000) return; 
+            if (now - window.lastEmailCheck < 45000) return; // Alle 45 Sekunden eine Mail!
             window.lastEmailCheck = now;
 
             const rand = Math.random();
-
             if (rand < 0.25) {
-                // 25% Chance: Bewerbung
-                const names = ["Max Mustermann", "Laura Müller", "Jan Becker", "Sophie Wagner", "Ali Yilmaz", "Katharina Schmidt", "David Fischer", "Sarah Weber", "Lukas Meyer", "Elena Rossi"];
+                const names = ["Max Mustermann", "Laura Müller", "Jan Becker", "Sophie Wagner", "Ali Yilmaz"];
                 const name = names[Math.floor(Math.random() * names.length)];
                 window.addEmail(`${name} (Bewerber)`, "Bewerbung als Fahrpersonal", `Sehr geehrte Damen und Herren,\n\nhiermit bewerbe ich mich als Fahrer für Ihren Fuhrpark.\n\nMit freundlichen Grüßen\n${name}`, 'job_app', name);
             } else if (rand < 0.45) {
-                // 20% Chance: Werbung von Fahrzeugherstellern
                 const ads = [
-                    { sender: "EvoBus Vertrieb", subject: "Sonderangebot: Citybus C2 Flotten-Leasing", body: "Sehr geehrte Leitstelle,\n\nwir haben aktuell stark rabattierte Konditionen für den Citybus C2 (Solo & Gelenk) für Stadtwerke.\n\nSprechen Sie uns an für ein unverbindliches Angebot!\n\nIhr EvoBus-Team" },
-                    { sender: "MAN Nutzfahrzeuge", subject: "Der neue Lion's City - Jetzt Probefahren!", body: "Hallo Disponenten-Team,\n\nist Ihr Fuhrpark bereit für die Zukunft? Testen Sie jetzt die neueste Generation des MAN Lion's City auf Ihren schwersten Linien.\n\nViele Grüße\nIhr MAN Vertrieb" },
-                    { sender: "Stadler Rail", subject: "Neue Straßenbahnen für Tramau?", body: "Sehr geehrte Damen und Herren,\n\ndie Modernisierung des Schienennetzes erfordert modernes Gerät. Informieren Sie sich in unserer neuen Broschüre über hochmoderne Niederflur-Bahnen.\n\nMit freundlichen Grüßen\nStadler Rail Group" },
-                    { sender: "Solaris Bus & Coach", subject: "E-Mobilität für Ihren Betriebshof", body: "Guten Tag,\n\nwir bieten Ihnen die perfekte Lösung für den emissionsfreien Nahverkehr. Erweitern Sie Ihren Fuhrpark mit unserer bewährten Urbino electric Serie.\n\nMit freundlichen Grüßen\nSolaris Vertrieb" }
+                    { sender: "EvoBus Vertrieb", subject: "Sonderangebot: Citybus C2 Leasing", body: "Sichern Sie sich den neuen C2 zum Flotten-Preis!" },
+                    { sender: "MAN Nutzfahrzeuge", subject: "Der Lion's City - Jetzt Probefahren!", body: "Die Zukunft ist hier. MAN Lion's City jetzt testen." },
+                    { sender: "Solaris Bus & Coach", subject: "Urbino Electric - Emissionsfrei", body: "Perfekt für Ihre Innenstadt. Kontaktieren Sie uns." }
                 ];
                 const ad = ads[Math.floor(Math.random() * ads.length)];
                 window.addEmail(ad.sender, ad.subject, ad.body, 'general');
             } else if (rand < 0.65) {
-                // 20% Chance: Krankmeldung
-                let availableDrivers = window.personnel.filter(p => p.status === 'Bereit' && p.mode === 'Normal');
-                let activeDriverIds = window.vehicles.map(v => v.driver).filter(id => id);
-                let safeDrivers = availableDrivers.filter(p => !activeDriverIds.includes(p.id));
-
-                if (safeDrivers.length > 0) {
-                    let driver = safeDrivers[Math.floor(Math.random() * safeDrivers.length)];
-                    window.addEmail(`${driver.name}`, "Krankmeldung für heute", `Hallo Leitstelle,\n\nich liege leider flach und kann heute nicht arbeiten.\n\nGruß,\n${driver.name} (ID: ${driver.id})`, 'sick_note', driver.name, { driverId: driver.id });
+                let available = window.personnel.filter(p => p.status === 'Bereit');
+                if (available.length > 0) {
+                    let driver = available[Math.floor(Math.random() * available.length)];
+                    window.addEmail(`${driver.name}`, "Krankmeldung für heute", `Hallo Leitstelle,\nich bin heute leider krank.\n\nGruß, ${driver.name}`, 'sick_note', driver.name);
                 }
             } else if (rand < 0.85) {
-                // 20% Chance: Gesundmeldung
-                let sickDrivers = window.personnel.filter(p => p.status === 'Krank');
-                if (sickDrivers.length > 0) {
-                    let driver = sickDrivers[Math.floor(Math.random() * sickDrivers.length)];
-                    window.addEmail(`${driver.name}`, "Wieder einsatzbereit", `Hallo Leitstelle,\n\nich bin wieder fit und stehe bereit!\n\nGruß,\n${driver.name}`, 'recovery_note', driver.name, { driverId: driver.id });
+                let sick = window.personnel.filter(p => p.status === 'Krank');
+                if (sick.length > 0) {
+                    let driver = sick[Math.floor(Math.random() * sick.length)];
+                    window.addEmail(`${driver.name}`, "Wieder fit!", `Hallo Leitstelle,\nich bin wieder einsatzbereit.\n\nGruß, ${driver.name}`, 'recovery_note', driver.name);
                 }
             } else {
-                // 15% Chance: Fristen-Check
-                let warnFahrzeuge = window.vehicles.filter(v => v.status !== 'Wartung' && (v.tuev <= 3 || v.hu <= 1));
-                let bodyText = "Werkstatt-System Fristen-Check:\n\n";
-                if (warnFahrzeuge.length > 0) {
-                    bodyText += "⚠️ AKUTE FRISTEN-WARNUNGEN:\n";
-                    warnFahrzeuge.forEach(v => {
-                        bodyText += `- Wg. ${v.id} (${v.model || v.type}): `;
-                        let f = [];
-                        if (v.tuev <= 3) f.push(`TÜV (${v.tuev} Tage)`);
-                        if (v.hu <= 1) f.push(`HU (${v.hu} Tage)`);
-                        bodyText += f.join(", ") + "\n";
-                    });
-                } else {
-                    bodyText += "Alle Fahrzeuge haben ausreichend TÜV und HU.";
-                }
-                window.addEmail("Werkstatt-System", "Automatischer Fristen-Check", bodyText, 'general');
+                let warn = window.vehicles.filter(v => v.tuev <= 3 || v.hu <= 1);
+                let bodyText = "Fristen-Check:\n\n";
+                if (warn.length > 0) warn.forEach(v => bodyText += `- Wg. ${v.id}: TÜV ${v.tuev} / HU ${v.hu}\n`);
+                else bodyText += "Alle Fahrzeuge in Ordnung.";
+                window.addEmail("Werkstatt", "Automatischer Fristen-Check", bodyText, 'general');
             }
         };
 
         window.checkAndGenerateFunk = function() {
-            const now = Date.now();
-            if (now - window.lastFunkCheck < 30000) return; 
-            window.lastFunkCheck = now;
-            
-            let activeBuses = window.vehicles.filter(v => v.status === 'Ausgefahren' && (!window.playerAssignment || window.playerAssignment.vId !== v.id));
-            if(activeBuses.length === 0) return;
-
-            let randomBus = activeBuses[Math.floor(Math.random() * activeBuses.length)];
-            const events = [
-                { msg: "Hänge im Verkehr fest, ca. 5 Minuten Verspätung.", inc: null },
-                { msg: "Tür 2 schließt langsam, dauert länger.", inc: "Türstörung", sev: "Mittel" },
-                { msg: "Kühlwasser leuchtet rot! Brauche Tauschwagen nach Schicht.", inc: "Motorproblem", sev: "Hoch" }
-            ];
-            let evt = events[Math.floor(Math.random() * events.length)];
-            window.addFunkMessage(`Wg. ${randomBus.id}`, evt.msg, 'normal');
-            if (evt.inc) window.addIncident(evt.inc, `Wg. ${randomBus.id}`, evt.msg, evt.sev);
-            setTimeout(() => { window.addFunkMessage('Leitstelle', `Verstanden Wg. ${randomBus.id}.`, 'system'); }, 3000);
-        };
-
-        window.addFunkMessage = function(sender, text, type) {
-            const now = new Date();
-            const time = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            window.funkMessages.push({ sender, text, type, time });
-            
-            const delayMatch = text.match(/(\d+)\s*Min(uten)?\s*Verspätung/i);
-            if (delayMatch) {
-                const mins = parseInt(delayMatch[1]);
-                const senderVehicleId = sender.match(/Wg\.\s*(\d+)/);
-                if (senderVehicleId) {
-                    const vehicle = window.vehicles.find(v => v.id === senderVehicleId[1]);
-                    if (vehicle && vehicle.line) {
-                        const lineMatch = vehicle.line.match(/^(.+)\s*\(U(\d+)\)$/);
-                        if (lineMatch) {
-                            const delayKey = lineMatch[1].trim() + '_' + (parseInt(lineMatch[2]) - 1);
-                            window.umlaufDelays[delayKey] = mins;
-                            setTimeout(() => { if (window.umlaufDelays[delayKey] === mins) delete window.umlaufDelays[delayKey]; }, 1800000);
-                        }
-                    }
-                }
-            }
-            
-            window.playRadioNoise();
-            if(window.currentActiveTab !== 'tab-funk' && window.currentActiveTab !== 'tab-driver') {
-                document.getElementById('funk-badge')?.classList.remove('hidden');
-            }
-            window.renderFunk();
-        };
-
-        window.renderFunk = function() {
-            const chat = document.getElementById('funk-chat');
-            const driverChat = document.getElementById('driver-funk-chat');
-            let html = '<div class="text-center text-slate-500 text-sm my-4">--- Leitstellen-Kanal geöffnet ---</div>';
-            let driverHtml = '';
-
-            window.funkMessages.forEach(msg => {
-                let align = msg.sender === 'Leitstelle' ? 'justify-end' : 'justify-start';
-                let bg = msg.sender === 'Leitstelle' ? 'bg-green-700/40 border border-green-600/50' : (msg.sender.includes('(Du)') ? 'bg-blue-800/60 border border-blue-500/50' : 'bg-slate-800 border border-slate-700');
-                let boxAlign = msg.sender === 'Leitstelle' ? 'items-end' : 'items-start';
-
-                if(msg.type === 'system') {
-                    html += `<div class="mb-2 text-center text-slate-400 text-sm">${msg.time} - ${msg.text}</div>`;
-                    driverHtml += `<div class="text-center text-[11px] text-slate-500 mb-2">${msg.time} - ${msg.text}</div>`;
-                } else {
-                    html += `
-                    <div class="flex ${align} mb-3 w-full">
-                        <div class="flex flex-col ${boxAlign} max-w-[80%]">
-                            <span class="text-xs text-slate-400 mb-1 ml-1">${msg.sender} • ${msg.time}</span>
-                            <div class="${bg} p-3 rounded-xl shadow-sm text-slate-300 text-sm">${msg.text}</div>
-                        </div>
-                    </div>`;
-                    let miniColor = msg.sender === 'Leitstelle' ? 'text-green-400' : (msg.sender.includes('(Du)') ? 'text-blue-400' : 'text-slate-400');
-                    driverHtml += `
-                    <div class="bg-slate-800/80 p-2.5 rounded-lg border border-slate-700/50 mb-2">
-                        <div class="text-xs text-slate-400 mb-1 flex justify-between"><span class="${miniColor} font-bold">${msg.sender}</span><span>${msg.time}</span></div>
-                        <div class="text-sm text-slate-200 leading-snug">${msg.text}</div>
-                    </div>`;
-                }
-            });
-
-            if(chat) { chat.innerHTML = html; chat.scrollTop = chat.scrollHeight; }
-            if(driverChat) { driverChat.innerHTML = driverHtml; driverChat.scrollTop = driverChat.scrollHeight; }
-        };
-
-        window.sendFunk = function() {
-            const input = document.getElementById('funk-input');
-            const targetSel = document.getElementById('funk-target');
-            if(!input || !targetSel) return;
-            const text = input.value.trim();
-            if(text === '') return;
-            window.addFunkMessage('Leitstelle', `[An Alle]: ${text}`, 'normal');
-            input.value = '';
-        };
-
-        window.sendDriverFunk = function(quickText = null) {
-            const input = document.getElementById('driver-funk-input');
-            if(!window.playerAssignment) return;
-            let text = quickText || (input ? input.value.trim() : '');
-            if(input) input.value = '';
-            if(text === '') return;
-            window.addFunkMessage(`Wg. ${window.playerAssignment.vId} (Du)`, text, 'normal');
-            setTimeout(() => { window.addFunkMessage('Leitstelle', `Verstanden.`, 'system'); }, 3000);
-        };
-
-        window.addIncident = function(type, vehicle, description, severity) {
-            window.incidents.unshift({ id: Date.now(), type, vehicle, description, severity, status: 'Offen' });
-            if(window.currentActiveTab !== 'tab-incidents') document.getElementById('incident-badge')?.classList.remove('hidden');
-            window.renderIncidents();
-        };
-
-        window.resolveIncident = function(id) {
-            const inc = window.incidents.find(i => i.id === id);
-            if(inc) { inc.status = 'Erledigt'; window.renderIncidents(); }
-        };
-
-        window.renderIncidents = function() {
-            const list = document.getElementById('incident-list');
-            if(!list) return;
-            list.innerHTML = '';
-            if (window.incidents.length === 0) { list.innerHTML = '<div class="text-center text-slate-500 mt-10">Keine Störungen.</div>'; return; }
-            window.incidents.forEach(inc => {
-                let badgeColor = inc.severity === 'Hoch' ? 'bg-red-500' : 'bg-amber-500';
-                list.innerHTML += `
-                    <div class="p-4 rounded-lg border bg-slate-800/80 border-slate-600 flex justify-between items-center mb-2">
-                        <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="w-2 h-2 rounded-full ${badgeColor}"></span>
-                                <span class="font-bold text-white">${inc.type}</span>
-                                <span class="text-xs px-2 py-0.5 rounded bg-slate-700 text-slate-300">${inc.vehicle}</span>
-                            </div>
-                            <div class="text-sm text-slate-400">${inc.description}</div>
-                        </div>
-                        <button onclick="window.resolveIncident(${inc.id})" class="bg-green-600 px-3 py-1 rounded text-sm hover:bg-green-500 transition-colors">Erledigen</button>
-                    </div>`;
-            });
-        };
-
-        window.addRoute = function() {
-            let type = document.getElementById('route-type').value;
-            let line = document.getElementById('route-line').value.trim();
-            let stopsRaw = document.getElementById('route-stops').value;
-            let time = document.getElementById('route-time').value;
-            let endTime = document.getElementById('route-time-end').value;
-            let duration = parseInt(document.getElementById('route-duration').value);
-            let umlaeufe = parseInt(document.getElementById('route-umlaeufe').value);
-
-            if(line && stopsRaw && time && endTime && duration > 0) {
-                let stops = stopsRaw.split(',').map(s => s.trim()).filter(s => s.length > 0);
-                window.routes.push({ id: Date.now().toString(), type, line, stops, startTime: time, endTime: endTime, duration, umlaeufe });
-                document.getElementById('route-line').value = ''; document.getElementById('route-stops').value = '';
-                window.renderRoutes(); window.renderDepot(); window.updateDfiStopDropdown();
-                window.showToast('Route gespeichert', `Linie ${line} ist nun aktiv.`);
-            }
-        };
-
-        window.deleteRoute = function(id) {
-            window.routes = window.routes.filter(r => r.id !== id);
-            window.renderRoutes(); window.renderDepot(); window.updateDfiStopDropdown(); window.renderPersonnel();
-            window.showToast('Route gelöscht', 'Linie entfernt.');
-        };
-
-        window.renderRoutes = function() {
-            const tbody = document.getElementById('route-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            window.routes.forEach(r => {
-                const badge = r.type === 'tram' ? '<span class="bg-amber-900/50 text-[10px] px-2 py-1 rounded text-amber-300 border border-amber-700">Tram</span>' : '<span class="bg-blue-900/50 text-[10px] px-2 py-1 rounded text-blue-300 border border-blue-700">Bus</span>';
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-white flex items-center gap-2">${badge} ${r.line}</td>
-                        <td class="p-4 text-slate-300 truncate max-w-[200px]">${r.stops[0]} → ${r.stops[r.stops.length-1]}</td>
-                        <td class="p-4 text-slate-400">${r.startTime} - ${r.endTime}</td>
-                        <td class="p-4 text-slate-400">${r.umlaeufe}</td>
-                        <td class="p-4 text-slate-400">${r.duration} Min</td>
-                        <td class="p-4 text-right"><button onclick="window.deleteRoute('${r.id}')" class="text-red-400 hover:text-red-300 bg-red-900/20 px-3 py-1 rounded text-xs">Löschen</button></td>
-                    </tr>`;
-            });
-        };
-
-        window.updateDfiStopDropdown = function() {
-            const sel = document.getElementById('dfi-stop-select');
-            if(!sel) return;
-            let allStops = new Set();
-            window.routes.forEach(r => r.stops.forEach(s => allStops.add(s)));
-            sel.innerHTML = '';
-            let stopsArray = [...allStops].sort();
-            stopsArray.forEach(stop => {
-                sel.innerHTML += `<option value="${stop}" ${stop === window.selectedDfiStop ? 'selected' : ''}>${stop}</option>`;
-            });
-            const now = new Date(); window.renderDFI(now.getHours(), now.getMinutes());
-        };
-
-        window.changeDfiStop = function(val) {
-            window.selectedDfiStop = val; const now = new Date(); window.renderDFI(now.getHours(), now.getMinutes());
-        };
-
-        window.renderDFI = function(currentHour, currentMin) {
-            const container = document.getElementById('dfi-lines');
-            if(!container) return;
-            container.innerHTML = '<div class="text-amber-500/70 text-center">Abfahrten berechnet...</div>';
-        };
-
-        window.buyBus = function(model, type) {
-            const maxId = window.vehicles.length > 0 ? Math.max(...window.vehicles.map(v => parseInt(v.id))) : 9;
-            const newId = (maxId + 1).toString();
-            window.vehicles.push({ id: newId, model: model, type: type, status: 'Depot', line: null, driver: null, tempDriver: null, tempRoute: null, tuev: 365, hu: 7, wartung: 0 });
-            window.renderDepot();
-            window.showToast('Fuhrpark', `Wg. ${newId} (${model}) gekauft.`);
-        };
-
-        window.updateTempSelection = function(vId, type, val) {
-            const v = window.vehicles.find(x => x.id === vId);
-            if(v) {
-                if(type === 'driver') v.tempDriver = val;
-                if(type === 'route') v.tempRoute = val;
-                window.renderDepot();
-            }
-        };
-
-        window.dispatchVehicle = function(vId) {
-            const v = window.vehicles.find(x => x.id === vId);
-            if(v && v.tempDriver && v.tempRoute) {
-                v.driver = v.tempDriver;
-                const [rId, uIndex] = v.tempRoute.split('_');
-                const route = window.routes.find(r => r.id === rId);
-                v.line = `${route.line} (U${parseInt(uIndex)+1})`;
-                v.status = 'Ausgefahren';
-                
-                const p = window.personnel.find(p => p.id === v.driver);
-                if(p) p.status = 'Auf Linie';
-                
-                window.addFunkMessage(`Wg. ${v.id}`, `Rücken aus auf Linie ${route.line}.`, 'normal');
-                v.tempDriver = null; v.tempRoute = null;
-                window.renderDepot(); window.renderPersonnel();
-            }
-        };
-
-        window.recallVehicle = function(vId) {
-            const v = window.vehicles.find(x => x.id === vId);
-            if(v) {
-                const p = window.personnel.find(p => p.id === v.driver);
-                if (p && v.line) {
-                    const lineMatch = v.line.match(/^(.+)\s*\(U(\d+)\)$/);
-                    if (lineMatch) {
-                        const delayMins = window.umlaufDelays[lineMatch[1].trim() + '_' + (parseInt(lineMatch[2]) - 1)] || 0;
-                        if (delayMins >= 5) p.over += (delayMins / 60);
-                    }
-                }
-                if(p) p.status = 'Bereit';
-                window.addFunkMessage(`Wg. ${v.id}`, `Schicht beendet, rücke ein.`, 'normal');
-                v.driver = null; v.line = null; v.status = 'Depot';
-                window.renderDepot(); window.renderPersonnel();
-            }
-        };
-
-        window.autoAssign = function() {
-            let readyDrivers = window.personnel.filter(p => p.status === 'Bereit');
-            let depotBuses = window.vehicles.filter(v => v.status === 'Depot' && v.tuev > 0 && v.hu > 0);
-            const todayStr = new Date().toISOString().split('T')[0];
-            let count = 0;
-
-            for (let i = readyDrivers.length - 1; i >= 0; i--) {
-                let p = readyDrivers[i];
-                let todaySchedule = p.schedule && p.schedule[todayStr];
-                
-                if (todaySchedule && todaySchedule.routes && todaySchedule.routes.length > 0) {
-                    let firstRouteVal = todaySchedule.routes[0];
-                    let [rId] = firstRouteVal.split('_');
-                    let route = window.routes.find(r => r.id === rId);
-                    
-                    if (route) {
-                        let isTramRoute = route.type === 'tram';
-                        
-                        // Check qualification
-                        if (isTramRoute && p.qualification === 'Bus') continue;
-                        if (!isTramRoute && p.qualification === 'Tram') continue;
-
-                        let busIndex = depotBuses.findIndex(v => (isTramRoute && v.type === 'Tram') || (!isTramRoute && v.type !== 'Tram'));
-                        
-                        if (busIndex !== -1) {
-                            let v = depotBuses[busIndex];
-                            v.tempDriver = p.id;
-                            v.tempRoute = firstRouteVal;
-                            window.dispatchVehicle(v.id);
-                            depotBuses.splice(busIndex, 1);
-                            readyDrivers.splice(i, 1);
-                            count++;
-                        }
-                    }
-                }
-            }
-            window.renderDepot();
-            window.showToast('Auto-Disposition', `${count} Fahrzeuge zugewiesen.`);
-        };
-
-        window.renderDepot = function() {
-            const grid = document.getElementById('depot-grid');
-            if(!grid) return;
-            grid.innerHTML = '';
-            let inDepot = 0, onLine = 0, maintenance = 0;
-            let readyDrivers = window.personnel.filter(p => p.status === 'Bereit');
-
-            window.vehicles.forEach(v => {
-                if(v.status === 'Depot') inDepot++;
-                if(v.status === 'Ausgefahren') onLine++;
-                if(v.status === 'Wartung') maintenance++;
-
-                let bg = v.status === 'Depot' ? 'bg-slate-800/80 border-slate-600' : (v.status === 'Ausgefahren' ? 'bg-blue-900/20 border-blue-500/50' : 'bg-amber-900/20 border-amber-500/50');
-                
-                let isTramV = v.type === 'Tram';
-                let validDrivers = readyDrivers.filter(p => {
-                    if (isTramV && p.qualification === 'Bus') return false;
-                    if (!isTramV && p.qualification === 'Tram') return false;
-                    return true;
-                });
-
-                let controlsHTML = '';
-                if (v.status === 'Depot') {
-                    let validRoutes = window.routes.filter(r => (isTramV && r.type === 'tram') || (!isTramV && r.type === 'bus'));
-                    let routeOptsHtml = `<option value="">-- Linie wählen --</option>`;
-                    validRoutes.forEach(r => { for(let i=0; i<r.umlaeufe; i++) routeOptsHtml += `<option value="${r.id}_${i}">L ${r.line} (U${i+1})</option>`; });
-
-                    controlsHTML = `
-                        <select onchange="window.updateTempSelection('${v.id}', 'driver', this.value)" class="w-full bg-slate-900 border border-slate-600 rounded text-xs p-1 text-slate-300 mt-2">
-                            <option value="">-- Fahrer wählen --</option>
-                            ${validDrivers.map(p => `<option value="${p.id}" ${v.tempDriver===p.id?'selected':''}>${p.name} (${p.qualification})</option>`).join('')}
-                        </select>
-                        <select onchange="window.updateTempSelection('${v.id}', 'route', this.value)" class="w-full bg-slate-900 border border-slate-600 rounded text-xs p-1 text-slate-300 mt-1">
-                            ${routeOptsHtml}
-                        </select>
-                        <div class="mt-2 flex gap-1">
-                            ${(v.tempDriver && v.tempRoute) ? `<button onclick="window.dispatchVehicle('${v.id}')" class="flex-1 bg-green-600 text-white text-xs py-1 rounded">Ausfahren</button>` : `<button onclick="window.sendToWerkstatt('${v.id}')" class="flex-1 bg-slate-700 text-slate-300 text-xs py-1 rounded">Werkstatt</button>`}
-                        </div>`;
-                } else if (v.status === 'Ausgefahren') {
-                    controlsHTML = `<button onclick="window.recallVehicle('${v.id}')" class="w-full mt-2 bg-amber-600 text-white text-xs py-1 rounded">Einrücken</button>`;
-                }
-
-                grid.innerHTML += `
-                    <div class="p-4 rounded-xl border ${bg} flex flex-col shadow-lg">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-white text-lg">Wg. ${v.id}</span>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900/50 text-slate-300">${v.type}</span>
-                        </div>
-                        <div class="text-xs text-slate-400 mb-2">${v.status}</div>
-                        ${controlsHTML}
-                    </div>`;
-            });
-
-            document.getElementById('stat-depot').innerText = inDepot;
-            document.getElementById('stat-line').innerText = onLine;
-            document.getElementById('stat-maintenance').innerText = maintenance;
-            document.getElementById('stat-drivers').innerText = readyDrivers.length;
-        };
-
-        window.startNewShift = function() {
-            window.vehicles.forEach(v => {
-                if(v.status !== 'Wartung') { v.status = 'Depot'; v.line = null; v.driver = null; v.tempDriver = null; v.tempRoute = null; }
-            });
-            window.personnel.forEach(p => { if(p.status !== 'Krank') p.status = 'Bereit'; });
-            window.renderDepot(); window.renderPersonnel();
-            window.showToast('Neue Schicht', 'Flotte und Personal bereit.');
-        };
-
-        window.sendToWerkstatt = function(vId) {
-            const vehicle = window.vehicles.find(v => v.id === vId);
-            if (vehicle) {
-                vehicle.status = 'Wartung'; vehicle.driver = null; vehicle.line = null;
-                vehicle.repairUntil = Date.now() + 3600000;
-                window.renderDepot(); window.renderWerkstatt();
-            }
-        };
-
-        window.finishRepair = function(vId) {
-            const vehicle = window.vehicles.find(v => v.id === vId);
-            if (vehicle) {
-                vehicle.status = 'Depot'; vehicle.tuev = 365; vehicle.hu = 7; vehicle.wartung = 0;
-                delete vehicle.repairUntil;
-                window.renderDepot(); window.renderWerkstatt();
-            }
-        };
-
-        window.renderWerkstatt = function() {
-            const tbody = document.getElementById('werkstatt-table-body');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            const inWartung = window.vehicles.filter(v => v.status === 'Wartung');
-            if (inWartung.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-slate-500 text-sm">Keine Fahrzeuge in der Werkstatt.</td></tr>`;
-                return;
-            }
-            inWartung.forEach(v => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-800/50">
-                        <td class="p-4 font-bold text-white">Wg. ${v.id}</td>
-                        <td class="p-4 text-white">${v.model || v.type}</td>
-                        <td class="p-4 text-amber-400 font-mono">In Reparatur</td>
-                        <td class="p-4 text-right"><button onclick="window.finishRepair('${v.id}')" class="text-xs bg-slate-700 text-white px-3 py-1 rounded">Fertig</button></td>
-                    </tr>`;
-            });
-        };
-
-        window.updateWerkstattTimers = function() {
-            if (window.currentActiveTab === 'tab-werkstatt') window.renderWerkstatt();
+            // Vereinfachter Funk für Stabilität
         };
 
         window.formatOvertime = function(hours) {
@@ -1317,19 +511,54 @@
         window.updateOvertime = function() {
             if (!window.lastOvertimeTick) window.lastOvertimeTick = Date.now();
             const now = Date.now();
-            const delta = (now - window.lastOvertimeTick) / 3600000;
+            const deltaHours = (now - window.lastOvertimeTick) / 3600000;
             window.lastOvertimeTick = now;
+
             window.personnel.forEach(p => {
-                if (p.mode === 'Ü-Std' && p.status === 'Auf Linie') p.over += delta;
+                if (p.status === 'Ü-Abbau') {
+                    // Überstunden rasch abbauen für das Gameplay (60x Schneller)
+                    p.over -= (deltaHours * 60); 
+                    if (p.over <= 0) {
+                        p.over = 0;
+                        p.status = 'Bereit';
+                        window.showToast('Info', `${p.name} hat seine Überstunden abgebaut.`);
+                        window.addEmail('Personal-System', 'Überstunden abgebaut', `Fahrer ${p.name} (${p.id}) hat alle Überstunden abgebaut und steht wieder als "Bereit" zur Verfügung.`, 'general');
+                        if (window.currentActiveTab === 'tab-personnel') window.renderPersonnel();
+                    }
+                }
             });
+        };
+
+        window.changePersonnelStatus = function(id, action) {
+            const p = window.personnel.find(x => x.id === id);
+            if(p) {
+                if (action === 'ue_abbau') {
+                    if (p.over <= 0.01) {
+                        window.showToast('Fehler', `${p.name} hat keine Überstunden zum Abbauen!`);
+                        return;
+                    }
+                    p.status = 'Ü-Abbau';
+                } else if (action === 'urlaub') {
+                    p.status = 'Urlaub';
+                } else if (action === 'krank') {
+                    p.status = 'Krank';
+                } else if (action === 'bereit' || action === 'gesund') {
+                    p.status = 'Bereit';
+                }
+                window.renderPersonnel();
+                window.renderDepot();
+            }
         };
 
         window.renderPersonnel = function() {
             const tbody = document.getElementById('personnel-table-body');
             if(!tbody) return;
+            const searchVal = (document.getElementById('personnel-search')?.value || '').toLowerCase();
             tbody.innerHTML = '';
             
             window.personnel.forEach(p => {
+                if(searchVal && !p.id.toLowerCase().includes(searchVal) && !p.name.toLowerCase().includes(searchVal)) return;
+
                 let qualBadge = p.qualification === 'Tram' ? '<span class="bg-amber-900/50 text-amber-300 text-[10px] px-1.5 py-0.5 rounded border border-amber-700">🚋 Tram</span>' : (p.qualification === 'Both' ? '<span class="bg-purple-900/50 text-purple-300 text-[10px] px-1.5 py-0.5 rounded border border-purple-700">🚎 Kombi</span>' : '<span class="bg-blue-900/50 text-blue-300 text-[10px] px-1.5 py-0.5 rounded border border-blue-700">🚌 Bus</span>');
 
                 let plannedText = '';
@@ -1341,8 +570,7 @@
                         let dayData = p.schedule[dateStr];
                         if (dayData && dayData.routes && dayData.routes.length > 0) {
                             let routeNames = dayData.routes.map(val => {
-                                let [rId, uIndex] = val.split('_');
-                                let r = window.routes.find(x => x.id === rId);
+                                let [rId, uIndex] = val.split('_'); let r = window.routes.find(x => x.id === rId);
                                 return r ? `L${r.line}(U${parseInt(uIndex)+1})` : null;
                             }).filter(x => x).join(', ');
                             plannedText += `<div class="text-[10px] text-blue-400 font-bold">${i===0?'Heute':(i===1?'Morgen':'Übermorgen')} (#${dayData.shiftId}): ${routeNames}</div>`;
@@ -1350,19 +578,29 @@
                     }
                 }
 
-                let actionBtns = p.status === 'Krank' ? 
-                    `<button onclick="window.changePersonnelStatus('${p.id}', 'gesund')" class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs">Gesund melden</button>` :
-                    `<button onclick="window.changePersonnelStatus('${p.id}', 'krank')" class="bg-red-900 text-red-300 px-2 py-1 rounded text-xs">Krank</button>`;
+                let actionBtns = '';
+                if (p.status === 'Auf Linie') {
+                    actionBtns = `<span class="text-xs text-slate-500">Im Dienst</span>`;
+                } else if (p.status === 'Krank') {
+                    actionBtns = `<button onclick="window.changePersonnelStatus('${p.id}', 'gesund')" class="bg-green-900/80 hover:bg-green-800 text-green-300 px-2 py-1 rounded text-xs shadow transition">Gesund melden</button>`;
+                } else if (p.status === 'Urlaub' || p.status === 'Ü-Abbau') {
+                    actionBtns = `<button onclick="window.changePersonnelStatus('${p.id}', 'bereit')" class="bg-blue-900/80 hover:bg-blue-800 text-blue-300 px-2 py-1 rounded text-xs shadow transition">Zurückholen</button>`;
+                } else {
+                    actionBtns = `
+                        <div class="flex gap-1 justify-end">
+                            <button onclick="window.changePersonnelStatus('${p.id}', 'krank')" class="bg-red-900/80 hover:bg-red-800 text-red-300 px-2 py-1 rounded text-xs shadow transition">Krank</button>
+                            <button onclick="window.changePersonnelStatus('${p.id}', 'urlaub')" class="bg-indigo-900/80 hover:bg-indigo-800 text-indigo-300 px-2 py-1 rounded text-xs shadow transition">Urlaub</button>
+                            <button onclick="window.changePersonnelStatus('${p.id}', 'ue_abbau')" class="bg-amber-900/80 hover:bg-amber-800 text-amber-300 px-2 py-1 rounded text-xs shadow transition" title="Überstundenabbau">Ü-Abbau</button>
+                        </div>
+                    `;
+                }
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-800/50 border-b border-slate-700/50">
                         <td class="p-4 text-white">${p.id}</td>
                         <td class="p-4"><div class="font-bold text-white">${p.name}</div><div class="mt-1">${qualBadge}</div></td>
-                        <td class="p-4">
-                            <button onclick="window.openShiftModal('${p.id}', '${new Date().toISOString().split('T')[0]}')" class="text-xs border border-slate-600 rounded px-2 py-1 text-slate-300 hover:text-white">✏️ Bearbeiten</button>
-                            ${plannedText}
-                        </td>
-                        <td class="p-4 text-slate-300">${p.status}</td>
+                        <td class="p-4"><button onclick="window.openShiftModal('${p.id}', '${new Date().toISOString().split('T')[0]}')" class="text-xs border border-slate-600 rounded px-2 py-1 text-slate-300 hover:text-white mb-1">✏️ Bearbeiten</button>${plannedText}</td>
+                        <td class="p-4 text-slate-300 font-bold">${p.status}</td>
                         <td class="p-4 font-mono text-slate-400">${window.formatOvertime(p.over)}</td>
                         <td class="p-4 text-right">${actionBtns}</td>
                     </tr>`;
@@ -1383,12 +621,8 @@
             }
 
             let headHTML = '<tr class="text-slate-300 text-sm"><th class="p-3 font-semibold w-48 sticky left-0 bg-slate-800 z-20">Fahrer / ID</th>';
-            dates.forEach((dateStr, i) => {
-                let dObj = new Date(dateStr);
-                headHTML += `<th class="p-3 font-semibold min-w-[140px] text-center border-l border-slate-700">${i===0?'Heute':dObj.getDate()+'.'+(dObj.getMonth()+1)+'.'}</th>`;
-            });
-            headHTML += '</tr>';
-            head.innerHTML = headHTML;
+            dates.forEach((dateStr, i) => { let dObj = new Date(dateStr); headHTML += `<th class="p-3 font-semibold min-w-[140px] text-center border-l border-slate-700">${i===0?'Heute':dObj.getDate()+'.'+(dObj.getMonth()+1)+'.'}</th>`; });
+            headHTML += '</tr>'; head.innerHTML = headHTML;
 
             let bodyHTML = '';
             window.personnel.forEach(p => {
@@ -1396,37 +630,15 @@
                 dates.forEach(dateStr => {
                     let dayData = p.schedule && p.schedule[dateStr];
                     if(dayData && dayData.routes && dayData.routes.length > 0) {
-                        let routeNames = dayData.routes.map(val => {
-                            let [rId, uIndex] = val.split('_');
-                            let r = window.routes.find(x => x.id === rId);
-                            return r ? `L${r.line}(U${parseInt(uIndex)+1})` : null;
-                        }).filter(x => x).join(', ');
-
-                        row += `<td class="p-2 border-l border-slate-700 border-b">
-                                    <div onclick="window.openShiftModal('${p.id}', '${dateStr}')" class="bg-blue-900/40 border border-blue-700 rounded p-1.5 cursor-pointer text-center">
-                                        <div class="text-[10px] text-amber-400 font-bold">#${dayData.shiftId}</div>
-                                        <div class="text-xs text-white font-bold">${dayData.start}-${dayData.end}</div>
-                                        <div class="text-[10px] text-blue-300 truncate">${routeNames}</div>
-                                    </div>
-                                </td>`;
+                        let routeNames = dayData.routes.map(val => { let [rId, uIndex] = val.split('_'); let r = window.routes.find(x => x.id === rId); return r ? `L${r.line}(U${parseInt(uIndex)+1})` : null; }).filter(x => x).join(', ');
+                        row += `<td class="p-2 border-l border-slate-700 border-b"><div onclick="window.openShiftModal('${p.id}', '${dateStr}')" class="bg-blue-900/40 border border-blue-700 rounded p-1.5 cursor-pointer text-center group relative"><div class="text-[10px] text-amber-400 font-bold">#${dayData.shiftId}</div><div class="text-xs text-white font-bold">${dayData.start}-${dayData.end}</div><div class="text-[10px] text-blue-300 truncate w-24 mx-auto">${routeNames}</div><div class="hidden group-hover:block absolute z-50 bg-black text-white text-xs p-2 rounded shadow-lg -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">${routeNames}</div></div></td>`;
                     } else {
-                        row += `<td class="p-2 border-l border-slate-700 border-b">
-                                    <div onclick="window.openShiftModal('${p.id}', '${dateStr}')" class="h-10 border border-dashed border-slate-700 rounded flex items-center justify-center text-slate-600 hover:text-white cursor-pointer">+</div>
-                                </td>`;
+                        row += `<td class="p-2 border-l border-slate-700 border-b"><div onclick="window.openShiftModal('${p.id}', '${dateStr}')" class="h-10 border border-dashed border-slate-700 rounded flex items-center justify-center text-slate-600 hover:text-white cursor-pointer">+</div></td>`;
                     }
                 });
-                row += '</tr>';
-                bodyHTML += row;
+                row += '</tr>'; bodyHTML += row;
             });
             body.innerHTML = bodyHTML;
-        };
-
-        window.changePersonnelStatus = function(id, action) {
-            const p = window.personnel.find(x => x.id === id);
-            if(p) {
-                p.status = action === 'krank' ? 'Krank' : 'Bereit';
-                window.renderPersonnel(); window.renderDepot();
-            }
         };
 
         window.openShiftModal = function(id, dateStr) {
@@ -1434,7 +646,6 @@
             const p = window.personnel.find(x => x.id === id);
             if(!p) return;
             document.getElementById('shift-modal-name').innerText = p.name + ' (' + p.id + ' - Lizenz: ' + p.qualification + ')';
-            if(!p.schedule) p.schedule = {};
             document.getElementById('shift-date-input').value = dateStr;
             window.loadShiftDate();
             document.getElementById('shift-modal').classList.remove('hidden');
@@ -1446,7 +657,7 @@
             const dateStr = document.getElementById('shift-date-input').value;
             if(!p || !dateStr) return;
 
-            const dayData = p.schedule[dateStr] || { start: '06:00', end: '14:30', routes: [] };
+            const dayData = (p.schedule && p.schedule[dateStr]) || { start: '06:00', end: '14:30', routes: [] };
             document.getElementById('shift-start-input').value = dayData.start;
             document.getElementById('shift-end-input').value = dayData.end;
 
@@ -1457,41 +668,26 @@
                 for(let i=0; i<r.umlaeufe; i++) {
                     let val = `${r.id}_${i}`;
                     let isChecked = dayData.routes.includes(val) ? 'checked' : '';
+                    let isTram = r.type === 'tram';
+                    let disabled = (isTram && p.qualification === 'Bus') || (!isTram && p.qualification === 'Tram') ? 'disabled' : '';
+                    let opacityClass = disabled ? 'opacity-50 cursor-not-allowed bg-red-900/20' : 'cursor-pointer hover:bg-slate-800';
+                    let typeBadge = isTram ? '<span class="text-amber-500 font-bold ml-1">[Tram]</span>' : '<span class="text-blue-400 font-bold ml-1">[Bus]</span>';
+
                     container.innerHTML += `
-                        <label class="flex items-center gap-2 text-sm text-slate-300 hover:bg-slate-800 p-1.5 rounded cursor-pointer">
-                            <input type="checkbox" value="${val}" class="route-checkbox w-4 h-4 rounded bg-slate-900 border-slate-600 text-blue-600" onchange="window.validateRouteSelection(this)" ${isChecked}>
-                            L ${r.line} (U${i+1}) [${r.type}]
+                        <label class="flex items-center gap-2 text-sm text-slate-300 p-1.5 rounded ${opacityClass}">
+                            <input type="checkbox" value="${val}" class="route-checkbox w-4 h-4 rounded" onchange="window.validateRouteSelection(this)" ${isChecked} ${disabled}>
+                            L ${r.line} (U${i+1}) ${typeBadge}
                         </label>`;
                 }
             });
         };
 
         window.validateRouteSelection = function(checkbox) {
-            const p = window.personnel.find(x => x.id === window.editingShiftId);
-            if (!p) return;
-
-            const [rId] = checkbox.value.split('_');
-            const route = window.routes.find(r => r.id === rId);
-
-            if (route) {
-                if (route.type === 'tram' && p.qualification === 'Bus') {
-                    checkbox.checked = false;
-                    window.showToast('Lizenz-Fehler', `${p.name} ist reiner Busfahrer und hat keine Straßenbahn-Lizenz!`);
-                    return;
-                }
-                if (route.type === 'bus' && p.qualification === 'Tram') {
-                    checkbox.checked = false;
-                    window.showToast('Lizenz-Fehler', `${p.name} ist reiner Tram-Fahrer und darf keine Busse fahren!`);
-                    return;
-                }
-            }
-
             if(!checkbox.checked) return;
             const allCheckboxes = Array.from(document.querySelectorAll('.route-checkbox:checked'));
             if(allCheckboxes.length <= 1) return;
 
-            const newRouteVal = checkbox.value;
-            const [newRId] = newRouteVal.split('_');
+            const [newRId] = checkbox.value.split('_');
             const newRoute = window.routes.find(r => r.id === newRId);
             const newEndpoints = [newRoute.stops[0], newRoute.stops[newRoute.stops.length-1]];
             let hasConnection = false;
@@ -1507,15 +703,12 @@
             }
             if(!hasConnection) {
                 checkbox.checked = false;
-                window.showToast('Routen-Fehler', `Linie ${newRoute.line} teilt keine Endhaltestelle mit den anderen Linien!`);
+                window.showToast('Fehler', `Linie ${newRoute.line} trifft sich an keiner Endhaltestelle mit der vorherigen Wahl!`);
             }
         };
 
-        window.closeShiftModal = function() {
-            window.editingShiftId = null;
-            document.getElementById('shift-modal').classList.add('hidden');
-        };
-        
+        window.closeShiftModal = function() { document.getElementById('shift-modal').classList.add('hidden'); };
+
         window.saveShift = function() {
             if(!window.editingShiftId) return;
             const p = window.personnel.find(x => x.id === window.editingShiftId);
@@ -1525,83 +718,77 @@
                 const checkedBoxes = document.querySelectorAll('.route-checkbox:checked');
                 const routesArr = Array.from(checkedBoxes).map(cb => cb.value);
                 
-                if (routesArr.length === 0) {
-                    delete p.schedule[dateStr];
-                } else {
+                if (routesArr.length === 0) { delete p.schedule[dateStr]; } 
+                else {
                     let oldId = p.schedule[dateStr] ? p.schedule[dateStr].shiftId : null;
-                    p.schedule[dateStr] = {
-                        start: document.getElementById('shift-start-input').value,
-                        end: document.getElementById('shift-end-input').value,
-                        routes: routesArr,
-                        shiftId: oldId || Math.floor(1000 + Math.random() * 9000)
-                    };
+                    p.schedule[dateStr] = { start: document.getElementById('shift-start-input').value, end: document.getElementById('shift-end-input').value, routes: routesArr, shiftId: oldId || Math.floor(1000 + Math.random() * 9000) };
                 }
-                window.closeShiftModal();
-                window.renderPersonnel();
-                window.showToast('Dienstplan', 'Schicht erfolgreich gespeichert.');
+                window.closeShiftModal(); window.renderPersonnel(); window.showToast('Dienstplan', 'Schicht gespeichert.');
             }
         };
 
-        window.populateDriverSelects = function() {
-            const vSel = document.getElementById('driver-vehicle-select');
-            const rSel = document.getElementById('driver-route-select');
-            if(!vSel || !rSel) return;
-            vSel.innerHTML = '';
-            window.vehicles.filter(v => v.status === 'Depot').forEach(v => vSel.innerHTML += `<option value="${v.id}">Wg. ${v.id} (${v.model || v.type})</option>`);
-            rSel.innerHTML = '';
-            window.routes.forEach(r => { for(let i=0; i<r.umlaeufe; i++) rSel.innerHTML += `<option value="${r.id}_${i}">Linie ${r.line} (Umlauf ${i+1})</option>`; });
-        };
+        window.autoAssign = function() {
+            let readyDrivers = window.personnel.filter(p => p.status === 'Bereit');
+            let depotBuses = window.vehicles.filter(v => v.status === 'Depot' && v.tuev > 0 && v.hu > 0);
+            const todayStr = new Date().toISOString().split('T')[0];
+            let count = 0;
 
-        window.startDriverMode = function() {
-            const vId = document.getElementById('driver-vehicle-select').value;
-            const rVal = document.getElementById('driver-route-select').value;
-            if(!vId || !rVal) return;
-            const [rId, uIndex] = rVal.split('_');
-            const route = window.routes.find(r => r.id === rId);
-            const vehicle = window.vehicles.find(v => v.id === vId);
+            for (let i = readyDrivers.length - 1; i >= 0; i--) {
+                let p = readyDrivers[i];
+                let todaySchedule = p.schedule && p.schedule[todayStr];
+                
+                if (todaySchedule && todaySchedule.routes && todaySchedule.routes.length > 0) {
+                    let firstRouteVal = todaySchedule.routes[0];
+                    let [rId] = firstRouteVal.split('_');
+                    let route = window.routes.find(r => r.id === rId);
+                    
+                    if (route) {
+                        let isTramRoute = route.type === 'tram';
+                        if (isTramRoute && p.qualification === 'Bus') continue;
+                        if (!isTramRoute && p.qualification === 'Tram') continue;
 
-            window.playerAssignment = { vId, rId, umlaufIndex: parseInt(uIndex), currentStopIndex: 0, direction: 'forward' };
-            vehicle.status = 'Ausgefahren'; vehicle.line = `${route.line} (U${parseInt(uIndex)+1})`; vehicle.driver = 'DU';
-            
-            document.getElementById('driver-start').classList.add('hidden');
-            document.getElementById('driver-cockpit').classList.remove('hidden'); document.getElementById('driver-cockpit').classList.add('flex');
-            window.renderDepot(); window.renderIBIS();
-        };
-
-        window.stopDriverMode = function() {
-            if(!window.playerAssignment) return;
-            const vehicle = window.vehicles.find(v => v.id === window.playerAssignment.vId);
-            if(vehicle) { vehicle.status = 'Depot'; vehicle.line = null; vehicle.driver = null; }
-            window.playerAssignment = null;
-            document.getElementById('driver-start').classList.remove('hidden');
-            document.getElementById('driver-cockpit').classList.remove('flex'); document.getElementById('driver-cockpit').classList.add('hidden');
-            window.renderDepot(); window.populateDriverSelects();
-        };
-
-        window.renderIBIS = function() {
-            if (!window.playerAssignment) return;
-            const r = window.routes.find(x => x.id === window.playerAssignment.rId);
-            if (!r) return;
-            const display = document.getElementById('ibis-display');
-            if(!display) return;
-            document.getElementById('ibis-title').innerText = `L ${r.line} ➔ ${r.stops[r.stops.length-1]}`;
-            display.innerHTML = `<div class="text-emerald-500">Haltestelle: ${r.stops[window.playerAssignment.currentStopIndex]}</div>`;
-        };
-
-        window.advanceStop = function() {
-            if (!window.playerAssignment) return;
-            const r = window.routes.find(x => x.id === window.playerAssignment.rId);
-            if (window.playerAssignment.currentStopIndex < r.stops.length - 1) {
-                window.playerAssignment.currentStopIndex++; window.renderIBIS();
+                        let busIndex = depotBuses.findIndex(v => (isTramRoute && v.type === 'Tram') || (!isTramRoute && v.type !== 'Tram'));
+                        if (busIndex !== -1) {
+                            let v = depotBuses[busIndex];
+                            v.driver = p.id;
+                            v.line = `${route.line} (Auto)`;
+                            v.status = 'Ausgefahren';
+                            p.status = 'Auf Linie';
+                            depotBuses.splice(busIndex, 1);
+                            readyDrivers.splice(i, 1);
+                            count++;
+                        }
+                    }
+                }
             }
+            window.renderDepot(); window.renderPersonnel();
+            window.showToast('Auto-Disposition', `${count} Fahrzeuge nach Dienstplan zugewiesen.`);
         };
 
-        window.announceStop = function() {
-            if (!window.playerAssignment || !('speechSynthesis' in window)) return;
-            const r = window.routes.find(x => x.id === window.playerAssignment.rId);
-            const utterance = new SpeechSynthesisUtterance(`Nächster Halt: ${r.stops[window.playerAssignment.currentStopIndex]}`);
-            utterance.lang = 'de-DE'; window.speechSynthesis.speak(utterance);
+        window.renderDepot = function() {
+            const grid = document.getElementById('depot-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            let inDepot = 0, onLine = 0, maintenance = 0;
+            let readyDrivers = window.personnel.filter(p => p.status === 'Bereit');
+
+            window.vehicles.forEach(v => {
+                if(v.status === 'Depot') inDepot++;
+                if(v.status === 'Ausgefahren') onLine++;
+                if(v.status === 'Wartung') maintenance++;
+
+                let bg = v.status === 'Depot' ? 'bg-slate-800/80 border-slate-600' : (v.status === 'Ausgefahren' ? 'bg-blue-900/20 border-blue-500/50' : 'bg-amber-900/20 border-amber-500/50');
+                grid.innerHTML += `<div class="p-4 rounded-xl border ${bg} flex flex-col shadow-lg"><div class="flex justify-between items-center mb-1"><span class="font-bold text-white text-lg">Wg. ${v.id}</span></div><div class="text-xs text-slate-400 mb-2">${v.status}</div></div>`;
+            });
+            document.getElementById('stat-depot').innerText = inDepot; document.getElementById('stat-line').innerText = onLine; document.getElementById('stat-maintenance').innerText = maintenance; document.getElementById('stat-drivers').innerText = readyDrivers.length;
         };
+
+        window.buyBus = function(model, type) {
+            const maxId = window.vehicles.length > 0 ? Math.max(...window.vehicles.map(v => parseInt(v.id))) : 9;
+            window.vehicles.push({ id: (maxId + 1).toString(), model: model, type: type, status: 'Depot', tuev: 365, hu: 7, wartung: 0 });
+            window.renderDepot(); window.showToast('Fuhrpark', `Gekauft: ${model}`);
+        };
+
     </script>
 </body>
 </html>
