@@ -67,6 +67,7 @@
             <button onclick="openApp('personal')" class="hover:text-blue-300 transition">Dienstplan</button>
             <button onclick="openApp('betriebshof')" class="hover:text-blue-300 transition">Betriebshof</button>
             <button onclick="openApp('werkstatt')" class="hover:text-yellow-400 text-yellow-500 transition flex items-center gap-1">🔧 Werkstatt</button>
+            <button onclick="openApp('shop')" class="hover:text-green-400 text-green-500 transition flex items-center gap-1">🛒 Fahrzeughandel</button>
         </div>
         <div class="flex items-center space-x-4">
             <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>Online</span>
@@ -112,7 +113,6 @@
                 <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Personalverwaltung & Dienstpläne</div>
             </div>
             <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-                <!-- Dienstplan Zuweisung -->
                 <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700">
                     <h3 class="text-lg font-bold mb-4 text-blue-400">Schicht & Dienstplan generieren</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -137,7 +137,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- Personal Liste -->
                 <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto flex-1 border border-slate-700">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-bold">Aktuelle Dienstpläne</h3>
@@ -156,6 +155,24 @@
                         <tbody id="personal-list" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
+            </div>
+        </div>
+
+        <!-- ================= FAHRZEUGHANDEL (SHOP) ================= -->
+        <div id="app-shop" class="os-window absolute w-[950px] h-[650px] top-[10%] left-[5%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('shop')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-shop')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Fahrzeughandel (Neu- & Gebrauchtfahrzeuge)</div>
+            </div>
+            <div class="flex-1 flex overflow-hidden">
+                <!-- Marken Sidebar -->
+                <div class="w-1/4 bg-slate-800 border-r border-slate-700 overflow-y-auto" id="shop-brands"></div>
+                <!-- Fahrzeuge Anzeige -->
+                <div class="w-3/4 bg-slate-900 p-6 overflow-y-auto" id="shop-vehicles"></div>
             </div>
         </div>
 
@@ -410,6 +427,7 @@
             if(id === 'betriebshof') renderBetriebshof();
             if(id === 'werkstatt') renderWerkstatt();
             if(id === 'routen') renderRoutes();
+            if(id === 'shop') renderShopBrands();
         }
         function closeApp(id) { document.getElementById('app-' + id).style.display = 'none'; }
         function toggleMaximize(id) { document.getElementById(id).classList.toggle('maximized'); }
@@ -462,17 +480,102 @@
             {
                 id: 1, sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false,
                 content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn war ich stets für die sichere Beförderung der Fahrgäste im Überland- und Stadtverkehr verantwortlich. Dabei bin ich bestens mit den gängigen Systemen, insbesondere den IBIS-Geräten der Firma Atron, vertraut. Auch der Umgang mit anspruchsvollen Verkehrssituationen, Ticketverkäufen und der Kommunikation mit der Leitstelle ist für mich selbstverständlich.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
-            },
-            {
-                id: 2, sender: "Andrea Schmidt (Rheinbahn AG)", subject: "Bewerbung als Straßenbahnfahrerin (FiF)", read: false, replied: false,
-                content: "Hallo Max,\n\nhiermit bewerbe ich mich um die offene Stelle als Straßenbahnfahrerin in deinem Verkehrsbetrieb. Nach meiner erfolgreich abgeschlossenen Ausbildung zur Fachkraft im Fahrbetrieb (FiF) bin ich nun seit drei Jahren bei der Rheinbahn AG in Düsseldorf im aktiven Fahrdienst tätig und suche nun nach einer neuen beruflichen Herausforderung.\n\nZu meinen täglichen Aufgaben gehört die sichere Führung von Niederflur- und Stadtbahnwagen, die präzise Fahrgastinformation über die Bordsysteme sowie die schnelle und routinierte Störungsbeseitigung an den Fahrzeugen. Ich behalte auch in stressigen Situationen, wie etwa bei Großveranstaltungen, Schienenersatzverkehr oder widrigen Wetterbedingungen, stets einen kühlen Kopf und halte mich exakt an die Dienstpläne.\n\nDa ich von den modernen Strukturen und dem Fuhrpark deines Unternehmens gehört habe, sehe ich hier den idealen nächsten Schritt für meine Karriere. Meine Unterlagen liegen bei, und ich stehe für ein Probearbeiten jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\nAndrea Schmidt"
-            },
-            {
-                id: 3, sender: "EvoBus Vertrieb Deutschland", subject: "Angebot: Neuer Mercedes-Benz eCitaro für Ihre Flotte", read: false, replied: false,
-                content: "Hallo Max,\n\nwir bedanken uns für das Interesse an der Elektrifizierung der Flotte und die gute Zusammenarbeit in den vergangenen Jahren. Anbei das unverbindliche Angebot für einen neuen Mercedes-Benz eCitaro G (Gelenkbus) der neuesten Generation, inklusive kompletter Ladeinfrastruktur für den Betriebshof.\n\nFahrzeugdaten:\n- Modell: eCitaro G (18 Meter)\n- Batteriekapazität: 441 kWh (Festkörperbatterie)\n- Reichweite: Garantiert 250 km auch im Winterbetrieb\n- Ausstattung: Klimaautomatik, Atron AFR410 Vorrüstung, WLAN für Fahrgäste\n\nFahrzeugpreis: 650.000 € netto\nLieferzeit: 4 Monate ab Bestelleingang\n\nWenn das Angebot angenommen und das Fahrzeug in den Betriebshof aufgenommen werden soll, antworte bitte einfach auf diese Mail mit den Worten 'Kaufen' oder 'Bestellen'. Wir leiten dann umgehend alles in die Wege.\n\nMit freundlichen Grüßen\nEvoBus Vertriebsteam"
             }
         ];
         let currentMail = null;
+
+        // --- FAHRZEUGHANDEL (SHOP) DATEN & LOGIK ---
+        const shopData = {
+            "Mercedes-Benz": [
+                { type: "Mercedes-Benz Citaro (Gelenk)", price: "350.000 €", time: "Sofort lieferbar", isTram: false },
+                { type: "Mercedes-Benz eCitaro G", price: "650.000 €", time: "Sofort lieferbar", isTram: false },
+                { type: "Mercedes-Benz CapaCity L", price: "480.000 €", time: "Sofort lieferbar", isTram: false }
+            ],
+            "MAN": [
+                { type: "MAN Lion's City 12", price: "280.000 €", time: "Sofort lieferbar", isTram: false },
+                { type: "MAN Lion's City 18", price: "360.000 €", time: "Sofort lieferbar", isTram: false }
+            ],
+            "Solaris": [
+                { type: "Solaris Urbino 12 electric", price: "450.000 €", time: "Sofort lieferbar", isTram: false },
+                { type: "Solaris Urbino 18", price: "340.000 €", time: "Sofort lieferbar", isTram: false }
+            ],
+            "Siemens (Tram)": [
+                { type: "Siemens Variobahn", price: "2.800.000 €", time: "Auf Lager", isTram: true },
+                { type: "Siemens Avenio", price: "3.200.000 €", time: "Auf Lager", isTram: true }
+            ],
+            "Stadler (Tram)": [
+                { type: "Stadler TINA", price: "3.500.000 €", time: "Auf Lager", isTram: true },
+                { type: "Stadler TANGO", price: "3.100.000 €", time: "Auf Lager", isTram: true }
+            ]
+        };
+        let currentShopBrand = "Mercedes-Benz";
+
+        function renderShopBrands() {
+            const list = document.getElementById('shop-brands');
+            list.innerHTML = '';
+            Object.keys(shopData).forEach(brand => {
+                const isActive = brand === currentShopBrand ? 'bg-blue-600 text-white font-bold border-l-4 border-white' : 'text-gray-300 hover:bg-slate-700';
+                list.innerHTML += `<div onclick="selectShopBrand('${brand}')" class="p-4 border-b border-slate-700 cursor-pointer transition ${isActive}">${brand}</div>`;
+            });
+            renderShopVehicles();
+        }
+
+        function selectShopBrand(brand) {
+            currentShopBrand = brand;
+            renderShopBrands(); 
+        }
+
+        function renderShopVehicles() {
+            const container = document.getElementById('shop-vehicles');
+            container.innerHTML = `<h2 class="text-2xl font-bold mb-6 text-white">${currentShopBrand} Modelle</h2>`;
+            const grid = document.createElement('div');
+            grid.className = 'grid grid-cols-2 gap-6';
+            
+            shopData[currentShopBrand].forEach((vehicle, idx) => {
+                grid.innerHTML += `
+                    <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold text-white leading-tight">${vehicle.type}</h3>
+                                <span class="bg-slate-700 text-xs px-2 py-1 rounded text-gray-300">${vehicle.isTram ? 'Tram' : 'Bus'}</span>
+                            </div>
+                            <p class="text-gray-400 text-sm mb-4 mt-2">
+                                Kaufpreis: <span class="font-bold text-green-400">${vehicle.price}</span><br>
+                                Verfügbarkeit: <span class="text-blue-300">${vehicle.time}</span>
+                            </p>
+                        </div>
+                        <button onclick="buyVehicle('${currentShopBrand}', ${idx})" class="w-full bg-green-600 hover:bg-green-500 py-2 rounded text-sm font-bold transition shadow uppercase">Fahrzeug kaufen</button>
+                    </div>
+                `;
+            });
+            container.appendChild(grid);
+        }
+
+        function buyVehicle(brand, idx) {
+            const vehicle = shopData[brand][idx];
+            const newId = (vehicle.isTram ? 'TW ' : 'KOM ') + (Math.floor(Math.random()*9000)+1000);
+            
+            // Reale TÜV/HU Daten generieren (nächste 1-3 Jahre)
+            const year = new Date().getFullYear() + Math.floor(Math.random()*3) + 1;
+            const month = String(Math.floor(Math.random()*12) + 1).padStart(2, '0');
+            const tuevDate = `${month}/${year}`;
+            
+            vehicles.push({
+                id: newId,
+                type: vehicle.type,
+                tuev: tuevDate,
+                hu: tuevDate,
+                status: "Einsatzbereit",
+                repairUntil: null,
+                problem: ""
+            });
+            
+            alert(`Herzlichen Glückwunsch!\nEin ${vehicle.type} wurde erfolgreich gekauft.\nDas Fahrzeug wurde mit der ID ${newId} deinem Betriebshof hinzugefügt!`);
+            
+            if(document.getElementById('app-betriebshof').style.display === 'flex') {
+                renderBetriebshof();
+            }
+        }
 
         // --- MAIL SYSTEM ---
         function renderMails() {
@@ -510,11 +613,6 @@
                 employees.push({ name: name, role: currentMail.subject.includes('Straßenbahn') ? 'Straßenbahnfahrer/in' : 'Busfahrer/in', status: 'Ruhezeit', shift: null });
                 alert(`${name} wurde erfolgreich eingestellt! Du kannst nun Schichten im Reiter Personal zuweisen.`);
                 if(document.getElementById('app-personal').style.display === 'flex') { populateShiftSelects(); renderPersonal(); }
-            }
-            if(text.includes('kaufen') || text.includes('bestellen')) {
-                vehicles.push({ id: `KOM ${Math.floor(Math.random()*9000)+1000}`, type: "Mercedes-Benz eCitaro (Elektro)", tuev: "10/2029", hu: "10/2029", status: "Einsatzbereit", repairUntil: null, problem: "" });
-                alert(`Der Mercedes-Benz eCitaro wurde bestellt und dem Betriebshof hinzugefügt!`);
-                if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
             }
             
             currentMail.replied = true;
@@ -643,7 +741,6 @@
             v.status = "In Werkstatt";
             v.problem = problems[Math.floor(Math.random() * problems.length)];
             
-            // Zufällige Dauer zwischen 1 und 5 Tagen
             const repairDays = Math.floor(Math.random() * 5) + 1;
             v.repairUntil = new Date(Date.now() + repairDays * 24 * 60 * 60 * 1000); 
             
@@ -742,7 +839,7 @@
             });
         }
 
-        // --- NEUES AUDIO SYSTEM (Web Speech API) ---
+        // --- AUDIO SYSTEM (Web Speech API) ---
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -751,8 +848,6 @@
                 utterance.rate = 0.95;
                 utterance.pitch = 1.0; 
                 window.speechSynthesis.speak(utterance);
-            } else {
-                console.log("Web Speech API wird von diesem Browser nicht unterstützt.");
             }
         }
 
@@ -916,7 +1011,7 @@
         }
         
         // Start apps
-        openApp('mail');
+        openApp('shop');
     </script>
 </body>
 </html>
