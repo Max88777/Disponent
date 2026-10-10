@@ -27,15 +27,13 @@
         /* Atron AFR410 Classic Design */
         .atron-screen { background-color: #B2FFFF; color: #000; font-family: 'Arial', sans-serif; }
         .atron-header { background-color: #008080; color: white; }
-        
-        /* Atron Dark Mode override */
         .atron-dark { background-color: #111827; color: #E5E7EB; }
         .atron-dark .atron-header { background-color: #064E3B; }
         .atron-dark .ticket-btn { background-color: #1F2937; border-color: #374151; color: #fff; }
         .atron-dark .stop-box { background-color: #1F2937; border-color: #374151; color: #fff; }
         .atron-dark .menu-panel { background-color: #111827; color: #E5E7EB; }
         
-        /* Hardware Buttons Bottom */
+        /* Hardware Buttons */
         .atron-bottom-bar { background-color: #1C325B; }
         .btn-moon { background-color: #1C325B; color: #FBBF24; border: 2px solid #FBBF24; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
         .btn-storno { background-color: #FFFFFF; color: #DC2626; font-weight: bold; border: 1px solid #999; font-size: 0.8rem;}
@@ -46,31 +44,25 @@
         .btn-grey { background-color: #E5E7EB; color: #9CA3AF; font-size: 1.5rem; font-weight: bold; border: 1px solid #999;}
         .btn-stop { background-color: #FFFFFF; color: #000; font-weight: 900; border: 3px solid #000; font-size: 1.2rem;}
 
-        /* Ticket/Ansagen Buttons on screen */
         .ticket-btn { background-color: #FFFFFF; border: 2px solid #4ADE80; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); transition: 0.1s; }
         .ticket-btn:active { transform: scale(0.98); background-color: #f3f4f6; }
         .stop-box { background-color: #F0FDFA; border: 1px solid #5EEAD4; }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
         
-        /* Push Notification Animation */
         .notif-enter { transform: translateX(120%); opacity: 0; }
         .notif-show { transform: translateX(0); opacity: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-
-        /* Excel Table Styles */
         .excel-cell { transition: background 0.1s; }
         .excel-cell:hover { background-color: rgba(59, 130, 246, 0.2) !important; }
     </style>
 </head>
 <body class="text-white h-screen w-screen flex flex-col relative overflow-hidden">
 
-    <!-- Push Notification Container -->
     <div id="notification-container" class="absolute top-14 right-4 flex flex-col gap-2 z-[9999] pointer-events-none"></div>
 
-    <!-- Top Bar / Menu -->
+    <!-- Top Bar -->
     <div class="h-10 bg-slate-900 bg-opacity-90 flex items-center justify-between px-4 text-sm font-semibold z-50 border-b border-gray-700 shadow-md">
         <div class="flex space-x-6 items-center">
             <span class="text-blue-400 font-bold tracking-wider">CTS OS 2026</span>
@@ -110,9 +102,7 @@
                     <div class="p-6 flex-1 overflow-y-auto relative" id="mail-content">
                         <p class="text-gray-500 mt-20 text-center">Wähle eine E-Mail aus, um sie zu lesen.</p>
                     </div>
-                    <div id="mail-actions" class="p-4 bg-slate-800 border-t border-slate-700 flex gap-3 justify-end items-center min-h-[70px]">
-                        <!-- Dynamische Buttons -->
-                    </div>
+                    <div id="mail-actions" class="p-4 bg-slate-800 border-t border-slate-700 flex gap-3 justify-end items-center min-h-[70px]"></div>
                 </div>
             </div>
         </div>
@@ -505,7 +495,7 @@
             if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }, 1000);
 
-        // --- PUSH BENACHRICHTIGUNGEN & LIVE-EMAILS ---
+        // --- PUSH BENACHRICHTIGUNGEN & LIVE-EMAILS (DYNAMIC GENERATOR) ---
         function showNotification(title, message) {
             const container = document.getElementById('notification-container');
             const notif = document.createElement('div');
@@ -524,54 +514,63 @@
             }, 5000);
         }
 
-        const emailTemplates = [
-            { 
-                type: 'application', 
-                senderName: "Lukas Müller", 
-                role: "Busfahrer/in", 
-                sender: "Lukas Müller (DB Regio Bus)", 
-                subject: "Bewerbung als Busfahrer im Linienverkehr", 
-                content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn konnte ich umfangreiche Erfahrungen im Umgang mit dem Atron AFR410 sowie INIT-Bordsystemen sammeln. Die sichere Personenbeförderung, auch in stressigen Situationen oder im Nachtverkehr, ist für mich eine Selbstverständlichkeit. Meine Führerscheinklassen D und DE sowie die gesetzlich vorgeschriebenen Module sind aktuell und lückenlos nachweisbar.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Da ich mich beruflich in Ihre Region verändern möchte, steht einem zeitnahen Wechsel nichts im Wege.\n\nÜber eine Einladung zu einem persönlichen Vorstellungsgespräch würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller" 
-            },
-            { 
-                type: 'application', 
-                senderName: "Andrea Schmidt", 
-                role: "Straßenbahnfahrer/in", 
-                sender: "Andrea Schmidt (Rheinbahn AG)", 
-                subject: "Bewerbung als Straßenbahnfahrerin (FiF)", 
-                content: "Guten Tag Max,\n\nhiermit bewerbe ich mich um die offene Stelle als Straßenbahnfahrerin in deinem Verkehrsbetrieb. Nach meiner erfolgreich abgeschlossenen Ausbildung zur Fachkraft im Fahrbetrieb (FiF) bin ich nun seit fast sechs Jahren bei der Rheinbahn AG in Düsseldorf im aktiven Fahrdienst tätig und suche nun nach einer neuen beruflichen Herausforderung.\n\nZu meinen täglichen Aufgaben gehört die sichere Führung diverser Niederflur-Trams, darunter auch moderne Siemens-Fahrzeuge, sowie die Bedienung der Totmann- und Sifa-Systeme unter höchster Konzentration. Die routinierte Störungsbeseitigung direkt auf der Strecke und ein kundenorientiertes Handeln bei Schienenersatzverkehr gehören zu meinen absoluten Stärken.\n\nDa ich von den modernen Strukturen und dem zukunftsorientierten Fuhrpark deines Unternehmens gehört habe, sehe ich hier den idealen nächsten Schritt für meine Karriere. Meine notwendigen Streckenberechtigungen und Zeugnisse kann ich jederzeit nachreichen.\n\nIch stehe für ein Vorstellungsgespräch oder eine Probefahrt jederzeit zur Verfügung und freue mich auf eine Rückmeldung.\n\nMit freundlichen Grüßen\nAndrea Schmidt" 
-            },
-            { 
-                type: 'application', 
-                senderName: "Jonas Becker", 
-                role: "Busfahrer/in", 
-                sender: "Jonas Becker (Kölner Verkehrs-Betriebe)", 
-                subject: "Initiativbewerbung für den Fahrdienst (Bus)", 
-                content: "Guten Tag Max,\n\nmein Name ist Jonas Becker und ich möchte mich hiermit initiativ als Busfahrer für euer Liniennetz bewerben. Ich habe meine Ausbildung bei den Kölner Verkehrs-Betrieben (KVB) absolviert und dort in den letzten drei Jahren vor allem Erfahrung auf 18-Meter-Gelenkbussen, wie dem Mercedes-Benz Citaro G und MAN Lion's City 18, gesammelt.\n\nIm anspruchsvollen Stadtverkehr bewahre ich stets die Ruhe und bin äußerst stressresistent. Ich kenne mich hervorragend in komplexen Tarifstrukturen aus und bin bereit, auch unbeliebte Wochenend- und Spätschichten zu übernehmen. Die Fahrgastbetreuung macht mir große Freude, weshalb ich den Beruf des Busfahrers mit absoluter Leidenschaft ausübe.\n\nIch würde mich sehr freuen, wenn mein Profil euer Interesse weckt und wir uns in einem Gespräch persönlich kennenlernen können.\n\nViele Grüße\nJonas Becker" 
-            },
-            { 
-                type: 'ad', 
-                vehicleType: "Solaris Urbino 18 electric", 
-                sender: "Solaris Bus & Coach", 
-                subject: "Sonderangebot: Solaris Urbino 18 electric", 
-                content: "Hallo Leitstelle,\n\nwir haben aktuell ein Sonderangebot für den Solaris Urbino 18 electric. Bei sofortiger Abnahme gewähren wir auf Vorführwagen einen Rabatt.\nStückpreis: 450.000 €.\n\nAntworte mit 'Kaufen', um ein Fahrzeug zu ordern.\n\nViele Grüße\nSolaris Vertrieb" 
-            },
-            { 
-                type: 'ad', 
-                vehicleType: "MAN Lion's City 18", 
-                sender: "MAN Truck & Bus", 
-                subject: "Testfahrzeug MAN Lion's City 18", 
-                content: "Guten Tag,\n\nwir bieten euch einen MAN Lion's City 18 als Testfahrzeug an. Wenn Interesse besteht, ihn dauerhaft für 360.000 € in den Fuhrpark aufzunehmen, lasst es uns wissen (Antwort: 'Kaufen').\n\nMAN Vertrieb" 
+        const firstNames = ["Leon", "Felix", "Lukas", "Jonas", "Michael", "Thomas", "Andreas", "Mia", "Emma", "Hannah", "Julia", "Sarah", "Laura", "Andrea"];
+        const lastNames = ["Müller", "Schmidt", "Schneider", "Fischer", "Weber", "Meyer", "Wagner", "Becker", "Hoffmann", "Schäfer"];
+        const companies = ["DSW21", "BOGESTRA", "Rheinbahn AG", "KVB", "BVG", "DB Regio Bus", "MVG", "Vestische", "Ruhrbahn"];
+
+        function generateApplication() {
+            const fName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const company = companies[Math.floor(Math.random() * companies.length)];
+            const isTram = Math.random() > 0.5;
+            const role = isTram ? "Straßenbahnfahrer/in" : "Busfahrer/in";
+            const roleTitle = isTram ? "Straßenbahnfahrer" : "Busfahrer";
+            
+            let content = "";
+            if (isTram) {
+                content = `Guten Tag Max,\n\nhiermit bewerbe ich mich um die offene Stelle als ${roleTitle} in deinem Verkehrsbetrieb. Nach meiner erfolgreich abgeschlossenen Ausbildung zur Fachkraft im Fahrbetrieb (FiF) bin ich nun seit einigen Jahren bei der ${company} im aktiven Fahrdienst tätig und suche nun nach einer neuen beruflichen Herausforderung in deiner Leitstelle.\n\nZu meinen täglichen Aufgaben gehört die sichere Führung diverser Niederflur-Trams, die Bedienung der Totmann- und Sifa-Systeme unter höchster Konzentration sowie die routinierte Störungsbeseitigung direkt auf der Strecke. Ein kundenorientiertes Handeln bei Schienenersatzverkehr und Großveranstaltungen ist für mich selbstverständlich. Die Arbeit im Schichtdienst bin ich gewohnt und stets zuverlässig angetreten.\n\nDa ich von den modernen Strukturen und dem zukunftsorientierten Fuhrpark deines Unternehmens gehört habe, sehe ich hier den idealen nächsten Schritt für meine Karriere. Meine notwendigen Streckenberechtigungen und Zeugnisse kann ich jederzeit nachreichen.\n\nIch stehe für ein Vorstellungsgespräch oder eine Probefahrt jederzeit zur Verfügung und freue mich auf eine Rückmeldung.\n\nMit freundlichen Grüßen\n${fName} ${lName}`;
+            } else {
+                content = `Guten Tag Leitstellen-Team (z.H. Max),\n\nmit großem Interesse habe ich Ihre Stellenausschreibung für die Position als ${roleTitle} in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der ${company} bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn konnte ich umfangreiche Erfahrungen im Umgang mit dem Atron AFR410 sowie diversen Bordsystemen sammeln. Die sichere Personenbeförderung, auch in stressigen Situationen oder im Nachtverkehr, ist für mich eine absolute Selbstverständlichkeit. Meine Führerscheinklassen D und DE sowie die gesetzlich vorgeschriebenen Module sind aktuell und lückenlos nachweisbar.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Da ich mich beruflich in Ihre Region verändern möchte, steht einem zeitnahen Wechsel nichts im Wege.\n\nÜber eine Einladung zu einem persönlichen Vorstellungsgespräch würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\n${fName} ${lName}`;
             }
-        ];
+
+            return {
+                type: 'application',
+                senderName: `${fName} ${lName}`,
+                role: role,
+                sender: `${fName} ${lName} (${company})`,
+                subject: `Bewerbung als ${roleTitle}`,
+                content: content
+            };
+        }
+
+        let emails = [];
+
+        // Generiere eine erste E-Mail beim Start
+        let initialMail = generateApplication();
+        initialMail.id = Date.now();
+        initialMail.read = false;
+        initialMail.replied = false;
+        emails.push(initialMail);
 
         function receiveRandomEmail() {
             if(Math.random() > 0.4) { 
-                const template = emailTemplates[Math.floor(Math.random() * emailTemplates.length)];
-                const newMail = {
-                    id: Date.now(), type: template.type, senderName: template.senderName, role: template.role, vehicleType: template.vehicleType,
-                    sender: template.sender, subject: template.subject, read: false, replied: false, content: template.content
-                };
+                let newMail;
+                if (Math.random() > 0.3) {
+                    newMail = generateApplication();
+                } else {
+                    const adTemplates = [
+                        { type: 'ad', vehicleType: "Solaris Urbino 18 electric", sender: "Solaris Bus & Coach", subject: "Sonderangebot: Solaris Urbino 18 electric", content: "Hallo Leitstelle,\n\nwir haben aktuell ein Sonderangebot für den Solaris Urbino 18 electric. Bei sofortiger Abnahme gewähren wir auf Vorführwagen einen Rabatt.\nStückpreis: 450.000 €.\n\nAntworte mit 'Kaufen', um ein Fahrzeug zu ordern.\n\nViele Grüße\nSolaris Vertrieb" },
+                        { type: 'ad', vehicleType: "MAN Lion's City 18", sender: "MAN Truck & Bus", subject: "Testfahrzeug MAN Lion's City 18", content: "Guten Tag,\n\nwir bieten euch einen MAN Lion's City 18 als Testfahrzeug an. Wenn Interesse besteht, ihn dauerhaft für 360.000 € in den Fuhrpark aufzunehmen, lasst es uns wissen (Antwort: 'Kaufen').\n\nMAN Vertrieb" },
+                        { type: 'info', sender: "Stadtwerke IT", subject: "Wartung der Leitstellen-Software", content: "Hallo Max,\n\nheute Nacht um 02:00 Uhr führen wir ein Update der Leitstellen-Software durch. Es kann zu kurzen Ausfällen im IBIS-System und bei den Dienstplänen kommen.\n\nGrüße,\nIT-Support" }
+                    ];
+                    const tmpl = adTemplates[Math.floor(Math.random() * adTemplates.length)];
+                    newMail = { ...tmpl, senderName: tmpl.sender }; 
+                }
+
+                newMail.id = Date.now();
+                newMail.read = false;
+                newMail.replied = false;
+
                 emails.unshift(newMail); 
                 showNotification("Neue E-Mail empfangen", newMail.subject);
                 
@@ -609,16 +608,10 @@
             { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "Einsatzbereit", repairUntil: null, problem: "" }
         ];
 
-        let emails = [
-            { id: 1, type: 'application', senderName: "Lukas Müller", role: "Busfahrer/in", sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false, 
-              content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn konnte ich umfangreiche Erfahrungen im Umgang mit dem Atron AFR410 sowie INIT-Bordsystemen sammeln. Die sichere Personenbeförderung, auch in stressigen Situationen oder im Nachtverkehr, ist für mich eine Selbstverständlichkeit. Meine Führerscheinklassen D und DE sowie die gesetzlich vorgeschriebenen Module sind aktuell und lückenlos nachweisbar.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Da ich mich beruflich in Ihre Region verändern möchte, steht einem zeitnahen Wechsel nichts im Wege.\n\nÜber eine Einladung zu einem persönlichen Vorstellungsgespräch würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller" 
-            }
-        ];
         let currentMail = null;
-
         setTimeout(updateMailBadge, 500);
 
-        // --- NEUES E-MAIL ACTION SYSTEM (BUTTONS) ---
+        // --- E-MAIL ACTION SYSTEM (BUTTONS) ---
         function renderMails() {
             const list = document.getElementById('mail-list');
             list.innerHTML = '';
