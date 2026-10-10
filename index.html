@@ -59,6 +59,10 @@
         /* Push Notification Animation */
         .notif-enter { transform: translateX(120%); opacity: 0; }
         .notif-show { transform: translateX(0); opacity: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        /* Excel Table Styles */
+        .excel-cell { transition: background 0.1s; }
+        .excel-cell:hover { background-color: rgba(59, 130, 246, 0.2) !important; }
     </style>
 </head>
 <body class="text-white h-screen w-screen flex flex-col relative overflow-hidden">
@@ -106,9 +110,9 @@
                     <div class="p-6 flex-1 overflow-y-auto relative" id="mail-content">
                         <p class="text-gray-500 mt-20 text-center">Wähle eine E-Mail aus, um sie zu lesen.</p>
                     </div>
-                    <div class="p-4 bg-slate-800 border-t border-slate-700">
-                        <textarea id="mail-reply" class="w-full bg-slate-900 text-sm p-3 rounded border border-slate-600 focus:outline-none focus:border-blue-500 text-white" rows="3" placeholder="Antwort verfassen (Schreibe 'Zusage' für Einstellung, 'Kaufen' für Fahrzeuge)..."></textarea>
-                        <button onclick="sendReply()" class="mt-2 bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded text-sm font-semibold float-right transition">Senden</button>
+                    <!-- Dynamische Buttons Bereich -->
+                    <div id="mail-actions" class="p-4 bg-slate-800 border-t border-slate-700 flex gap-3 justify-end items-center min-h-[70px]">
+                        <!-- Wird per JS befüllt -->
                     </div>
                 </div>
             </div>
@@ -513,11 +517,7 @@
             `;
             notif.onclick = () => { openApp('mail'); notif.style.opacity = '0'; setTimeout(() => notif.remove(), 300); };
             container.appendChild(notif);
-
-            // Animate In
             setTimeout(() => { notif.classList.add('notif-show'); notif.classList.remove('notif-enter'); }, 50);
-
-            // Auto Remove after 5 seconds
             setTimeout(() => {
                 notif.classList.remove('notif-show');
                 notif.classList.add('notif-enter');
@@ -526,36 +526,28 @@
         }
 
         const emailTemplates = [
-            { sender: "Solaris Bus & Coach", subject: "Sonderangebot: Solaris Urbino 18 electric", content: "Hallo Max,\n\nwir haben aktuell ein Sonderangebot für den Solaris Urbino 18 electric. Bei Abnahme von 2 Fahrzeugen gewähren wir 10% Rabatt.\nStückpreis: 450.000 €.\n\nAntworte mit 'Kaufen', um ein Fahrzeug zu ordern." },
-            { sender: "Michael Bauer (BOGESTRA)", subject: "Bewerbung als Straßenbahnfahrer", content: "Guten Tag Max,\n\nich bewerbe mich hiermit als Straßenbahnfahrer. Ich fahre seit 4 Jahren bei der BOGESTRA (Variobahn und NF6D) und suche einen neuen Wirkungskreis.\n\nWürde mich über eine Zusage freuen.\n\nGruß,\nMichael Bauer" },
-            { sender: "Stadtwerke IT", subject: "Wartung der Leitstellen-Software", content: "Hallo Max,\n\nheute Nacht um 02:00 Uhr führen wir ein Update der Leitstellen-Software durch. Es kann zu kurzen Ausfällen im IBIS-System und bei den Dienstplänen kommen.\n\nGrüße,\nIT-Support" },
-            { sender: "MAN Truck & Bus", subject: "Testfahrzeug MAN Lion's City 18", content: "Guten Tag,\n\nwir bieten euch einen Lion's City 18 für 2 Wochen als Testfahrzeug an. Kostenlos. Wenn Interesse besteht, bitte einfach antworten mit 'Kaufen', um ihn dauerhaft für 360.000 € in den Fuhrpark aufzunehmen.\n\nMAN Vertrieb" },
-            { sender: "Lisa Schmidt (BVG)", subject: "Bewerbung als Busfahrerin", content: "Guten Tag,\n\nich bin Lisa und fahre seit 2 Jahren Doppeldecker in Berlin (BVG). Ich ziehe demnächst um und brauche einen neuen Job im Stadtverkehr.\n\nBitte um Rückmeldung! (Schreibe 'Zusage' für Einstellung).\n\nLG Lisa" }
+            { type: 'ad', vehicleType: "Solaris Urbino 18 electric", sender: "Solaris Bus & Coach", subject: "Sonderangebot: Solaris Urbino 18 electric", content: "Hallo Max,\n\nwir haben aktuell ein Sonderangebot für den Solaris Urbino 18 electric. Bei Abnahme von 2 Fahrzeugen gewähren wir 10% Rabatt.\nStückpreis: 450.000 €.\n\nViele Grüße\nSolaris Vertrieb" },
+            { type: 'application', senderName: "Michael Bauer", role: "Straßenbahnfahrer/in", sender: "Michael Bauer (BOGESTRA)", subject: "Bewerbung als Straßenbahnfahrer", content: "Guten Tag Max,\n\nich bewerbe mich hiermit als Straßenbahnfahrer. Ich fahre seit 4 Jahren bei der BOGESTRA (Variobahn und NF6D) und suche einen neuen Wirkungskreis.\n\nWürde mich über eine Einladung freuen.\n\nGruß,\nMichael Bauer" },
+            { type: 'info', sender: "Stadtwerke IT", subject: "Wartung der Leitstellen-Software", content: "Hallo Max,\n\nheute Nacht um 02:00 Uhr führen wir ein Update der Leitstellen-Software durch. Es kann zu kurzen Ausfällen im IBIS-System und bei den Dienstplänen kommen.\n\nGrüße,\nIT-Support" },
+            { type: 'ad', vehicleType: "MAN Lion's City 18", sender: "MAN Truck & Bus", subject: "Testfahrzeug MAN Lion's City 18", content: "Guten Tag,\n\nwir bieten euch einen Lion's City 18 für 2 Wochen als Testfahrzeug an. Kostenlos. Wenn Interesse besteht, ihn dauerhaft für 360.000 € in den Fuhrpark aufzunehmen, lasst es uns wissen.\n\nMAN Vertrieb" },
+            { type: 'application', senderName: "Lisa Schmidt", role: "Busfahrer/in", sender: "Lisa Schmidt (BVG)", subject: "Bewerbung als Busfahrerin", content: "Guten Tag,\n\nich bin Lisa und fahre seit 2 Jahren Doppeldecker in Berlin (BVG). Ich ziehe demnächst um und brauche einen neuen Job im Stadtverkehr.\n\nBitte um Rückmeldung!\n\nLG Lisa" }
         ];
 
         function receiveRandomEmail() {
-            if(Math.random() > 0.4) { // 60% Chance für eine neue Email alle paar Sekunden
+            if(Math.random() > 0.4) { 
                 const template = emailTemplates[Math.floor(Math.random() * emailTemplates.length)];
                 const newMail = {
-                    id: Date.now(),
-                    sender: template.sender,
-                    subject: template.subject,
-                    read: false,
-                    replied: false,
-                    content: template.content
+                    id: Date.now(), type: template.type, senderName: template.senderName, role: template.role, vehicleType: template.vehicleType,
+                    sender: template.sender, subject: template.subject, read: false, replied: false, content: template.content
                 };
-                emails.unshift(newMail); // Oben anfügen
+                emails.unshift(newMail); 
                 showNotification("Neue E-Mail empfangen", newMail.subject);
                 
-                if (document.getElementById('app-mail').style.display === 'flex') {
-                    renderMails();
-                }
+                if (document.getElementById('app-mail').style.display === 'flex') { renderMails(); }
                 updateMailBadge();
             }
         }
-        
-        // Simuliere E-Mail-Empfang alle 40 Sekunden
-        setInterval(receiveRandomEmail, 40000);
+        setInterval(receiveRandomEmail, 40000); // 40 Sek Live E-Mails
 
         function updateMailBadge() {
             const unreadCount = emails.filter(e => !e.read).length;
@@ -577,8 +569,7 @@
 
         let employees = [
             { name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"] },
-            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] },
-            { name: "Tom Meier", role: "Busfahrer/in", schedule: ["Krank", "Krank", "Krank", "Frei", "S-100", "S-100", "F-100"] }
+            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] }
         ];
 
         let vehicles = [
@@ -587,12 +578,125 @@
         ];
 
         let emails = [
-            { id: 1, sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false, content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller" }
+            { id: 1, type: 'application', senderName: "Lukas Müller", role: "Busfahrer/in", sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false, content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller" }
         ];
         let currentMail = null;
 
-        // Init Badge
         setTimeout(updateMailBadge, 500);
+
+        // --- NEUES E-MAIL ACTION SYSTEM (BUTTONS) ---
+        function renderMails() {
+            const list = document.getElementById('mail-list');
+            list.innerHTML = '';
+            emails.forEach((mail, idx) => {
+                const el = document.createElement('div');
+                el.className = `p-4 border-b border-slate-700 cursor-pointer hover:bg-slate-700 transition ${mail.read ? 'text-gray-400' : 'font-bold text-white'}`;
+                el.innerHTML = `
+                    <div class="text-sm truncate">${mail.sender} ${mail.replied ? '<span class="text-green-500 font-bold ml-2">↩</span>' : ''}</div>
+                    <div class="text-xs truncate text-blue-400">${mail.subject}</div>
+                `;
+                el.onclick = () => { openMail(idx); };
+                list.appendChild(el);
+            });
+        }
+
+        function openMail(idx) {
+            currentMail = emails[idx];
+            currentMail.read = true;
+            updateMailBadge();
+            renderMails();
+            
+            document.getElementById('mail-content').innerHTML = `
+                <h2 class="text-xl font-bold mb-2">${currentMail.subject}</h2>
+                <p class="text-sm text-blue-400 mb-6">Von: ${currentMail.sender}</p>
+                <div class="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">${currentMail.content}</div>
+            `;
+            
+            // Render Buttons based on Type
+            let actionsHtml = '';
+            if (currentMail.replied) {
+                actionsHtml = '<div class="text-green-500 font-bold text-sm w-full text-right">✅ Diese E-Mail wurde bereits bearbeitet.</div>';
+            } else {
+                if (currentMail.type === 'application') {
+                    actionsHtml = `
+                        <button onclick="handleMailAction('einladung')" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-bold transition shadow">Einladung (Personalabteilung)</button>
+                        <button onclick="handleMailAction('absage')" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded text-sm font-bold transition shadow">Direkt Absagen</button>
+                    `;
+                } else if (currentMail.type === 'hr_feedback') {
+                    actionsHtml = `
+                        <button onclick="handleMailAction('annehmen')" class="bg-green-600 hover:bg-green-500 px-4 py-2 rounded text-sm font-bold transition shadow">Einstellen (Vertrag zusenden)</button>
+                        <button onclick="handleMailAction('ablehnen')" class="bg-red-600 hover:bg-red-500 px-4 py-2 rounded text-sm font-bold transition shadow">Absagen</button>
+                    `;
+                } else if (currentMail.type === 'ad') {
+                    actionsHtml = `
+                        <button onclick="handleMailAction('kaufen')" class="bg-green-600 hover:bg-green-500 px-4 py-2 rounded text-sm font-bold transition shadow">Kaufen / Bestellen</button>
+                        <button onclick="handleMailAction('ignorieren')" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-sm font-bold transition shadow">Ignorieren</button>
+                    `;
+                } else {
+                    actionsHtml = `<button onclick="handleMailAction('gelesen')" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded text-sm font-bold transition shadow">Als erledigt markieren</button>`;
+                }
+            }
+            document.getElementById('mail-actions').innerHTML = actionsHtml;
+        }
+
+        function handleMailAction(actionType) {
+            if(!currentMail) return;
+
+            if(currentMail.type === 'application') {
+                if(actionType === 'einladung') {
+                    alert(`Dem Bewerber wurde mitgeteilt, dass die Personalabteilung sich meldet.`);
+                    currentMail.replied = true;
+                    // Trigger HR Feedback after 10 seconds
+                    setTimeout(() => generateHREmail(currentMail.senderName, currentMail.role), 10000);
+                } else if(actionType === 'absage') {
+                    alert(`Absage an Bewerber verschickt.`);
+                    currentMail.replied = true;
+                }
+            } else if(currentMail.type === 'hr_feedback') {
+                if(actionType === 'annehmen') {
+                    employees.push({ name: currentMail.candidateName, role: currentMail.role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
+                    alert(`${currentMail.candidateName} wurde erfolgreich eingestellt!`);
+                    if(document.getElementById('app-personal').style.display === 'flex') renderExcel();
+                    currentMail.replied = true;
+                } else if(actionType === 'ablehnen') {
+                    alert(`Die Einstellung wurde gestoppt. Bewerber abgelehnt.`);
+                    currentMail.replied = true;
+                }
+            } else if(currentMail.type === 'ad') {
+                if(actionType === 'kaufen') {
+                    const newId = (currentMail.isTram ? 'TW ' : 'KOM ') + (Math.floor(Math.random()*9000)+1000);
+                    vehicles.push({ id: newId, type: currentMail.vehicleType, tuev: "10/2029", hu: "10/2029", status: "Einsatzbereit", repairUntil: null, problem: "" });
+                    alert(`Das Fahrzeug (${currentMail.vehicleType}) wurde bestellt und mit der ID ${newId} dem Betriebshof hinzugefügt!`);
+                    if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
+                    currentMail.replied = true;
+                } else if (actionType === 'ignorieren') {
+                    currentMail.replied = true;
+                }
+            } else {
+                currentMail.replied = true;
+            }
+            
+            renderMails();
+            openMail(emails.indexOf(currentMail)); 
+        }
+
+        function generateHREmail(candidateName, role) {
+            const hrMail = {
+                id: Date.now(),
+                type: 'hr_feedback',
+                candidateName: candidateName,
+                role: role,
+                sender: "Personalabteilung (CTS)",
+                subject: `Feedback Vorstellungsgespräch: ${candidateName}`,
+                read: false,
+                replied: false,
+                content: `Hallo Max,\n\nwir hatten soeben das Vorstellungsgespräch mit ${candidateName} für die Position als ${role}.\n\nDas Gespräch verlief äußerst positiv. Der Bewerber hat unsere fachlichen Fragen zur Fahrzeugtechnik und zum Tarifsystem einwandfrei beantwortet. Auch im simulierten Kundengespräch am Atron-System zeigte er sich freundlich und stressresistent. Wir haben die Führerscheine und Module (Kennziffer 95) geprüft – alles ist aktuell und fehlerfrei.\n\nAus Sicht der Personalabteilung geben wir absolut grünes Licht für diesen Kandidaten.\n\nBitte entscheide, ob wir den Arbeitsvertrag aufsetzen und die Einstellung finalisieren sollen.\n\nViele Grüße\nDeine Personalabteilung`
+            };
+            emails.unshift(hrMail);
+            showNotification("Neue Nachricht von Personalabteilung", hrMail.subject);
+            updateMailBadge();
+            if (document.getElementById('app-mail').style.display === 'flex') renderMails();
+        }
 
         // --- EXCEL / KALENDER LOGIK ---
         let currentPaintTool = "";
@@ -761,70 +865,6 @@
             });
             alert(`Herzlichen Glückwunsch!\nEin ${vehicle.type} wurde erfolgreich gekauft.\nDas Fahrzeug wurde mit der ID ${newId} deinem Betriebshof hinzugefügt!`);
             if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
-        }
-
-        // --- MAIL SYSTEM (Antwort Logik Update für smarte dynamische Antworten) ---
-        function renderMails() {
-            const list = document.getElementById('mail-list');
-            list.innerHTML = '';
-            emails.forEach((mail, idx) => {
-                const el = document.createElement('div');
-                el.className = `p-4 border-b border-slate-700 cursor-pointer hover:bg-slate-700 transition ${mail.read ? 'text-gray-400' : 'font-bold text-white'}`;
-                el.innerHTML = `
-                    <div class="text-sm truncate">${mail.sender} ${mail.replied ? '<span class="text-green-500 font-bold ml-2">↩</span>' : ''}</div>
-                    <div class="text-xs truncate text-blue-400">${mail.subject}</div>
-                `;
-                el.onclick = () => { openMail(idx); };
-                list.appendChild(el);
-            });
-        }
-        function openMail(idx) {
-            currentMail = emails[idx];
-            currentMail.read = true;
-            updateMailBadge();
-            renderMails();
-            document.getElementById('mail-content').innerHTML = `
-                <h2 class="text-xl font-bold mb-2">${currentMail.subject}</h2>
-                <p class="text-sm text-blue-400 mb-6">Von: ${currentMail.sender}</p>
-                <div class="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">${currentMail.content}</div>
-            `;
-            document.getElementById('mail-reply').value = '';
-        }
-        function sendReply() {
-            if(!currentMail) return alert('Bitte wähle zuerst eine E-Mail aus.');
-            const text = document.getElementById('mail-reply').value.toLowerCase();
-            if(text.trim() === '') return;
-            
-            // Logik: Einstellung / Personal
-            if(text.includes('zusage') || text.includes('eingestellt')) {
-                const name = currentMail.sender.split('(')[0].trim();
-                let role = "Busfahrer/in";
-                if(currentMail.subject.toLowerCase().includes('straßenbahn')) role = "Straßenbahnfahrer/in";
-                
-                employees.push({ name: name, role: role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
-                alert(`${name} wurde erfolgreich eingestellt! Du kannst nun Schichten im Kalender zuweisen.`);
-                if(document.getElementById('app-personal').style.display === 'flex') renderExcel();
-            }
-            // Logik: Fahrzeugkauf
-            else if(text.includes('kaufen') || text.includes('bestellen')) {
-                let vehicleType = "Sonderfahrzeug (Angebot)";
-                let isTram = false;
-                if(currentMail.subject.includes("Solaris")) vehicleType = "Solaris Urbino 18 electric";
-                if(currentMail.subject.includes("MAN")) vehicleType = "MAN Lion's City 18";
-                if(currentMail.subject.includes("eCitaro")) vehicleType = "Mercedes-Benz eCitaro G";
-                
-                const newId = (isTram ? 'TW ' : 'KOM ') + (Math.floor(Math.random()*9000)+1000);
-                vehicles.push({ id: newId, type: vehicleType, tuev: "10/2029", hu: "10/2029", status: "Einsatzbereit", repairUntil: null, problem: "" });
-                alert(`Der Kaufvertrag wurde bestätigt!\nFahrzeug (${vehicleType}) wurde mit ID ${newId} dem Betriebshof hinzugefügt!`);
-                if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
-            }
-            else {
-                alert("Nachricht erfolgreich an Absender verschickt.");
-            }
-            
-            currentMail.replied = true;
-            document.getElementById('mail-reply').value = '';
-            renderMails();
         }
 
         // --- BETRIEBSHOF & WERKSTATT ---
