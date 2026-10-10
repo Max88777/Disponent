@@ -24,7 +24,7 @@
             transform: none !important;
         }
 
-        /* Atron AFR410 Classic Design (based on image) */
+        /* Atron AFR410 Classic Design */
         .atron-screen { background-color: #B2FFFF; color: #000; font-family: 'Arial', sans-serif; }
         .atron-header { background-color: #008080; color: white; }
         
@@ -45,7 +45,8 @@
         .btn-stop { background-color: #FFFFFF; color: #000; font-weight: 900; border: 3px solid #000; font-size: 1.2rem;}
 
         /* Ticket/Ansagen Buttons on screen */
-        .ticket-btn { background-color: #FFFFFF; border: 2px solid #4ADE80; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .ticket-btn { background-color: #FFFFFF; border: 2px solid #4ADE80; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); transition: 0.1s; }
+        .ticket-btn:active { transform: scale(0.98); background-color: #f3f4f6; }
         .stop-box { background-color: #F0FDFA; border: 1px solid #5EEAD4; }
 
         /* Custom Scrollbar */
@@ -111,8 +112,7 @@
                 <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Personalverwaltung & Dienstpläne</div>
             </div>
             <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-                
-                <!-- Dienstplan Zuweisung (Realistisch) -->
+                <!-- Dienstplan Zuweisung -->
                 <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700">
                     <h3 class="text-lg font-bold mb-4 text-blue-400">Schicht & Dienstplan generieren</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -137,7 +137,6 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Personal Liste -->
                 <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto flex-1 border border-slate-700">
                     <div class="flex justify-between items-center mb-4">
@@ -154,9 +153,7 @@
                                 <th class="p-3 rounded-tr-lg">Aktion (Abweichung)</th>
                             </tr>
                         </thead>
-                        <tbody id="personal-list" class="divide-y divide-slate-700">
-                            <!-- Rendered dynamically -->
-                        </tbody>
+                        <tbody id="personal-list" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
@@ -184,9 +181,7 @@
                                 <th class="p-3 rounded-tr-lg">Werkstatt</th>
                             </tr>
                         </thead>
-                        <tbody id="betriebshof-list" class="divide-y divide-slate-700">
-                            <!-- Rendered dynamically -->
-                        </tbody>
+                        <tbody id="betriebshof-list" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
@@ -214,9 +209,7 @@
                                 <th class="p-3 rounded-tr-lg">Aktion</th>
                             </tr>
                         </thead>
-                        <tbody id="werkstatt-list" class="divide-y divide-slate-700">
-                            <!-- Rendered dynamically -->
-                        </tbody>
+                        <tbody id="werkstatt-list" class="divide-y divide-slate-700"></tbody>
                     </table>
                 </div>
             </div>
@@ -266,18 +259,11 @@
                 </div>
                 <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Atron AFR410 Terminal</div>
             </div>
+            
             <div class="flex-1 flex flex-col items-center justify-center bg-gray-300 overflow-y-auto p-4">
                 
-                <!-- LOGIN SCREEN -->
-                <div id="ibis-login" class="bg-white text-black p-8 rounded-lg shadow-xl w-96 text-center border-4 border-gray-400">
-                    <h2 class="text-2xl font-bold mb-2">Atron AFR410</h2>
-                    <p class="text-gray-500 mb-6 text-sm">Fahrer-Anmeldung</p>
-                    <input type="text" id="login-code" class="w-full bg-gray-100 p-3 rounded mb-4 text-center font-mono text-xl border border-gray-300" placeholder="Linie (z.B. 100) oder Schichtcode">
-                    <button onclick="startFahrt()" class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded font-bold transition">Dienst beginnen</button>
-                </div>
-
-                <!-- HARDWARE SHELL -->
-                <div id="ibis-hardware" class="hidden flex-col items-center w-full max-w-[950px]">
+                <!-- HARDWARE SHELL (Immer sichtbar) -->
+                <div id="ibis-hardware" class="flex flex-col items-center w-full max-w-[950px]">
                     <!-- Top Printer/Card Reader Module -->
                     <div class="w-[55%] h-24 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
                         <div class="absolute top-2 right-6 flex space-x-2">
@@ -296,12 +282,12 @@
                         <!-- Screen -->
                         <div id="ibis-screen" class="atron-screen w-full flex flex-col relative" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
                             
-                            <!-- Top Bar -->
+                            <!-- Top Bar (Immer da) -->
                             <div class="atron-header h-12 flex items-center justify-between px-2 font-bold shadow-sm">
                                 <div class="flex items-center space-x-1">
                                     <div class="bg-yellow-200 text-black px-2 py-1 shadow border border-yellow-400 text-lg">↓</div>
                                     <div class="bg-white text-gray-400 px-2 py-1 shadow border border-gray-200 text-lg">↑</div>
-                                    <div class="bg-white text-black px-3 py-1 shadow ml-2 min-w-[250px] border border-gray-300 text-sm" id="ibis-line-dest">824 - Hennigsdorf</div>
+                                    <div class="bg-white text-black px-3 py-1 shadow ml-2 min-w-[250px] border border-gray-300 text-sm" id="ibis-line-dest">System gesperrt</div>
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     <div class="flex space-x-px">
@@ -310,47 +296,55 @@
                                         <span class="bg-[#ef4444] text-white px-1 text-[10px] font-black border border-gray-400">GPS</span>
                                     </div>
                                     <div class="text-right leading-tight min-w-[80px]">
-                                        <div id="ibis-clock" class="text-lg">15:56:46</div>
-                                        <div id="ibis-delay" class="text-yellow-300 text-sm">-37:46</div>
+                                        <div id="ibis-clock" class="text-lg">--:--:--</div>
+                                        <div id="ibis-delay" class="text-yellow-300 text-sm"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Content -->
-                            <div class="flex-1 flex p-2 gap-2 text-sm font-semibold">
-                                <!-- Route List (Left) -->
-                                <div class="w-5/12 flex flex-col gap-1 overflow-hidden relative border-r-2 border-[#008080] pr-2" id="ibis-route-list">
-                                    <!-- Rendered dynamically -->
+                            <!-- LOGIN STATE (Direkt auf dem Bildschirm) -->
+                            <div id="ibis-state-login" class="flex-1 flex flex-col items-center justify-center p-4">
+                                <div class="bg-white border-2 border-[#008080] p-6 shadow-lg text-center max-w-md w-full">
+                                    <h3 class="text-xl font-bold mb-2">Atron AFR410 Anmeldung</h3>
+                                    <p class="text-sm text-gray-600 mb-4">Bitte Schichtcode oder Linie eingeben</p>
+                                    <input type="text" id="hw-login-code" class="w-full border border-gray-400 p-2 mb-4 text-center text-lg uppercase font-mono" placeholder="z.B. F-100-U1 oder 100">
+                                    <button onclick="startFahrt()" class="bg-[#008080] text-white font-bold py-2 px-6 shadow hover:bg-teal-700 w-full uppercase">Anmelden / OK</button>
                                 </div>
+                            </div>
+
+                            <!-- DRIVE STATE (Versteckt bis Anmeldung) -->
+                            <div id="ibis-state-drive" class="flex-1 flex p-2 gap-2 text-sm font-semibold hidden">
+                                <!-- Route List (Left) -->
+                                <div class="w-5/12 flex flex-col gap-1 overflow-hidden relative border-r-2 border-[#008080] pr-2" id="ibis-route-list"></div>
                                 
-                                <!-- Ansagen / Actions (Right, styled like Tickets) -->
+                                <!-- Ansagen / Actions (Right) -->
                                 <div class="w-7/12 flex flex-col gap-2">
                                     <div class="flex gap-2 h-1/4">
-                                        <button onclick="nextHaltestelle()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                        <button onclick="nextHaltestelle()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
                                             <span class="font-bold text-sm">Nächste Hst.</span>
                                             <span class="font-normal text-[10px] text-gray-600">Manuell weiterschalten</span>
                                         </button>
-                                        <button onclick="playSonderansage('fahrscheinkontrolle')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                        <button onclick="playSonderansage('fahrscheinkontrolle')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
                                             <span class="font-bold text-sm">Sonderansage</span>
                                             <span class="font-normal text-[10px] text-gray-600">Ticketkontrolle</span>
                                         </button>
                                     </div>
                                     <div class="flex gap-2 h-1/4">
-                                        <button onclick="wendeZug()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                        <button onclick="wendeZug()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
                                             <span class="font-bold text-sm">Wende / Rückfahrt</span>
                                             <span class="font-normal text-[10px] text-gray-600">Route umkehren</span>
                                         </button>
-                                        <button onclick="playSonderansage('aufrucken')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                        <button onclick="playSonderansage('aufrucken')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
                                             <span class="font-bold text-sm">Sonderansage</span>
                                             <span class="font-normal text-[10px] text-gray-600">Bitte aufrücken</span>
                                         </button>
                                     </div>
                                     <div class="flex gap-2 h-1/4">
-                                        <button onclick="playAnsage(currentStopName)" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                        <button onclick="playAnsage(currentStopName)" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
                                             <span class="font-bold text-sm">Ansage WH</span>
                                             <span class="font-normal text-[10px] text-gray-600">Erneut abspielen</span>
                                         </button>
-                                        <button onclick="playSonderansage('essen')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                        <button onclick="playSonderansage('essen')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
                                             <span class="font-bold text-sm">Sonderansage</span>
                                             <span class="font-normal text-[10px] text-gray-600">Essen & Trinken</span>
                                         </button>
@@ -428,13 +422,13 @@
             const now = new Date();
             document.getElementById('os-clock').innerText = now.toLocaleTimeString('de-DE');
             
-            // IBIS Uhrzeit Update
-            if(currentRoute && document.getElementById('ibis-hardware').classList.contains('flex')) {
+            // IBIS Uhrzeit Update (egal ob angemeldet oder nicht, solange Gerät sichtbar)
+            if(document.getElementById('app-ibis').style.display === 'flex') {
                 document.getElementById('ibis-clock').innerText = now.toLocaleTimeString('de-DE');
-                updateDelay();
+                if(currentRoute) updateDelay();
             }
 
-            // Werkstatt Timer Update
+            // Werkstatt Timer
             let updatedWerkstatt = false;
             vehicles.forEach(v => {
                 if (v.status === 'In Werkstatt' && v.repairUntil) {
@@ -446,13 +440,8 @@
                 }
             });
             
-            // Falls Fenster offen sind, UI updaten
-            if(document.getElementById('app-werkstatt').style.display === 'flex') {
-                renderWerkstatt();
-            }
-            if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') {
-                renderBetriebshof();
-            }
+            if(document.getElementById('app-werkstatt').style.display === 'flex') renderWerkstatt();
+            if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }, 1000);
 
         // --- DATENBANKEN ---
@@ -477,7 +466,7 @@
         let emails = [
             {
                 id: 1, sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false,
-                content: "Guten Tag Max Backhaus,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn war ich stets für die sichere Beförderung der Fahrgäste im Überland- und Stadtverkehr verantwortlich. Dabei bin ich bestens mit den gängigen Systemen, insbesondere den IBIS-Geräten der Firma Atron, vertraut. Auch der Umgang mit anspruchsvollen Verkehrssituationen, Ticketverkäufen und der Kommunikation mit der Leitstelle ist für mich selbstverständlich.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
+                content: "Hallo Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn war ich stets für die sichere Beförderung der Fahrgäste im Überland- und Stadtverkehr verantwortlich. Dabei bin ich bestens mit den gängigen Systemen, insbesondere den IBIS-Geräten der Firma Atron, vertraut. Auch der Umgang mit anspruchsvollen Verkehrssituationen, Ticketverkäufen und der Kommunikation mit der Leitstelle ist für mich selbstverständlich.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
             },
             {
                 id: 2, sender: "Andrea Schmidt (Rheinbahn AG)", subject: "Bewerbung als Straßenbahnfahrerin (FiF)", read: false, replied: false,
@@ -565,7 +554,6 @@
             if(type === 'S') times = "12:00 - 20:00";
             if(type === 'N') times = "20:00 - 04:00";
             
-            // Generate Realistic Shift Code (e.g. F-100-U1)
             const umlauf = Math.floor(Math.random() * 5) + 1;
             const code = `${type}-${lineId}-U${umlauf}`;
             
@@ -586,7 +574,7 @@
         function updateManualStatus(idx, newStatus) {
             employees[idx].status = newStatus;
             if(newStatus === 'Krank' || newStatus === 'Frei' || newStatus === 'Überstundenabbau') {
-                employees[idx].shift = null; // Clear shift if not working
+                employees[idx].shift = null;
             }
             renderPersonal();
         }
@@ -631,7 +619,7 @@
             const tbody = document.getElementById('betriebshof-list');
             tbody.innerHTML = '';
             vehicles.forEach((v, idx) => {
-                if(v.status !== 'Einsatzbereit') return; // Nur einsatzbereite Fahrzeuge hier zeigen
+                if(v.status !== 'Einsatzbereit') return;
                 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700 transition">
@@ -659,7 +647,6 @@
             const v = vehicles[idx];
             v.status = "In Werkstatt";
             v.problem = problems[Math.floor(Math.random() * problems.length)];
-            // Zufällige Dauer zwischen 1 und 5 Minuten (für Demo-Zwecke verkürzt, in "echt" wären es Stunden)
             const repairMinutes = Math.floor(Math.random() * 4) + 1;
             v.repairUntil = new Date(Date.now() + repairMinutes * 60000); 
             
@@ -758,17 +745,27 @@
         let currentStopName = "";
         let isDarkMode = false;
 
+        function playWelcomeMessage(destination) {
+            const text = `Willkommen an Bord. Unsere Fahrt geht nach ${destination}.`;
+            const audio = document.getElementById('tts-audio');
+            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${encodeURIComponent(text)}`;
+            audio.play().catch(e => console.log("Audio blockiert (braucht Nutzerinteraktion):", e));
+        }
+
         function startFahrt() {
-            const code = document.getElementById('login-code').value;
-            // Suche ob Linie (z.B. "100") oder Schichtcode (z.B. "F-100-U1") eingegeben wurde
+            const code = document.getElementById('hw-login-code').value.toUpperCase().trim();
+            if(!code) return alert("Bitte Code eingeben!");
+
+            // Ermittelt Linie aus dem Schichtcode (z.B. "100" aus "F-100-U1")
             let foundLineId = code;
             if(code.includes('-')) {
-                foundLineId = code.split('-')[1]; // Extrahiere "100" aus "F-100-U1"
+                foundLineId = code.split('-')[1]; 
             }
             
             currentRoute = routes.find(r => r.id === foundLineId);
-            if(!currentRoute) return alert("Linie oder Schicht nicht gefunden im System!");
+            if(!currentRoute) return alert("Linie oder Schicht nicht im Fahrplan gefunden!");
             
+            // Rechnet Startzeit strikt nach Fahrplan aus!
             const now = new Date();
             const [sh, sm] = currentRoute.start.split(':').map(Number);
             let taktStart = new Date(now);
@@ -783,28 +780,38 @@
             }
 
             currentStopIdx = 0;
-            document.getElementById('ibis-login').classList.add('hidden');
-            document.getElementById('ibis-hardware').classList.remove('hidden');
-            document.getElementById('ibis-hardware').classList.add('flex');
+            
+            // Wechselt den Status auf dem Atron Display
+            document.getElementById('ibis-state-login').classList.add('hidden');
+            document.getElementById('ibis-state-drive').classList.remove('hidden');
+            document.getElementById('ibis-state-drive').classList.add('flex');
             
             document.getElementById('ibis-line-dest').innerText = `${currentRoute.id} - ${currentRoute.stops[currentRoute.stops.length-1]}`;
             renderIbisStops();
-            playAnsage(currentRoute.stops[0]);
+            
+            // Startet Begrüßungsansage (zieht sich Zielort aus dem Fahrplan)
+            playWelcomeMessage(currentRoute.stops[currentRoute.stops.length-1]);
         }
 
         function beendeDienst() {
             currentRoute = null;
-            document.getElementById('ibis-hardware').classList.add('hidden');
-            document.getElementById('ibis-hardware').classList.remove('flex');
-            document.getElementById('ibis-login').classList.remove('hidden');
-            document.getElementById('login-code').value = '';
+            document.getElementById('ibis-state-drive').classList.add('hidden');
+            document.getElementById('ibis-state-drive').classList.remove('flex');
+            document.getElementById('ibis-state-login').classList.remove('hidden');
+            document.getElementById('hw-login-code').value = '';
+            document.getElementById('ibis-line-dest').innerText = 'System gesperrt';
+            document.getElementById('ibis-delay').innerText = '';
         }
 
         function nextHaltestelle() {
+            if(!currentRoute) return;
             if(currentStopIdx < currentRoute.stops.length - 1) {
                 currentStopIdx++;
                 renderIbisStops();
-                playAnsage(currentRoute.stops[currentStopIdx]);
+                
+                // Kontrolliert, ob Endstation erreicht ist und ändert die Ansage
+                const isEndstation = (currentStopIdx === currentRoute.stops.length - 1);
+                playAnsage(currentRoute.stops[currentStopIdx], isEndstation);
             }
         }
 
@@ -815,7 +822,7 @@
             routeStartTime = new Date(routeStartTime.getTime() + (currentRoute.dauer + currentRoute.pause) * 60000);
             document.getElementById('ibis-line-dest').innerText = `${currentRoute.id} - ${currentRoute.stops[currentRoute.stops.length-1]}`;
             renderIbisStops();
-            playAnsage(currentRoute.stops[0]);
+            playWelcomeMessage(currentRoute.stops[currentRoute.stops.length-1]);
         }
 
         function toggleDarkMode() {
@@ -884,12 +891,16 @@
         }
 
         // --- AUDIO / TTS ---
-        function playAnsage(station) {
-            const text = encodeURIComponent(`Nächster Halt: ${station}.`);
+        function playAnsage(station, isEnd = false) {
+            let text = `Nächste Haltestelle: ${station}.`;
+            if (isEnd) {
+                text += " Endstation. Bitte alle aussteigen. Auf Wiedersehen!";
+            }
             const audio = document.getElementById('tts-audio');
-            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${text}`;
-            audio.play();
+            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${encodeURIComponent(text)}`;
+            audio.play().catch(e => console.log("Audio blockiert:", e));
         }
+
         function playSonderansage(type) {
             let text = "";
             if(type === 'fahrscheinkontrolle') text = "Sehr geehrte Fahrgäste, bitte halten Sie Ihre Fahrausweise zur Kontrolle bereit.";
@@ -897,7 +908,7 @@
             if(type === 'essen') text = "Wir weisen Sie darauf hin, dass der Verzehr von Speisen und Getränken in diesem Fahrzeug nicht gestattet ist.";
             const audio = document.getElementById('tts-audio');
             audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${encodeURIComponent(text)}`;
-            audio.play();
+            audio.play().catch(e => console.log("Audio blockiert:", e));
         }
         
         // Start apps
