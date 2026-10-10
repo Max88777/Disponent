@@ -63,8 +63,9 @@
             <button onclick="openApp('mail')" class="hover:text-blue-300 transition">CTS Mail</button>
             <button onclick="openApp('ibis')" class="hover:text-blue-300 transition">Atron IBIS</button>
             <button onclick="openApp('routen')" class="hover:text-blue-300 transition">Routen-Editor</button>
-            <button onclick="openApp('betriebshof')" class="hover:text-blue-300 transition">Betriebshof & Werkstatt</button>
-            <button onclick="openApp('personal')" class="hover:text-blue-300 transition">Personal & Dienstplan</button>
+            <button onclick="openApp('personal')" class="hover:text-blue-300 transition">Dienstplan</button>
+            <button onclick="openApp('betriebshof')" class="hover:text-blue-300 transition">Betriebshof</button>
+            <button onclick="openApp('werkstatt')" class="hover:text-yellow-400 text-yellow-500 transition flex items-center gap-1">🔧 Werkstatt</button>
         </div>
         <div class="flex items-center space-x-4">
             <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>Online</span>
@@ -92,15 +93,171 @@
                         <p class="text-gray-500 mt-20 text-center">Wähle eine E-Mail aus, um sie zu lesen.</p>
                     </div>
                     <div class="p-4 bg-slate-800 border-t border-slate-700">
-                        <textarea id="mail-reply" class="w-full bg-slate-900 text-sm p-3 rounded border border-slate-600 focus:outline-none focus:border-blue-500 text-white" rows="3" placeholder="Formelle Antwort verfassen (Schreibe 'Zusage' für Einstellung)..."></textarea>
+                        <textarea id="mail-reply" class="w-full bg-slate-900 text-sm p-3 rounded border border-slate-600 focus:outline-none focus:border-blue-500 text-white" rows="3" placeholder="Antwort verfassen (Schreibe 'Zusage' für Einstellung, 'Kaufen' für Fahrzeuge)..."></textarea>
                         <button onclick="sendReply()" class="mt-2 bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded text-sm font-semibold float-right transition">Senden</button>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- ================= PERSONAL & DIENSTPLAN ================= -->
+        <div id="app-personal" class="os-window absolute w-[950px] h-[650px] top-[8%] left-[18%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('personal')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-personal')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Personalverwaltung & Dienstpläne</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
+                
+                <!-- Dienstplan Zuweisung (Realistisch) -->
+                <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 text-blue-400">Schicht & Dienstplan generieren</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Mitarbeiter wählen</label>
+                            <select id="shift-emp" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Schichtart</label>
+                            <select id="shift-type" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
+                                <option value="F">Frühschicht (04:00 - 12:00)</option>
+                                <option value="S">Spätschicht (12:00 - 20:00)</option>
+                                <option value="N">Nachtschicht (20:00 - 04:00)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Linie zuweisen</label>
+                            <select id="shift-line" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white"></select>
+                        </div>
+                        <div>
+                            <button onclick="generateShift()" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded text-sm font-bold transition shadow-lg">Schicht generieren</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personal Liste -->
+                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto flex-1 border border-slate-700">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold">Aktuelle Dienstpläne</h3>
+                        <button onclick="addEmployeeDemo()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded transition">+ Neuer Mitarbeiter</button>
+                    </div>
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-700 text-gray-300">
+                            <tr>
+                                <th class="p-3 rounded-tl-lg">Mitarbeiter</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3">Schichtcode</th>
+                                <th class="p-3">Zeiten / Linie</th>
+                                <th class="p-3 rounded-tr-lg">Aktion (Abweichung)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personal-list" class="divide-y divide-slate-700">
+                            <!-- Rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= BETRIEBSHOF ================= -->
+        <div id="app-betriebshof" class="os-window absolute w-[900px] h-[600px] top-[15%] left-[10%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('betriebshof')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-betriebshof')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Betriebshof (Einsatzbereite Fahrzeuge)</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto border border-slate-700">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-700 text-gray-300">
+                            <tr>
+                                <th class="p-3 rounded-tl-lg">Fahrzeug-ID</th>
+                                <th class="p-3">Fahrzeugtyp</th>
+                                <th class="p-3">TÜV / HU</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 rounded-tr-lg">Werkstatt</th>
+                            </tr>
+                        </thead>
+                        <tbody id="betriebshof-list" class="divide-y divide-slate-700">
+                            <!-- Rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= WERKSTATT ================= -->
+        <div id="app-werkstatt" class="os-window absolute w-[800px] h-[500px] top-[20%] left-[25%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('werkstatt')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-werkstatt')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-yellow-400 font-bold">Wartung & Werkstatt</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto border border-yellow-700">
+                    <h3 class="text-lg font-bold mb-4 text-yellow-400">Aktuell in Reparatur</h3>
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-700 text-gray-300">
+                            <tr>
+                                <th class="p-3 rounded-tl-lg">Fahrzeug-ID</th>
+                                <th class="p-3">Problem</th>
+                                <th class="p-3">Verbleibende Reparaturzeit</th>
+                                <th class="p-3 rounded-tr-lg">Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="werkstatt-list" class="divide-y divide-slate-700">
+                            <!-- Rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ROUTEN EDITOR ================= -->
+        <div id="app-routen" class="os-window absolute w-[900px] h-[600px] top-[12%] left-[12%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('routen')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-routen')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Routen-Editor & Taktplanung</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="bg-slate-800 p-5 rounded-lg mb-6 shadow-lg border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 text-blue-400">Fahrplan & Takt anlegen</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-9 gap-4 mb-4 text-sm">
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Typ</label><select id="n-typ" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Bus</option><option>Tram</option></select></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Art</label><select id="n-art" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Stadt</option><option>Überland</option></select></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Verlauf</label><select id="n-verlauf" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Pendel</option><option>Ring</option></select></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Linie</label><input type="text" id="n-nr" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="101"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Dauer(m)</label><input type="number" id="n-dauer" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="45"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Pause(m)</label><input type="number" id="n-pause" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="10"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Umläufe</label><input type="number" id="n-uml" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="1"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Start(Uhr)</label><input type="text" id="n-start" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="06:00"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Takt(m)</label><input type="number" id="n-takt" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="20"></div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 text-sm">Haltestellen (Komma getrennt)</label>
+                        <input type="text" id="n-stops" class="w-full bg-slate-900 p-2 border border-slate-600 rounded mb-4 text-white" placeholder="Hbf, Marktplatz, Rathaus">
+                    </div>
+                    <button onclick="addRoute()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-bold shadow-lg transition">Linie speichern</button>
+                </div>
+                <div id="routen-list" class="space-y-4"></div>
+            </div>
+        </div>
+
         <!-- ================= ATRON IBIS APP ================= -->
-        <div id="app-ibis" class="os-window absolute w-[1000px] h-[750px] top-[2%] left-[15%] rounded-xl hidden flex flex-col">
+        <div id="app-ibis" class="os-window absolute w-[1000px] h-[750px] top-[2%] left-[20%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
                     <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('ibis')"></div>
@@ -115,7 +272,7 @@
                 <div id="ibis-login" class="bg-white text-black p-8 rounded-lg shadow-xl w-96 text-center border-4 border-gray-400">
                     <h2 class="text-2xl font-bold mb-2">Atron AFR410</h2>
                     <p class="text-gray-500 mb-6 text-sm">Fahrer-Anmeldung</p>
-                    <input type="text" id="login-code" class="w-full bg-gray-100 p-3 rounded mb-4 text-center font-mono text-xl border border-gray-300" placeholder="Linie (z.B. 100)">
+                    <input type="text" id="login-code" class="w-full bg-gray-100 p-3 rounded mb-4 text-center font-mono text-xl border border-gray-300" placeholder="Linie (z.B. 100) oder Schichtcode">
                     <button onclick="startFahrt()" class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded font-bold transition">Dienst beginnen</button>
                 </div>
 
@@ -168,7 +325,6 @@
                                 
                                 <!-- Ansagen / Actions (Right, styled like Tickets) -->
                                 <div class="w-7/12 flex flex-col gap-2">
-                                    <!-- Row 1 -->
                                     <div class="flex gap-2 h-1/4">
                                         <button onclick="nextHaltestelle()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
                                             <span class="font-bold text-sm">Nächste Hst.</span>
@@ -179,7 +335,6 @@
                                             <span class="font-normal text-[10px] text-gray-600">Ticketkontrolle</span>
                                         </button>
                                     </div>
-                                    <!-- Row 2 -->
                                     <div class="flex gap-2 h-1/4">
                                         <button onclick="wendeZug()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
                                             <span class="font-bold text-sm">Wende / Rückfahrt</span>
@@ -190,7 +345,6 @@
                                             <span class="font-normal text-[10px] text-gray-600">Bitte aufrücken</span>
                                         </button>
                                     </div>
-                                    <!-- Row 3 -->
                                     <div class="flex gap-2 h-1/4">
                                         <button onclick="playAnsage(currentStopName)" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
                                             <span class="font-bold text-sm">Ansage WH</span>
@@ -201,9 +355,8 @@
                                             <span class="font-normal text-[10px] text-gray-600">Essen & Trinken</span>
                                         </button>
                                     </div>
-                                    <!-- Row 4 -->
                                     <div class="flex gap-2 h-1/4">
-                                        <div class="flex-1"></div> <!-- Empty space for alignment -->
+                                        <div class="flex-1"></div>
                                         <div class="flex gap-2 items-end pb-1 pr-1">
                                             <button class="bg-white border-2 border-gray-400 p-2 text-black text-2xl font-bold w-12 h-12 flex items-center justify-center shadow">↓</button>
                                             <button class="bg-white border-2 border-gray-400 p-2 text-gray-400 text-2xl font-bold w-12 h-12 flex items-center justify-center shadow">↑</button>
@@ -212,7 +365,7 @@
                                 </div>
                             </div>
 
-                            <!-- Hardware Bottom Bar (Exactly like image) -->
+                            <!-- Hardware Bottom Bar -->
                             <div class="atron-bottom-bar h-[60px] flex items-center px-2 gap-1 py-1 w-full absolute bottom-0">
                                 <button onclick="toggleDarkMode()" class="btn-moon h-full w-14 rounded shadow flex items-center justify-center text-2xl" title="Dark Mode">🌙</button>
                                 <button onclick="beendeDienst()" class="btn-storno h-full w-14 rounded shadow flex items-center justify-center">STORNO</button>
@@ -227,120 +380,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- ================= PERSONAL & DIENSTPLAN ================= -->
-        <div id="app-personal" class="os-window absolute w-[850px] h-[600px] top-[10%] left-[20%] rounded-xl hidden flex flex-col">
-            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
-                <div class="flex space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('personal')"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-personal')"></div>
-                </div>
-                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Personalverwaltung & Dienstpläne</div>
-            </div>
-            <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-                <!-- Dienstplan erstellen / Mitarbeiter hinzufügen -->
-                <div class="bg-slate-800 p-4 rounded-lg shadow-lg border border-slate-700">
-                    <h3 class="text-lg font-bold mb-3 text-blue-400">Neuen Mitarbeiter anlegen / Dienstplan erstellen</h3>
-                    <div class="flex gap-3">
-                        <input type="text" id="p-name" placeholder="Name des Mitarbeiters" class="flex-1 bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
-                        <select id="p-role" class="bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
-                            <option>Busfahrer/in</option>
-                            <option>Straßenbahnfahrer/in</option>
-                            <option>Disponent/in</option>
-                            <option>Werkstatt</option>
-                        </select>
-                        <button onclick="addEmployee()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-bold transition">Anlegen</button>
-                    </div>
-                </div>
-
-                <!-- Personal Liste -->
-                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto flex-1 border border-slate-700">
-                    <h3 class="text-lg font-bold mb-3">Mitarbeiterübersicht</h3>
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-slate-700 text-gray-300">
-                            <tr>
-                                <th class="p-3 rounded-tl-lg">Name</th>
-                                <th class="p-3">Position</th>
-                                <th class="p-3">Aktueller Status</th>
-                                <th class="p-3 rounded-tr-lg">Dienstplan Aktion</th>
-                            </tr>
-                        </thead>
-                        <tbody id="personal-list" class="divide-y divide-slate-700">
-                            <!-- Rendered dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= BETRIEBSHOF & WERKSTATT ================= -->
-        <div id="app-betriebshof" class="os-window absolute w-[900px] h-[600px] top-[15%] left-[25%] rounded-xl hidden flex flex-col">
-            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
-                <div class="flex space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('betriebshof')"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-betriebshof')"></div>
-                </div>
-                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Betriebshof & Werkstatt</div>
-            </div>
-            <div class="p-6 overflow-y-auto flex-1">
-                <div class="flex justify-between items-end mb-4">
-                    <h2 class="text-xl font-bold">Fahrzeugflotte & Wartung</h2>
-                    <span class="text-xs text-gray-400">TÜV / HU Überwachung aktiv</span>
-                </div>
-                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto border border-slate-700">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-slate-700 text-gray-300">
-                            <tr>
-                                <th class="p-3 rounded-tl-lg">Fahrzeug-ID</th>
-                                <th class="p-3">Fahrzeugtyp</th>
-                                <th class="p-3">TÜV / HU Status</th>
-                                <th class="p-3">Einsatzstatus</th>
-                                <th class="p-3 rounded-tr-lg">Werkstatt-Aktion</th>
-                            </tr>
-                        </thead>
-                        <tbody id="betriebshof-list" class="divide-y divide-slate-700">
-                            <!-- Rendered dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= ROUTEN EDITOR ================= -->
-        <div id="app-routen" class="os-window absolute w-[900px] h-[600px] top-[12%] left-[12%] rounded-xl hidden flex flex-col">
-            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
-                <div class="flex space-x-2">
-                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('routen')"></div>
-                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-routen')"></div>
-                </div>
-                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Routen-Editor & Taktplanung</div>
-            </div>
-            <div class="p-6 overflow-y-auto flex-1">
-                <div class="bg-slate-800 p-5 rounded-lg mb-6 shadow-lg border border-slate-700">
-                    <h3 class="text-lg font-bold mb-4 text-blue-400">Fahrplan & Takt anlegen</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-9 gap-4 mb-4 text-sm">
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Typ</label><select id="n-typ" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Bus</option><option>Tram</option></select></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Art</label><select id="n-art" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Stadt</option><option>Überland</option></select></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Verlauf</label><select id="n-verlauf" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Pendel</option><option>Ring</option></select></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Linie</label><input type="text" id="n-nr" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="101"></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Dauer(m)</label><input type="number" id="n-dauer" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="45"></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Pause(m)</label><input type="number" id="n-pause" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="10"></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Umläufe</label><input type="number" id="n-uml" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="1"></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Start(Uhr)</label><input type="text" id="n-start" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="06:00"></div>
-                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Takt(m)</label><input type="number" id="n-takt" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="20"></div>
-                    </div>
-                    <div>
-                        <label class="block text-gray-400 mb-1 text-sm">Haltestellen (Komma getrennt)</label>
-                        <input type="text" id="n-stops" class="w-full bg-slate-900 p-2 border border-slate-600 rounded mb-4 text-white" placeholder="Hbf, Marktplatz, Rathaus">
-                    </div>
-                    <button onclick="addRoute()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-bold shadow-lg transition">Linie speichern</button>
-                </div>
-                <div id="routen-list" class="space-y-4"></div>
             </div>
         </div>
 
@@ -376,53 +415,77 @@
             win.style.display = 'flex';
             win.style.zIndex = ++highestZ;
             if(id === 'mail') renderMails();
-            if(id === 'personal') renderPersonal();
+            if(id === 'personal') { populateShiftSelects(); renderPersonal(); }
             if(id === 'betriebshof') renderBetriebshof();
+            if(id === 'werkstatt') renderWerkstatt();
             if(id === 'routen') renderRoutes();
         }
         function closeApp(id) { document.getElementById('app-' + id).style.display = 'none'; }
         function toggleMaximize(id) { document.getElementById(id).classList.toggle('maximized'); }
 
-        // --- UHRZEIT ---
+        // --- UHRZEIT & WERKSTATT TIMER ---
         setInterval(() => {
             const now = new Date();
             document.getElementById('os-clock').innerText = now.toLocaleTimeString('de-DE');
+            
+            // IBIS Uhrzeit Update
             if(currentRoute && document.getElementById('ibis-hardware').classList.contains('flex')) {
                 document.getElementById('ibis-clock').innerText = now.toLocaleTimeString('de-DE');
                 updateDelay();
+            }
+
+            // Werkstatt Timer Update
+            let updatedWerkstatt = false;
+            vehicles.forEach(v => {
+                if (v.status === 'In Werkstatt' && v.repairUntil) {
+                    if (now >= v.repairUntil) {
+                        v.status = 'Einsatzbereit';
+                        v.repairUntil = null;
+                        updatedWerkstatt = true;
+                    }
+                }
+            });
+            
+            // Falls Fenster offen sind, UI updaten
+            if(document.getElementById('app-werkstatt').style.display === 'flex') {
+                renderWerkstatt();
+            }
+            if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') {
+                renderBetriebshof();
             }
         }, 1000);
 
         // --- DATENBANKEN ---
         let routes = [
             { id: "824", type: "Bus", art: "Überland", verlauf: "Pendel", dauer: 38, pause: 12, start: "05:00", takt: 20, stops: ["S Oranienburg", "Bernauer Str.", "Breite Str.", "Kremmener Str.", "Umspannwerk", "Hennigsdorf"] },
-            { id: "100", type: "Bus", art: "Stadtbus", verlauf: "Pendel", dauer: 45, pause: 10, start: "06:00", takt: 20, stops: ["Hauptbahnhof", "Marktplatz", "Rathaus", "Klinikum", "Stadion"] }
+            { id: "100", type: "Bus", art: "Stadtbus", verlauf: "Pendel", dauer: 45, pause: 10, start: "06:00", takt: 20, stops: ["Hauptbahnhof", "Marktplatz", "Rathaus", "Klinikum", "Stadion"] },
+            { id: "1", type: "Tram", art: "Straßenbahn", verlauf: "Ring", dauer: 30, pause: 5, start: "05:30", takt: 15, stops: ["Hbf", "Oper", "Theater", "Messe"] }
         ];
 
         let employees = [
-            { name: "Jürgen Wagner", role: "Busfahrer/in", status: "Im Dienst" },
-            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", status: "Frei" },
-            { name: "Tom Meier", role: "Busfahrer/in", status: "Überstundenabbau" }
+            { name: "Jürgen Wagner", role: "Busfahrer/in", status: "Ruhezeit", shift: null },
+            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", status: "Ruhezeit", shift: null },
+            { name: "Tom Meier", role: "Busfahrer/in", status: "Überstundenabbau", shift: null }
         ];
 
         let vehicles = [
-            { id: "KOM 1042", type: "Mercedes-Benz Citaro (Gelenk)", tuev: "10/2027", hu: "05/2027", status: "Einsatzbereit" },
-            { id: "KOM 1015", type: "Solaris Urbino 18", tuev: "04/2028", hu: "02/2028", status: "Einsatzbereit" },
-            { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "In Werkstatt" }
+            { id: "KOM 1042", type: "Mercedes-Benz Citaro", tuev: "10/2027", hu: "05/2027", status: "Einsatzbereit", repairUntil: null, problem: "" },
+            { id: "KOM 1015", type: "Solaris Urbino 18", tuev: "04/2028", hu: "02/2028", status: "Einsatzbereit", repairUntil: null, problem: "" },
+            { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "Einsatzbereit", repairUntil: null, problem: "" }
         ];
 
         let emails = [
             {
                 id: 1, sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false,
-                content: "Sehr geehrter Herr Backhaus,\n\nmit großem Interesse habe ich Ihre Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn war ich stets für die sichere Beförderung der Fahrgäste im Überland- und Stadtverkehr verantwortlich. Dabei bin ich bestens mit den gängigen Systemen, insbesondere den IBIS-Geräten der Firma Atron, vertraut. Auch der Umgang mit anspruchsvollen Verkehrssituationen, Ticketverkäufen und der Kommunikation mit der Leitstelle ist für mich selbstverständlich.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Gerne möchte ich mein Fachwissen in Ihr Unternehmen einbringen.\n\nÜber eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
+                content: "Guten Tag Max Backhaus,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn war ich stets für die sichere Beförderung der Fahrgäste im Überland- und Stadtverkehr verantwortlich. Dabei bin ich bestens mit den gängigen Systemen, insbesondere den IBIS-Geräten der Firma Atron, vertraut. Auch der Umgang mit anspruchsvollen Verkehrssituationen, Ticketverkäufen und der Kommunikation mit der Leitstelle ist für mich selbstverständlich.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
             },
             {
                 id: 2, sender: "Andrea Schmidt (Rheinbahn AG)", subject: "Bewerbung als Straßenbahnfahrerin (FiF)", read: false, replied: false,
-                content: "Sehr geehrter Herr Backhaus,\n\nhiermit bewerbe ich mich um die offene Stelle als Straßenbahnfahrerin in Ihrem Verkehrsbetrieb. Nach meiner erfolgreich abgeschlossenen Ausbildung zur Fachkraft im Fahrbetrieb (FiF) bin ich nun seit drei Jahren bei der Rheinbahn AG in Düsseldorf im aktiven Fahrdienst tätig und suche nun nach einer neuen beruflichen Herausforderung.\n\nZu meinen täglichen Aufgaben gehört die sichere Führung von Niederflur- und Stadtbahnwagen, die präzise Fahrgastinformation über die Bordsysteme sowie die schnelle und routinierte Störungsbeseitigung an den Fahrzeugen. Ich behalte auch in stressigen Situationen, wie etwa bei Großveranstaltungen, Schienenersatzverkehr oder widrigen Wetterbedingungen, stets einen kühlen Kopf und halte mich exakt an die Dienstpläne.\n\nDa ich von den modernen Strukturen und dem Fuhrpark Ihres Unternehmens gehört habe, sehe ich hier den idealen nächsten Schritt für meine Karriere. Meine Unterlagen liegen bei, und ich stehe für ein Probearbeiten jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\nAndrea Schmidt"
+                content: "Hallo Max,\n\nhiermit bewerbe ich mich um die offene Stelle als Straßenbahnfahrerin in deinem Verkehrsbetrieb. Nach meiner erfolgreich abgeschlossenen Ausbildung zur Fachkraft im Fahrbetrieb (FiF) bin ich nun seit drei Jahren bei der Rheinbahn AG in Düsseldorf im aktiven Fahrdienst tätig und suche nun nach einer neuen beruflichen Herausforderung.\n\nZu meinen täglichen Aufgaben gehört die sichere Führung von Niederflur- und Stadtbahnwagen, die präzise Fahrgastinformation über die Bordsysteme sowie die schnelle und routinierte Störungsbeseitigung an den Fahrzeugen. Ich behalte auch in stressigen Situationen, wie etwa bei Großveranstaltungen, Schienenersatzverkehr oder widrigen Wetterbedingungen, stets einen kühlen Kopf und halte mich exakt an die Dienstpläne.\n\nDa ich von den modernen Strukturen und dem Fuhrpark deines Unternehmens gehört habe, sehe ich hier den idealen nächsten Schritt für meine Karriere. Meine Unterlagen liegen bei, und ich stehe für ein Probearbeiten jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\nAndrea Schmidt"
             },
             {
                 id: 3, sender: "EvoBus Vertrieb Deutschland", subject: "Angebot: Neuer Mercedes-Benz eCitaro für Ihre Flotte", read: false, replied: false,
-                content: "Sehr geehrter Herr Backhaus,\n\nwir bedanken uns für Ihr Interesse an der Elektrifizierung Ihrer Flotte und die gute Zusammenarbeit in den vergangenen Jahren. Anbei erhalten Sie unser unverbindliches Angebot für einen neuen Mercedes-Benz eCitaro G (Gelenkbus) der neuesten Generation, inklusive kompletter Ladeinfrastruktur für Ihren Betriebshof.\n\nFahrzeugdaten:\n- Modell: eCitaro G (18 Meter)\n- Batteriekapazität: 441 kWh (Festkörperbatterie)\n- Reichweite: Garantiert 250 km auch im Winterbetrieb\n- Ausstattung: Klimaautomatik, Atron AFR410 Vorrüstung, WLAN für Fahrgäste\n\nFahrzeugpreis: 650.000 € netto\nLieferzeit: 4 Monate ab Bestelleingang\n\nWenn Sie dieses Angebot annehmen und das Fahrzeug in Ihren Betriebshof aufnehmen möchten, antworten Sie bitte einfach auf diese Mail mit den Worten 'Kaufen' oder 'Bestellen'. Wir leiten dann umgehend alles in die Wege.\n\nMit freundlichen Grüßen\nIhr EvoBus Vertriebsteam"
+                content: "Hallo Max,\n\nwir bedanken uns für das Interesse an der Elektrifizierung der Flotte und die gute Zusammenarbeit in den vergangenen Jahren. Anbei das unverbindliche Angebot für einen neuen Mercedes-Benz eCitaro G (Gelenkbus) der neuesten Generation, inklusive kompletter Ladeinfrastruktur für den Betriebshof.\n\nFahrzeugdaten:\n- Modell: eCitaro G (18 Meter)\n- Batteriekapazität: 441 kWh (Festkörperbatterie)\n- Reichweite: Garantiert 250 km auch im Winterbetrieb\n- Ausstattung: Klimaautomatik, Atron AFR410 Vorrüstung, WLAN für Fahrgäste\n\nFahrzeugpreis: 650.000 € netto\nLieferzeit: 4 Monate ab Bestelleingang\n\nWenn das Angebot angenommen und das Fahrzeug in den Betriebshof aufgenommen werden soll, antworte bitte einfach auf diese Mail mit den Worten 'Kaufen' oder 'Bestellen'. Wir leiten dann umgehend alles in die Wege.\n\nMit freundlichen Grüßen\nEvoBus Vertriebsteam"
             }
         ];
         let currentMail = null;
@@ -460,14 +523,14 @@
             
             if(text.includes('zusage') || text.includes('eingestellt')) {
                 const name = currentMail.sender.split('(')[0].trim();
-                employees.push({ name: name, role: currentMail.subject.includes('Straßenbahn') ? 'Straßenbahnfahrer/in' : 'Busfahrer/in', status: 'Im Dienst' });
-                alert(`${name} wurde erfolgreich eingestellt und in den Dienstplan aufgenommen!`);
-                renderPersonal();
+                employees.push({ name: name, role: currentMail.subject.includes('Straßenbahn') ? 'Straßenbahnfahrer/in' : 'Busfahrer/in', status: 'Ruhezeit', shift: null });
+                alert(`${name} wurde erfolgreich eingestellt! Du kannst nun Schichten im Reiter Personal zuweisen.`);
+                if(document.getElementById('app-personal').style.display === 'flex') { populateShiftSelects(); renderPersonal(); }
             }
             if(text.includes('kaufen') || text.includes('bestellen')) {
-                vehicles.push({ id: `KOM ${Math.floor(Math.random()*9000)+1000}`, type: "Mercedes-Benz eCitaro (Elektro)", tuev: "10/2029", hu: "10/2029", status: "Einsatzbereit" });
+                vehicles.push({ id: `KOM ${Math.floor(Math.random()*9000)+1000}`, type: "Mercedes-Benz eCitaro (Elektro)", tuev: "10/2029", hu: "10/2029", status: "Einsatzbereit", repairUntil: null, problem: "" });
                 alert(`Der Mercedes-Benz eCitaro wurde bestellt und dem Betriebshof hinzugefügt!`);
-                renderBetriebshof();
+                if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
             }
             
             currentMail.replied = true;
@@ -476,47 +539,100 @@
         }
 
         // --- PERSONAL & DIENSTPLAN ---
-        function addEmployee() {
-            const name = document.getElementById('p-name').value;
-            const role = document.getElementById('p-role').value;
-            if(!name) return alert("Bitte Namen eingeben.");
-            employees.push({ name: name, role: role, status: "Im Dienst" });
-            document.getElementById('p-name').value = '';
+        function populateShiftSelects() {
+            const empSelect = document.getElementById('shift-emp');
+            const lineSelect = document.getElementById('shift-line');
+            empSelect.innerHTML = '';
+            lineSelect.innerHTML = '';
+            
+            employees.forEach((emp, idx) => {
+                empSelect.innerHTML += `<option value="${idx}">${emp.name} (${emp.role})</option>`;
+            });
+            routes.forEach(r => {
+                lineSelect.innerHTML += `<option value="${r.id}">Linie ${r.id} (${r.stops[0]} -> ${r.stops[r.stops.length-1]})</option>`;
+            });
+        }
+
+        function generateShift() {
+            const empIdx = document.getElementById('shift-emp').value;
+            const type = document.getElementById('shift-type').value;
+            const lineId = document.getElementById('shift-line').value;
+            
+            if(empIdx === "" || !lineId) return;
+            
+            const emp = employees[empIdx];
+            let times = "04:00 - 12:00";
+            if(type === 'S') times = "12:00 - 20:00";
+            if(type === 'N') times = "20:00 - 04:00";
+            
+            // Generate Realistic Shift Code (e.g. F-100-U1)
+            const umlauf = Math.floor(Math.random() * 5) + 1;
+            const code = `${type}-${lineId}-U${umlauf}`;
+            
+            emp.shift = { code: code, times: times, line: lineId };
+            emp.status = "Schicht geplant";
+            
             renderPersonal();
         }
+
+        function addEmployeeDemo() {
+            const name = prompt("Name des Mitarbeiters:");
+            if(!name) return;
+            employees.push({ name: name, role: "Fahrer/in (Flexibel)", status: "Ruhezeit", shift: null });
+            populateShiftSelects();
+            renderPersonal();
+        }
+
+        function updateManualStatus(idx, newStatus) {
+            employees[idx].status = newStatus;
+            if(newStatus === 'Krank' || newStatus === 'Frei' || newStatus === 'Überstundenabbau') {
+                employees[idx].shift = null; // Clear shift if not working
+            }
+            renderPersonal();
+        }
+
         function renderPersonal() {
             const tbody = document.getElementById('personal-list');
             tbody.innerHTML = '';
             employees.forEach((emp, idx) => {
-                let statusColor = emp.status === 'Im Dienst' ? 'text-green-400' : (emp.status === 'Frei' ? 'text-blue-400' : (emp.status === 'Krank' ? 'text-red-400' : 'text-yellow-400'));
+                let statusColor = 'text-gray-400';
+                if(emp.status === 'Schicht geplant' || emp.status === 'Im Dienst') statusColor = 'text-green-400';
+                if(emp.status === 'Frei' || emp.status === 'Ruhezeit') statusColor = 'text-blue-400';
+                if(emp.status === 'Krank') statusColor = 'text-red-400';
+                if(emp.status === 'Überstundenabbau') statusColor = 'text-yellow-400';
+
+                let shiftStr = emp.shift ? `<span class="font-bold text-white bg-slate-900 px-2 py-1 rounded border border-slate-600">${emp.shift.code}</span>` : '<span class="text-gray-600">-</span>';
+                let timeStr = emp.shift ? `${emp.shift.times} | Linie ${emp.shift.line}` : '-';
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700 transition">
-                        <td class="p-3 font-semibold">${emp.name}</td>
-                        <td class="p-3 text-gray-400">${emp.role}</td>
+                        <td class="p-3 font-semibold">${emp.name}<br><span class="text-xs text-gray-400">${emp.role}</span></td>
                         <td class="p-3 font-bold ${statusColor}">${emp.status}</td>
+                        <td class="p-3">${shiftStr}</td>
+                        <td class="p-3 text-xs text-gray-300">${timeStr}</td>
                         <td class="p-3">
-                            <select onchange="updateEmployeeStatus(${idx}, this.value)" class="bg-slate-900 border border-slate-600 rounded text-xs p-2 text-white outline-none focus:border-blue-500 w-40">
-                                <option ${emp.status === 'Im Dienst' ? 'selected' : ''}>Im Dienst</option>
-                                <option ${emp.status === 'Frei' ? 'selected' : ''}>Frei</option>
-                                <option ${emp.status === 'Überstundenabbau' ? 'selected' : ''}>Überstundenabbau</option>
-                                <option ${emp.status === 'Krank' ? 'selected' : ''}>Krank</option>
+                            <select onchange="updateManualStatus(${idx}, this.value)" class="bg-slate-900 border border-slate-600 rounded text-xs p-1 text-white outline-none w-32">
+                                <option value="" disabled selected>Aktion...</option>
+                                <option value="Krank">Krankmelden</option>
+                                <option value="Frei">In Frei schicken</option>
+                                <option value="Überstundenabbau">Überstundenabbau</option>
+                                <option value="Ruhezeit">Ruhezeit</option>
                             </select>
                         </td>
                     </tr>
                 `;
             });
         }
-        function updateEmployeeStatus(idx, newStatus) {
-            employees[idx].status = newStatus;
-            renderPersonal();
-        }
 
         // --- BETRIEBSHOF & WERKSTATT ---
+        const problems = ["Motorkontrollleuchte an", "Bremse quietscht", "IBIS bootet nicht", "Türen klemmen", "Scheibenwischer defekt", "Klimaanlage kühlt nicht"];
+
         function renderBetriebshof() {
             const tbody = document.getElementById('betriebshof-list');
             tbody.innerHTML = '';
             vehicles.forEach((v, idx) => {
-                let statusColor = v.status === 'Einsatzbereit' ? 'text-green-400' : 'text-red-400';
+                if(v.status !== 'Einsatzbereit') return; // Nur einsatzbereite Fahrzeuge hier zeigen
+                
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700 transition">
                         <td class="p-3 font-bold text-blue-300">${v.id}</td>
@@ -527,19 +643,72 @@
                                 <span><span class="font-bold text-gray-300">HU:</span> ${v.hu}</span>
                             </div>
                         </td>
-                        <td class="p-3 font-bold ${statusColor}">${v.status}</td>
+                        <td class="p-3 font-bold text-green-400">${v.status}</td>
                         <td class="p-3">
-                            <button onclick="toggleWerkstatt(${idx})" class="font-bold border rounded text-xs px-3 py-1.5 transition ${v.status === 'Einsatzbereit' ? 'border-yellow-600 text-yellow-500 hover:bg-yellow-900' : 'border-green-600 text-green-500 hover:bg-green-900'}">
-                                ${v.status === 'Einsatzbereit' ? 'In Werkstatt schicken' : 'Als repariert melden'}
+                            <button onclick="sendToWerkstatt(${idx})" class="font-bold border border-yellow-600 text-yellow-500 hover:bg-yellow-900 rounded text-xs px-3 py-1.5 transition">
+                                🔧 Zur Reparatur anmelden
                             </button>
                         </td>
                     </tr>
                 `;
             });
+            if(tbody.innerHTML === '') tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Alle Fahrzeuge sind in der Werkstatt.</td></tr>';
         }
-        function toggleWerkstatt(idx) {
-            vehicles[idx].status = vehicles[idx].status === 'Einsatzbereit' ? 'In Werkstatt' : 'Einsatzbereit';
+
+        function sendToWerkstatt(idx) {
+            const v = vehicles[idx];
+            v.status = "In Werkstatt";
+            v.problem = problems[Math.floor(Math.random() * problems.length)];
+            // Zufällige Dauer zwischen 1 und 5 Minuten (für Demo-Zwecke verkürzt, in "echt" wären es Stunden)
+            const repairMinutes = Math.floor(Math.random() * 4) + 1;
+            v.repairUntil = new Date(Date.now() + repairMinutes * 60000); 
+            
             renderBetriebshof();
+            if(document.getElementById('app-werkstatt').style.display === 'flex') {
+                renderWerkstatt();
+            } else {
+                alert(`Fahrzeug ${v.id} ist in der Werkstatt wegen: ${v.problem}.`);
+            }
+        }
+
+        function renderWerkstatt() {
+            const tbody = document.getElementById('werkstatt-list');
+            tbody.innerHTML = '';
+            const now = new Date();
+            
+            vehicles.forEach((v, idx) => {
+                if(v.status !== 'In Werkstatt') return;
+                
+                let timeStr = "Reparatur abgeschlossen";
+                if(v.repairUntil && v.repairUntil > now) {
+                    const diff = Math.floor((v.repairUntil - now) / 1000);
+                    const m = Math.floor(diff / 60).toString().padStart(2, '0');
+                    const s = (diff % 60).toString().padStart(2, '0');
+                    timeStr = `⏱ ${m}:${s} Min. verbleibend`;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700 transition">
+                        <td class="p-3 font-bold text-yellow-400">${v.id}</td>
+                        <td class="p-3 text-gray-300 text-xs">${v.problem}</td>
+                        <td class="p-3 font-mono text-blue-300">${timeStr}</td>
+                        <td class="p-3">
+                            <button onclick="forceRepair(${idx})" class="font-bold border border-green-600 text-green-500 hover:bg-green-900 rounded text-xs px-3 py-1.5 transition">
+                                Sofort reparieren (Notfall)
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            if(tbody.innerHTML === '') tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Keine Fahrzeuge in der Werkstatt.</td></tr>';
+        }
+
+        function forceRepair(idx) {
+            vehicles[idx].status = 'Einsatzbereit';
+            vehicles[idx].repairUntil = null;
+            vehicles[idx].problem = "";
+            renderWerkstatt();
+            if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }
 
         // --- ROUTEN EDITOR ---
@@ -558,6 +727,7 @@
             if(!r.id || r.stops.length < 2) return alert("Fehlerhafte Eingabe.");
             routes.push(r);
             renderRoutes();
+            if(document.getElementById('app-personal').style.display === 'flex') populateShiftSelects();
             alert("Linie gespeichert!");
         }
         function deleteRoute(idx) { routes.splice(idx, 1); renderRoutes(); }
@@ -590,8 +760,14 @@
 
         function startFahrt() {
             const code = document.getElementById('login-code').value;
-            currentRoute = routes.find(r => r.id === code);
-            if(!currentRoute) return alert("Linie nicht gefunden!");
+            // Suche ob Linie (z.B. "100") oder Schichtcode (z.B. "F-100-U1") eingegeben wurde
+            let foundLineId = code;
+            if(code.includes('-')) {
+                foundLineId = code.split('-')[1]; // Extrahiere "100" aus "F-100-U1"
+            }
+            
+            currentRoute = routes.find(r => r.id === foundLineId);
+            if(!currentRoute) return alert("Linie oder Schicht nicht gefunden im System!");
             
             const now = new Date();
             const [sh, sm] = currentRoute.start.split(':').map(Number);
@@ -726,7 +902,6 @@
         
         // Start apps
         openApp('mail');
-        openApp('ibis'); // Show ibis on start to check design
     </script>
 </body>
 </html>
