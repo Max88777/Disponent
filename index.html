@@ -110,9 +110,8 @@
                     <div class="p-6 flex-1 overflow-y-auto relative" id="mail-content">
                         <p class="text-gray-500 mt-20 text-center">Wähle eine E-Mail aus, um sie zu lesen.</p>
                     </div>
-                    <!-- Dynamische Buttons Bereich -->
                     <div id="mail-actions" class="p-4 bg-slate-800 border-t border-slate-700 flex gap-3 justify-end items-center min-h-[70px]">
-                        <!-- Wird per JS befüllt -->
+                        <!-- Dynamische Buttons -->
                     </div>
                 </div>
             </div>
@@ -526,11 +525,44 @@
         }
 
         const emailTemplates = [
-            { type: 'ad', vehicleType: "Solaris Urbino 18 electric", sender: "Solaris Bus & Coach", subject: "Sonderangebot: Solaris Urbino 18 electric", content: "Hallo Max,\n\nwir haben aktuell ein Sonderangebot für den Solaris Urbino 18 electric. Bei Abnahme von 2 Fahrzeugen gewähren wir 10% Rabatt.\nStückpreis: 450.000 €.\n\nViele Grüße\nSolaris Vertrieb" },
-            { type: 'application', senderName: "Michael Bauer", role: "Straßenbahnfahrer/in", sender: "Michael Bauer (BOGESTRA)", subject: "Bewerbung als Straßenbahnfahrer", content: "Guten Tag Max,\n\nich bewerbe mich hiermit als Straßenbahnfahrer. Ich fahre seit 4 Jahren bei der BOGESTRA (Variobahn und NF6D) und suche einen neuen Wirkungskreis.\n\nWürde mich über eine Einladung freuen.\n\nGruß,\nMichael Bauer" },
-            { type: 'info', sender: "Stadtwerke IT", subject: "Wartung der Leitstellen-Software", content: "Hallo Max,\n\nheute Nacht um 02:00 Uhr führen wir ein Update der Leitstellen-Software durch. Es kann zu kurzen Ausfällen im IBIS-System und bei den Dienstplänen kommen.\n\nGrüße,\nIT-Support" },
-            { type: 'ad', vehicleType: "MAN Lion's City 18", sender: "MAN Truck & Bus", subject: "Testfahrzeug MAN Lion's City 18", content: "Guten Tag,\n\nwir bieten euch einen Lion's City 18 für 2 Wochen als Testfahrzeug an. Kostenlos. Wenn Interesse besteht, ihn dauerhaft für 360.000 € in den Fuhrpark aufzunehmen, lasst es uns wissen.\n\nMAN Vertrieb" },
-            { type: 'application', senderName: "Lisa Schmidt", role: "Busfahrer/in", sender: "Lisa Schmidt (BVG)", subject: "Bewerbung als Busfahrerin", content: "Guten Tag,\n\nich bin Lisa und fahre seit 2 Jahren Doppeldecker in Berlin (BVG). Ich ziehe demnächst um und brauche einen neuen Job im Stadtverkehr.\n\nBitte um Rückmeldung!\n\nLG Lisa" }
+            { 
+                type: 'application', 
+                senderName: "Lukas Müller", 
+                role: "Busfahrer/in", 
+                sender: "Lukas Müller (DB Regio Bus)", 
+                subject: "Bewerbung als Busfahrer im Linienverkehr", 
+                content: "Guten Tag Leitstellen-Team (z.H. Max),\n\nmit großem Interesse habe ich Ihre Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nZu meinen Kernkompetenzen gehören:\n- Gültige Führerscheinklasse D und DE\n- Abgeschlossene Weiterbildung nach BKrFQG (Kennziffer 95)\n- Langjährige Erfahrung mit dem Atron AFR410 sowie INIT-Bordsystemen\n- Hohe Einsatzbereitschaft im Schichtdienst (auch Nachtschichten)\n- Eine zu 100% unfallfreie Akte im Linienverkehr\n\nIch bin hochmotiviert und pflege stets einen freundlichen Umgang mit den Fahrgästen. Da ich mich beruflich verändern möchte, steht einem zeitnahen Wechsel nichts im Wege.\n\nÜber eine Einladung zu einem persönlichen Vorstellungsgespräch würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller" 
+            },
+            { 
+                type: 'application', 
+                senderName: "Andrea Schmidt", 
+                role: "Straßenbahnfahrer/in", 
+                sender: "Andrea Schmidt (Rheinbahn AG)", 
+                subject: "Bewerbung als Straßenbahnfahrerin (FiF)", 
+                content: "Sehr geehrte Damen und Herren der Leitstelle CTS,\n\nhiermit bewerbe ich mich um die offene Stelle als Straßenbahnfahrerin in Ihrem Verkehrsbetrieb. Nach meiner erfolgreich abgeschlossenen Ausbildung zur Fachkraft im Fahrbetrieb (FiF) bin ich nun seit fast sechs Jahren bei der Rheinbahn AG in Düsseldorf im aktiven Fahrdienst tätig und suche nun nach einer neuen beruflichen Herausforderung in Ihrer Region.\n\nMeine Erfahrungen umfassen:\n- Die sichere Führung diverser Niederflur-Trams (inklusive Variobahn und Siemens ULF-Modelle)\n- Bedienung der Totmann- und Sifa-Systeme unter höchster Konzentration\n- Routinierte Störungsbeseitigung an den Fahrzeugen direkt auf der Strecke\n- Kundenorientiertes Handeln bei Schienenersatzverkehr und Großveranstaltungen\n\nDa ich von den modernen Strukturen und dem zukunftsorientierten Fuhrpark Ihres Unternehmens gehört habe, sehe ich hier den idealen nächsten Schritt für meine Karriere. Meine Unterlagen und Nachweise über die Streckenberechtigungen liegen dieser Mail bei.\n\nIch stehe für ein Probearbeiten oder Vorstellungsgespräch jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\nAndrea Schmidt" 
+            },
+            { 
+                type: 'application', 
+                senderName: "Jonas Becker", 
+                role: "Busfahrer/in", 
+                sender: "Jonas Becker (Kölner Verkehrs-Betriebe)", 
+                subject: "Initiativbewerbung für den Fahrdienst (Bus)", 
+                content: "Guten Tag,\n\nmein Name ist Jonas Becker und ich möchte mich hiermit initiativ als Busfahrer für Ihr Liniennetz bewerben. Ich habe meine Ausbildung bei der KVB (Köln) absolviert und dort in den letzten drei Jahren vor allem Erfahrung auf Gelenkbussen gesammelt (Mercedes-Benz Citaro G und MAN Lion's City 18).\n\nIch bin äußerst stressresistent, kenne mich hervorragend in komplexen Tarifstrukturen aus und bin bereit, auch unbeliebte Wochenend- und Spätschichten zu übernehmen. Die Fahrgastbetreuung macht mir große Freude, weshalb ich den Beruf des Busfahrers mit Leidenschaft ausübe.\n\nIch würde mich sehr freuen, wenn Sie mein Profil prüfen und mich zu einem Kennenlerngespräch einladen.\n\nViele Grüße\nJonas Becker" 
+            },
+            { 
+                type: 'ad', 
+                vehicleType: "Solaris Urbino 18 electric", 
+                sender: "Solaris Bus & Coach", 
+                subject: "Sonderangebot: Solaris Urbino 18 electric", 
+                content: "Hallo Leitstelle,\n\nwir haben aktuell ein Sonderangebot für den Solaris Urbino 18 electric. Bei sofortiger Abnahme gewähren wir auf Vorführwagen einen Rabatt.\nStückpreis: 450.000 €.\n\nAntworte mit 'Kaufen', um ein Fahrzeug zu ordern.\n\nViele Grüße\nSolaris Vertrieb" 
+            },
+            { 
+                type: 'ad', 
+                vehicleType: "MAN Lion's City 18", 
+                sender: "MAN Truck & Bus", 
+                subject: "Testfahrzeug MAN Lion's City 18", 
+                content: "Guten Tag,\n\nwir bieten euch einen MAN Lion's City 18 als Testfahrzeug an. Wenn Interesse besteht, ihn dauerhaft für 360.000 € in den Fuhrpark aufzunehmen, lasst es uns wissen (Antwort: 'Kaufen').\n\nMAN Vertrieb" 
+            }
         ];
 
         function receiveRandomEmail() {
@@ -578,7 +610,9 @@
         ];
 
         let emails = [
-            { id: 1, type: 'application', senderName: "Lukas Müller", role: "Busfahrer/in", sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false, content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller" }
+            { id: 1, type: 'application', senderName: "Lukas Müller", role: "Busfahrer/in", sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false, 
+              content: "Guten Tag Leitstellen-Team (z.H. Max),\n\nmit großem Interesse habe ich Ihre Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nZu meinen Kernkompetenzen gehören:\n- Gültige Führerscheinklasse D und DE\n- Abgeschlossene Weiterbildung nach BKrFQG (Kennziffer 95)\n- Langjährige Erfahrung mit dem Atron AFR410 sowie INIT-Bordsystemen\n- Hohe Einsatzbereitschaft im Schichtdienst (auch Nachtschichten)\n- Eine zu 100% unfallfreie Akte im Linienverkehr\n\nIch bin hochmotiviert und pflege stets einen freundlichen Umgang mit den Fahrgästen. Da ich mich beruflich verändern möchte, steht einem zeitnahen Wechsel nichts im Wege.\n\nÜber eine Einladung zu einem persönlichen Vorstellungsgespräch würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller" 
+            }
         ];
         let currentMail = null;
 
@@ -643,13 +677,13 @@
 
             if(currentMail.type === 'application') {
                 if(actionType === 'einladung') {
-                    alert(`Dem Bewerber wurde mitgeteilt, dass die Personalabteilung sich meldet.\n(Das Vorstellungsgespräch dauert nun etwas. Du erhältst später eine Benachrichtigung mit dem Feedback!)`);
+                    alert(`Dem Bewerber wurde eine formelle Bestätigung geschickt.\nDas Vorstellungsgespräch findet nun statt.\n\nBitte habe etwas Geduld, die Personalabteilung wird sich in ca. 1 bis 2 Minuten mit dem Feedback bei dir melden.`);
                     currentMail.replied = true;
-                    // Verzögerung für das HR Feedback: 60 - 120 Sekunden (1 bis 2 Minuten)
+                    // Zufällige Verzögerung für das HR Feedback: 60 bis 120 Sekunden
                     const interviewDauer = Math.floor(Math.random() * 60000) + 60000;
                     setTimeout(() => generateHREmail(currentMail.senderName, currentMail.role), interviewDauer);
                 } else if(actionType === 'absage') {
-                    alert(`Absage an Bewerber verschickt.`);
+                    alert(`Formelle Absage wurde an den Bewerber verschickt.`);
                     currentMail.replied = true;
                 }
             } else if(currentMail.type === 'hr_feedback') {
@@ -659,7 +693,7 @@
                     if(document.getElementById('app-personal').style.display === 'flex') renderExcel();
                     currentMail.replied = true;
                 } else if(actionType === 'ablehnen') {
-                    alert(`Die Einstellung wurde gestoppt. Bewerber abgelehnt.`);
+                    alert(`Die Einstellung wurde gestoppt. Bewerber wurde offiziell abgelehnt.`);
                     currentMail.replied = true;
                 }
             } else if(currentMail.type === 'ad') {
@@ -681,6 +715,23 @@
         }
 
         function generateHREmail(candidateName, role) {
+            const rand = Math.random();
+            let content = `Guten Tag,\n\nwir hatten soeben das Vorstellungsgespräch mit ${candidateName} für die Position als ${role}.\n\n`;
+            
+            // 3 Unterschiedliche Feedbacks (Top, Wackelkandidat, Durchgefallen)
+            if (rand > 0.6) {
+                // TOP
+                content += `Das Gespräch verlief äußerst positiv. Der Bewerber hat unsere fachlichen Fragen zur Fahrzeugtechnik und zum Tarifsystem einwandfrei beantwortet. Auch im simulierten Kundengespräch am Atron-System zeigte er/sie sich freundlich und stressresistent. Alle Lizenzen (inkl. Modul 95) sind gültig und fehlerfrei.\n\nAus Sicht der Personalabteilung geben wir absolut grünes Licht für diesen Kandidaten. Sollen wir den Arbeitsvertrag aufsetzen?`;
+            } else if (rand > 0.2) {
+                // WACKELKANDIDAT
+                content += `Das Gespräch war durchwachsen. Fachlich ist grundlegendes Wissen vorhanden, jedoch gab es spürbare Lücken bei den komplexeren Tarifzonen und der Bedienung des Atron-Systems. Der Bewerber wirkte zudem recht nervös bei Stressfragen.\n\nWir könnten ihn/sie einstellen, müssten aber definitiv noch 1-2 Wochen intensives Streckentraining einplanen. Wie möchtest du entscheiden? Risiko eingehen oder lieber absagen?`;
+            } else {
+                // DURCHGEFALLEN
+                content += `Leider müssen wir von einer Einstellung dringend abraten. Der Kandidat erschien 15 Minuten zu spät und zeigte im Gespräch erhebliche Wissenslücken im Bereich der Fahrzeugsicherheit. Zudem war das Auftreten im simulierten Kundengespräch sehr unfreundlich und absolut nicht kundenorientiert.\n\nWir empfehlen eine sofortige Absage. Bitte bestätige dies durch einen Klick auf 'Absagen', es sei denn, du bestehst trotz allem auf eine Einstellung.`;
+            }
+
+            content += `\n\nViele Grüße\nDeine Personalabteilung`;
+
             const hrMail = {
                 id: Date.now(),
                 type: 'hr_feedback',
@@ -690,10 +741,11 @@
                 subject: `Feedback Vorstellungsgespräch: ${candidateName}`,
                 read: false,
                 replied: false,
-                content: `Hallo Max,\n\nwir hatten soeben das Vorstellungsgespräch mit ${candidateName} für die Position als ${role}.\n\nDas Gespräch verlief äußerst positiv. Der Bewerber hat unsere fachlichen Fragen zur Fahrzeugtechnik und zum Tarifsystem einwandfrei beantwortet. Auch im simulierten Kundengespräch am Atron-System zeigte er sich freundlich und stressresistent. Wir haben die Führerscheine und Module (Kennziffer 95) geprüft – alles ist aktuell und fehlerfrei.\n\nAus Sicht der Personalabteilung geben wir absolut grünes Licht für diesen Kandidaten.\n\nBitte entscheide, ob wir den Arbeitsvertrag aufsetzen und die Einstellung finalisieren sollen.\n\nViele Grüße\nDeine Personalabteilung`
+                content: content
             };
+            
             emails.unshift(hrMail);
-            showNotification("Neue Nachricht von Personalabteilung", hrMail.subject);
+            showNotification("Personalabteilung", `Feedback zu ${candidateName} ist da!`);
             updateMailBadge();
             if (document.getElementById('app-mail').style.display === 'flex') renderMails();
         }
