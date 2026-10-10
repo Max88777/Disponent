@@ -113,6 +113,7 @@
                 <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Personalverwaltung & Dienstpläne</div>
             </div>
             <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
+                <!-- Dienstplan Zuweisung -->
                 <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700">
                     <h3 class="text-lg font-bold mb-4 text-blue-400">Schicht & Dienstplan generieren</h3>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
@@ -137,6 +138,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- Personal Liste -->
                 <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto flex-1 border border-slate-700">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-bold">Aktuelle Dienstpläne</h3>
@@ -159,7 +161,7 @@
         </div>
 
         <!-- ================= FAHRZEUGHANDEL (SHOP) ================= -->
-        <div id="app-shop" class="os-window absolute w-[950px] h-[650px] top-[10%] left-[5%] rounded-xl hidden flex flex-col">
+        <div id="app-shop" class="os-window absolute w-[1000px] h-[700px] top-[8%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
                     <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('shop')"></div>
@@ -278,10 +280,8 @@
             </div>
             
             <div class="flex-1 flex flex-col items-center justify-center bg-gray-300 overflow-y-auto p-4">
-                
                 <!-- HARDWARE SHELL -->
                 <div id="ibis-hardware" class="flex flex-col items-center w-full max-w-[950px]">
-                    <!-- Top Printer/Card Reader Module -->
                     <div class="w-[55%] h-24 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
                         <div class="absolute top-2 right-6 flex space-x-2">
                             <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
@@ -294,12 +294,8 @@
                         <div class="w-40 h-1.5 bg-black rounded-full shadow-inner"></div>
                     </div>
                     
-                    <!-- Main Tablet -->
                     <div class="w-full bg-black p-3 rounded-xl shadow-2xl border-[16px] border-black z-10 -mt-2">
-                        <!-- Screen -->
                         <div id="ibis-screen" class="atron-screen w-full flex flex-col relative" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
-                            
-                            <!-- Top Bar (Immer da) -->
                             <div class="atron-header h-12 flex items-center justify-between px-2 font-bold shadow-sm">
                                 <div class="flex items-center space-x-1">
                                     <div class="bg-yellow-200 text-black px-2 py-1 shadow border border-yellow-400 text-lg">↓</div>
@@ -319,7 +315,6 @@
                                 </div>
                             </div>
 
-                            <!-- LOGIN STATE -->
                             <div id="ibis-state-login" class="flex-1 flex flex-col items-center justify-center p-4">
                                 <div class="bg-white border-2 border-[#008080] p-6 shadow-lg text-center max-w-md w-full">
                                     <h3 class="text-xl font-bold mb-2">Atron AFR410 Anmeldung</h3>
@@ -329,12 +324,8 @@
                                 </div>
                             </div>
 
-                            <!-- DRIVE STATE -->
                             <div id="ibis-state-drive" class="flex-1 flex p-2 gap-2 text-sm font-semibold hidden">
-                                <!-- Route List (Left) -->
                                 <div class="w-5/12 flex flex-col gap-1 overflow-hidden relative border-r-2 border-[#008080] pr-2" id="ibis-route-list"></div>
-                                
-                                <!-- Ansagen / Actions (Right) -->
                                 <div class="w-7/12 flex flex-col gap-2">
                                     <div class="flex gap-2 h-1/4">
                                         <button onclick="nextHaltestelle()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
@@ -376,7 +367,6 @@
                                 </div>
                             </div>
 
-                            <!-- Hardware Bottom Bar -->
                             <div class="atron-bottom-bar h-[60px] flex items-center px-2 gap-1 py-1 w-full absolute bottom-0">
                                 <button onclick="toggleDarkMode()" class="btn-moon h-full w-14 rounded shadow flex items-center justify-center text-2xl" title="Dark Mode">🌙</button>
                                 <button onclick="beendeDienst()" class="btn-storno h-full w-14 rounded shadow flex items-center justify-center">STORNO</button>
@@ -471,8 +461,7 @@
         ];
 
         let vehicles = [
-            { id: "KOM 1042", type: "Mercedes-Benz Citaro", tuev: "10/2027", hu: "05/2027", status: "Einsatzbereit", repairUntil: null, problem: "" },
-            { id: "KOM 1015", type: "Solaris Urbino 18", tuev: "04/2028", hu: "02/2028", status: "Einsatzbereit", repairUntil: null, problem: "" },
+            { id: "KOM 1042", type: "Mercedes-Benz Citaro (Gelenk)", tuev: "10/2027", hu: "05/2027", status: "Einsatzbereit", repairUntil: null, problem: "" },
             { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "Einsatzbereit", repairUntil: null, problem: "" }
         ];
 
@@ -486,29 +475,44 @@
 
         // --- FAHRZEUGHANDEL (SHOP) DATEN & LOGIK ---
         const shopData = {
-            "Mercedes-Benz": [
+            "Mercedes-Benz / EvoBus": [
+                { type: "Citybus C2 (12m)", price: "310.000 €", time: "Sofort lieferbar", isTram: false },
+                { type: "Citybus C2G (18m)", price: "420.000 €", time: "Auf Lager", isTram: false },
+                { type: "Citybus C2K (10,5m)", price: "290.000 €", time: "Auf Lager", isTram: false },
                 { type: "Mercedes-Benz Citaro (Gelenk)", price: "350.000 €", time: "Sofort lieferbar", isTram: false },
-                { type: "Mercedes-Benz eCitaro G", price: "650.000 €", time: "Sofort lieferbar", isTram: false },
-                { type: "Mercedes-Benz CapaCity L", price: "480.000 €", time: "Sofort lieferbar", isTram: false }
+                { type: "Mercedes-Benz eCitaro G", price: "650.000 €", time: "Auf Bestellung", isTram: false }
             ],
             "MAN": [
+                { type: "MAN Lion's City NLC", price: "310.000 €", time: "Sofort lieferbar", isTram: false },
                 { type: "MAN Lion's City 12", price: "280.000 €", time: "Sofort lieferbar", isTram: false },
                 { type: "MAN Lion's City 18", price: "360.000 €", time: "Sofort lieferbar", isTram: false }
             ],
-            "Solaris": [
-                { type: "Solaris Urbino 12 electric", price: "450.000 €", time: "Sofort lieferbar", isTram: false },
-                { type: "Solaris Urbino 18", price: "340.000 €", time: "Sofort lieferbar", isTram: false }
+            "Sonstige Busse": [
+                { type: "Gräf-Steyr NL 205", price: "45.000 €", time: "Gebraucht lieferbar", isTram: false },
+                { type: "Solaris Urbino 12 electric", price: "450.000 €", time: "Sofort lieferbar", isTram: false }
             ],
             "Siemens (Tram)": [
-                { type: "Siemens Variobahn", price: "2.800.000 €", time: "Auf Lager", isTram: true },
-                { type: "Siemens Avenio", price: "3.200.000 €", time: "Auf Lager", isTram: true }
+                { type: "ULF A (24m)", price: "2.500.000 €", time: "Auf Bestellung", isTram: true },
+                { type: "ULF B (35m)", price: "3.400.000 €", time: "Auf Bestellung", isTram: true },
+                { type: "Siemens Variobahn", price: "2.800.000 €", time: "Auf Lager", isTram: true }
+            ],
+            "Alstom / Bombardier (Tram)": [
+                { type: "Flexity (Wien)", price: "3.100.000 €", time: "Auf Lager", isTram: true },
+                { type: "Flexity Graz", price: "3.150.000 €", time: "Lieferbar Q4/2026", isTram: true }
             ],
             "Stadler (Tram)": [
+                { type: "StadtRegioTram (SRT)", price: "3.800.000 €", time: "Auf Bestellung", isTram: true },
                 { type: "Stadler TINA", price: "3.500.000 €", time: "Auf Lager", isTram: true },
                 { type: "Stadler TANGO", price: "3.100.000 €", time: "Auf Lager", isTram: true }
+            ],
+            "Klassiker (Tram)": [
+                { type: "E1 Triebwagen", price: "150.000 €", time: "Gebraucht lieferbar", isTram: true },
+                { type: "GT6 Gelenktriebwagen", price: "120.000 €", time: "Gebraucht lieferbar", isTram: true },
+                { type: "GT8N Niederflur", price: "350.000 €", time: "Generalüberholt", isTram: true },
+                { type: "Tatra KT4D", price: "80.000 €", time: "Gebraucht lieferbar", isTram: true }
             ]
         };
-        let currentShopBrand = "Mercedes-Benz";
+        let currentShopBrand = "Mercedes-Benz / EvoBus";
 
         function renderShopBrands() {
             const list = document.getElementById('shop-brands');
@@ -532,12 +536,13 @@
             grid.className = 'grid grid-cols-2 gap-6';
             
             shopData[currentShopBrand].forEach((vehicle, idx) => {
+                let badgeClass = vehicle.isTram ? 'bg-purple-900 text-purple-300' : 'bg-emerald-900 text-emerald-300';
                 grid.innerHTML += `
-                    <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700 flex flex-col justify-between">
+                    <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700 flex flex-col justify-between hover:border-gray-500 transition">
                         <div>
                             <div class="flex justify-between items-start mb-2">
                                 <h3 class="text-lg font-bold text-white leading-tight">${vehicle.type}</h3>
-                                <span class="bg-slate-700 text-xs px-2 py-1 rounded text-gray-300">${vehicle.isTram ? 'Tram' : 'Bus'}</span>
+                                <span class="${badgeClass} text-xs px-2 py-1 rounded font-bold">${vehicle.isTram ? 'Tram' : 'Bus'}</span>
                             </div>
                             <p class="text-gray-400 text-sm mb-4 mt-2">
                                 Kaufpreis: <span class="font-bold text-green-400">${vehicle.price}</span><br>
@@ -555,7 +560,6 @@
             const vehicle = shopData[brand][idx];
             const newId = (vehicle.isTram ? 'TW ' : 'KOM ') + (Math.floor(Math.random()*9000)+1000);
             
-            // Reale TÜV/HU Daten generieren (nächste 1-3 Jahre)
             const year = new Date().getFullYear() + Math.floor(Math.random()*3) + 1;
             const month = String(Math.floor(Math.random()*12) + 1).padStart(2, '0');
             const tuevDate = `${month}/${year}`;
