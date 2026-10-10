@@ -608,7 +608,7 @@
         }
 
         // --- BETRIEBSHOF & WERKSTATT ---
-        const problems = ["Motorkontrollleuchte an", "Bremse quietscht", "IBIS bootet nicht", "Türen klemmen", "Scheibenwischer defekt", "Klimaanlage kühlt nicht"];
+        const problems = ["Getriebeschaden", "Motorkontrollleuchte an", "Bremse defekt (TÜV-relevant)", "Unfallschaden Front", "Elektronik-Ausfall (IBIS/Bordrechner)", "Klimakompressor defekt"];
 
         function renderBetriebshof() {
             const tbody = document.getElementById('betriebshof-list');
@@ -642,14 +642,16 @@
             const v = vehicles[idx];
             v.status = "In Werkstatt";
             v.problem = problems[Math.floor(Math.random() * problems.length)];
-            const repairMinutes = Math.floor(Math.random() * 4) + 1;
-            v.repairUntil = new Date(Date.now() + repairMinutes * 60000); 
+            
+            // Zufällige Dauer zwischen 1 und 5 Tagen
+            const repairDays = Math.floor(Math.random() * 5) + 1;
+            v.repairUntil = new Date(Date.now() + repairDays * 24 * 60 * 60 * 1000); 
             
             renderBetriebshof();
             if(document.getElementById('app-werkstatt').style.display === 'flex') {
                 renderWerkstatt();
             } else {
-                alert(`Fahrzeug ${v.id} ist in der Werkstatt wegen: ${v.problem}.`);
+                alert(`Fahrzeug ${v.id} ist in der Werkstatt wegen: ${v.problem}. Reparaturdauer: ca. ${repairDays} Tage.`);
             }
         }
 
@@ -663,10 +665,17 @@
                 
                 let timeStr = "Reparatur abgeschlossen";
                 if(v.repairUntil && v.repairUntil > now) {
-                    const diff = Math.floor((v.repairUntil - now) / 1000);
-                    const m = Math.floor(diff / 60).toString().padStart(2, '0');
-                    const s = (diff % 60).toString().padStart(2, '0');
-                    timeStr = `⏱ ${m}:${s} Min. verbleibend`;
+                    const diffSec = Math.floor((v.repairUntil - now) / 1000);
+                    const d = Math.floor(diffSec / 86400);
+                    const h = Math.floor((diffSec % 86400) / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((diffSec % 3600) / 60).toString().padStart(2, '0');
+                    const s = (diffSec % 60).toString().padStart(2, '0');
+                    
+                    if (d > 0) {
+                        timeStr = `⏱ ${d} Tage, ${h}:${m}:${s} Std.`;
+                    } else {
+                        timeStr = `⏱ ${h}:${m}:${s} Std. verbleibend`;
+                    }
                 }
 
                 tbody.innerHTML += `
@@ -736,10 +745,10 @@
         // --- NEUES AUDIO SYSTEM (Web Speech API) ---
         function speakText(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stoppt laufende Ansagen
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.lang = 'de-DE';
-                utterance.rate = 0.95; // Etwas langsamer, wie eine echte Durchsage
+                utterance.rate = 0.95;
                 utterance.pitch = 1.0; 
                 window.speechSynthesis.speak(utterance);
             } else {
