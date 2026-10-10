@@ -547,7 +547,7 @@
                 updateMailBadge();
             }
         }
-        setInterval(receiveRandomEmail, 40000); // 40 Sek Live E-Mails
+        setInterval(receiveRandomEmail, 40000); 
 
         function updateMailBadge() {
             const unreadCount = emails.filter(e => !e.read).length;
@@ -612,7 +612,6 @@
                 <div class="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">${currentMail.content}</div>
             `;
             
-            // Render Buttons based on Type
             let actionsHtml = '';
             if (currentMail.replied) {
                 actionsHtml = '<div class="text-green-500 font-bold text-sm w-full text-right">✅ Diese E-Mail wurde bereits bearbeitet.</div>';
@@ -644,10 +643,11 @@
 
             if(currentMail.type === 'application') {
                 if(actionType === 'einladung') {
-                    alert(`Dem Bewerber wurde mitgeteilt, dass die Personalabteilung sich meldet.`);
+                    alert(`Dem Bewerber wurde mitgeteilt, dass die Personalabteilung sich meldet.\n(Das Vorstellungsgespräch dauert nun etwas. Du erhältst später eine Benachrichtigung mit dem Feedback!)`);
                     currentMail.replied = true;
-                    // Trigger HR Feedback after 10 seconds
-                    setTimeout(() => generateHREmail(currentMail.senderName, currentMail.role), 10000);
+                    // Verzögerung für das HR Feedback: 60 - 120 Sekunden (1 bis 2 Minuten)
+                    const interviewDauer = Math.floor(Math.random() * 60000) + 60000;
+                    setTimeout(() => generateHREmail(currentMail.senderName, currentMail.role), interviewDauer);
                 } else if(actionType === 'absage') {
                     alert(`Absage an Bewerber verschickt.`);
                     currentMail.replied = true;
