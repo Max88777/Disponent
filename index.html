@@ -6,609 +6,727 @@
     <title>Leitstelle CTS 2026 OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; }
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            color: #e2e8f0;
-            overflow: hidden; 
-        }
-
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.90);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
-        }
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
-        .app-window { display: none; }
-        .app-window.active { display: flex; }
-        
-        .maximized { 
-            position: fixed !important; 
-            inset: 0 !important; 
-            width: 100% !important; 
-            max-width: 100% !important;
-            height: 100% !important; 
-            z-index: 50 !important; 
-            border-radius: 0 !important; 
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .toast-enter { animation: slideInRight 0.3s ease-out forwards; }
-
-        /* Atron AFR410 Hardware Design */
-        .atron-chassis {
-            background: #2a2a2a;
-            border-radius: 16px;
-            box-shadow: inset 0 0 30px #000, 0 25px 50px rgba(0,0,0,0.9);
-            border: 6px solid #1a1a1a;
-            position: relative;
-        }
-        .atron-screen {
-            background: #f0fdf4;
-            color: #0f172a;
-            border: 16px solid #000;
-            border-radius: 8px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+        .os-window {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
         }
+        .os-window.maximized {
+            width: 100vw !important;
+            height: calc(100vh - 40px) !important;
+            top: 40px !important;
+            left: 0 !important;
+            border-radius: 0;
+            transform: none !important;
+        }
+
+        /* Atron AFR410 Classic Design (based on image) */
+        .atron-screen { background-color: #B2FFFF; color: #000; font-family: 'Arial', sans-serif; }
+        .atron-header { background-color: #008080; color: white; }
         
-        .atron-screen.dark-mode {
-            background: #0f172a; 
-            color: #f1f5f9;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
-        }
-        .atron-screen.dark-mode .atron-box {
-            background: #1e293b !important;
-            border-color: #334155 !important;
-            color: #f1f5f9 !important;
-        }
-        .atron-screen.dark-mode .atron-box-highlight {
-            background: #1d4ed8 !important;
-            border-color: #3b82f6 !important;
-            color: #fff !important;
-        }
+        /* Atron Dark Mode override */
+        .atron-dark { background-color: #111827; color: #E5E7EB; }
+        .atron-dark .atron-header { background-color: #064E3B; }
+        .atron-dark .ticket-btn { background-color: #1F2937; border-color: #374151; color: #fff; }
+        .atron-dark .stop-box { background-color: #1F2937; border-color: #374151; color: #fff; }
         
-        .atron-btn {
-            background: linear-gradient(to bottom, #f1f5f9, #94a3b8);
-            border: 2px solid #475569;
-            color: #0f172a;
-            font-weight: bold;
-            box-shadow: 0 6px 0 #334155, 0 8px 10px rgba(0,0,0,0.5);
-            transition: all 0.1s;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
-        }
-        .atron-btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 0 0 #334155, 0 2px 2px rgba(0,0,0,0.5);
-        }
-        .atron-btn-yellow { background: linear-gradient(to bottom, #fef08a, #eab308); border-color: #ca8a04; box-shadow: 0 6px 0 #a16207, 0 8px 10px rgba(0,0,0,0.5); }
-        .atron-btn-red { background: linear-gradient(to bottom, #fca5a5, #ef4444); border-color: #b91c1c; box-shadow: 0 6px 0 #7f1d1d, 0 8px 10px rgba(0,0,0,0.5); color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5);}
-        .atron-btn-cyan { background: linear-gradient(to bottom, #a5f3fc, #06b6d4); border-color: #0891b2; box-shadow: 0 6px 0 #0e7490, 0 8px 10px rgba(0,0,0,0.5); }
+        /* Hardware Buttons Bottom */
+        .atron-bottom-bar { background-color: #1C325B; }
+        .btn-moon { background-color: #1C325B; color: #FBBF24; border: 2px solid #FBBF24; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+        .btn-storno { background-color: #FFFFFF; color: #DC2626; font-weight: bold; border: 1px solid #999; font-size: 0.8rem;}
+        .btn-f { background-color: #B2FFFF; color: #000; font-weight: bold; font-size: 1.5rem; border: 1px solid #999;}
+        .btn-ziel { background-color: #FFFFFF; color: #000; font-size: 0.75rem; line-height: 1.1; font-weight: bold; border: 1px solid #999;}
+        .btn-yellow { background-color: #FBBF24; color: #000; font-weight: bold; font-size: 1.5rem; border: 1px solid #999;}
+        .btn-grey { background-color: #E5E7EB; color: #9CA3AF; font-size: 1.5rem; font-weight: bold; border: 1px solid #999;}
+        .btn-stop { background-color: #FFFFFF; color: #000; font-weight: 900; border: 3px solid #000; font-size: 1.2rem;}
+
+        /* Ticket/Ansagen Buttons on screen */
+        .ticket-btn { background-color: #FFFFFF; border: 2px solid #4ADE80; box-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
+        .stop-box { background-color: #F0FDFA; border: 1px solid #5EEAD4; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="text-white h-screen w-screen flex flex-col">
 
-    <header class="glass-panel px-4 py-2 flex justify-between items-center gap-4 z-40 w-full shrink-0 border-b border-slate-700/50 bg-slate-900/95">
-        <div class="flex items-center gap-3 shrink-0">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-sm shadow-lg">CTS</div>
-            <div><h1 class="text-sm font-bold text-white tracking-wide">CTS OS <span class="text-blue-400">2026</span></h1></div>
+    <!-- Top Bar / Menu -->
+    <div class="h-10 bg-slate-900 bg-opacity-90 flex items-center justify-between px-4 text-sm font-semibold z-50 border-b border-gray-700 shadow-md">
+        <div class="flex space-x-6 items-center">
+            <span class="text-blue-400 font-bold tracking-wider">CTS OS 2026</span>
+            <button onclick="openApp('mail')" class="hover:text-blue-300 transition">CTS Mail</button>
+            <button onclick="openApp('ibis')" class="hover:text-blue-300 transition">Atron IBIS</button>
+            <button onclick="openApp('routen')" class="hover:text-blue-300 transition">Routen-Editor</button>
+            <button onclick="openApp('betriebshof')" class="hover:text-blue-300 transition">Betriebshof & Werkstatt</button>
+            <button onclick="openApp('personal')" class="hover:text-blue-300 transition">Personal & Dienstplan</button>
         </div>
+        <div class="flex items-center space-x-4">
+            <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>Online</span>
+            <span id="os-clock">12:00:00</span>
+        </div>
+    </div>
+
+    <!-- Workspace Area -->
+    <div class="relative flex-1 overflow-hidden" id="workspace">
         
-        <div class="flex gap-2 overflow-x-auto flex-1 mx-4 custom-scrollbar items-center whitespace-nowrap">
-            <button onclick="window.switchTab('app-email')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-slate-300 transition-colors text-sm font-medium relative">
-                Postfach <span id="email-badge" class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full hidden shadow-[0_0_8px_#ef4444]"></span>
-            </button>
-            <button onclick="window.switchTab('app-fahrtmodus')" class="nav-btn bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-white shadow-lg transition-colors text-sm font-medium">Atron IBIS</button>
-            <button onclick="window.switchTab('app-routes')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-slate-300 transition-colors text-sm font-medium">Routen-Editor</button>
-            <button onclick="window.switchTab('app-depot')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-slate-300 transition-colors text-sm font-medium">Betriebshof</button>
-            <button onclick="window.switchTab('app-personnel')" class="nav-btn bg-slate-800 hover:bg-slate-700 px-4 py-1.5 rounded-lg text-slate-300 transition-colors text-sm font-medium">Personal</button>
-        </div>
-
-        <div class="flex items-center gap-3 shrink-0 text-sm">
-            <div class="flex items-center gap-1 text-emerald-400"><div class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div> Online</div>
-            <div id="clock-display" class="font-mono font-bold text-white ml-2">00:00:00</div>
-        </div>
-    </header>
-
-    <main class="flex-1 overflow-hidden p-6 relative flex items-center justify-center">
-        <div id="toast-container" class="absolute bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none"></div>
-
-        <!-- APP: Postfach (CTS Mail) -->
-        <div id="app-email" class="app-window flex-col w-full max-w-6xl h-[85vh] glass-panel rounded-xl shadow-2xl relative transition-all duration-300">
-            <div class="h-8 bg-slate-800/80 rounded-t-xl border-b border-slate-700 flex items-center px-3 gap-2 shrink-0 cursor-default">
-                <button class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400" onclick="window.switchTab('')" title="Schließen"></button>
-                <button class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400" title="Minimieren"></button>
-                <button class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 cursor-pointer" onclick="window.toggleMaximize('app-email')" title="Maximieren"></button>
-                <div class="mx-auto text-xs font-semibold text-slate-400">CTS Mail - Postfach</div>
+        <!-- ================= MAIL APP ================= -->
+        <div id="app-mail" class="os-window absolute w-[950px] h-[650px] top-[5%] left-[5%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('mail')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-mail')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">CTS Mail - Posteingang</div>
             </div>
             <div class="flex-1 flex overflow-hidden">
-                <div class="w-1/3 border-r border-slate-700/50 bg-slate-900/50 flex flex-col">
-                    <div class="p-3 bg-slate-800/80 border-b border-slate-700 font-bold text-sm text-slate-300">Posteingang</div>
-                    <div id="email-list" class="flex-1 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
-                </div>
-                <div class="w-2/3 flex flex-col bg-slate-800/30 relative">
-                    <div id="email-content" class="flex-1 p-6 overflow-y-auto custom-scrollbar text-slate-300">
-                        <div class="flex items-center justify-center h-full text-slate-500">Wähle eine E-Mail aus, um sie zu lesen.</div>
+                <div class="w-1/3 bg-slate-800 border-r border-slate-700 overflow-y-auto" id="mail-list"></div>
+                <div class="w-2/3 bg-slate-900 flex flex-col">
+                    <div class="p-6 flex-1 overflow-y-auto" id="mail-content">
+                        <p class="text-gray-500 mt-20 text-center">Wähle eine E-Mail aus, um sie zu lesen.</p>
                     </div>
-                    <div id="email-reply-box" class="h-48 border-t border-slate-700 bg-slate-900/80 p-4 hidden flex-col gap-3">
-                        <div class="text-xs font-bold text-slate-400">Formelle Antwort schreiben (Tippe 'Zusage' zum Einstellen oder 'Kaufen' bei Werbemails)</div>
-                        <textarea id="email-reply-text" class="flex-1 bg-slate-800 border border-slate-600 rounded p-2 text-sm text-white resize-none focus:outline-none focus:border-blue-500" placeholder="Sehr geehrte Damen und Herren..."></textarea>
-                        <div class="text-right">
-                            <button onclick="window.sendEmailReply()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-1.5 rounded font-bold text-sm shadow">Antwort senden</button>
-                        </div>
+                    <div class="p-4 bg-slate-800 border-t border-slate-700">
+                        <textarea id="mail-reply" class="w-full bg-slate-900 text-sm p-3 rounded border border-slate-600 focus:outline-none focus:border-blue-500 text-white" rows="3" placeholder="Formelle Antwort verfassen (Schreibe 'Zusage' für Einstellung)..."></textarea>
+                        <button onclick="sendReply()" class="mt-2 bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded text-sm font-semibold float-right transition">Senden</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- APP: Routen-Editor -->
-        <div id="app-routes" class="app-window flex-col w-full max-w-6xl h-[85vh] glass-panel rounded-xl shadow-2xl relative transition-all duration-300">
-            <div class="h-8 bg-slate-800/80 rounded-t-xl border-b border-slate-700 flex items-center px-3 gap-2 shrink-0 cursor-default">
-                <button class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400" onclick="window.switchTab('')"></button>
-                <button class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400"></button>
-                <button class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 cursor-pointer" onclick="window.toggleMaximize('app-routes')"></button>
-                <div class="mx-auto text-xs font-semibold text-slate-400">Routen-Editor & Fahrplan</div>
-            </div>
-            
-            <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
-                <div class="bg-slate-800/50 p-6 rounded-xl border border-slate-700 shrink-0 shadow-lg mb-6">
-                    <h2 class="text-xl font-bold text-white mb-4">Neue Linie anlegen (Fahrplan & Takt)</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-9 gap-4 mb-4">
-                        <div><label class="block text-xs text-slate-400 mb-1">Typ</label><select id="route-type" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><option value="bus">Bus</option><option value="tram">Straßenbahn</option></select></div>
-                        <div class="col-span-2"><label class="block text-xs text-slate-400 mb-1">Linienart</label><select id="route-kind" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><option value="Stadtbus">Stadtbus</option><option value="Schnellbus">Schnellbus</option><option value="Nachtbus">Nachtbus</option></select></div>
-                        <div><label class="block text-xs text-slate-400 mb-1">Verlauf</label><select id="route-is-ring" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"><option value="false">Pendel</option><option value="true">Ring</option></select></div>
-                        <div><label class="block text-xs text-slate-400 mb-1">Linien-Nr.</label><input type="text" id="route-line" placeholder="101" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
-                        <div><label class="block text-xs text-slate-400 mb-1">Startzeit</label><input type="time" id="route-start" value="06:00" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
-                        <div><label class="block text-xs text-slate-400 mb-1">Takt (Min)</label><input type="number" id="route-takt" value="20" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
-                        <div><label class="block text-xs text-slate-400 mb-1">Dauer (Min)</label><input type="number" id="route-duration" value="45" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
-                        <div><label class="block text-xs text-slate-400 mb-1">Pause (Min)</label><input type="number" id="route-pause" value="10" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
-                        <div class="md:col-span-9"><label class="block text-xs text-slate-400 mb-1">Haltestellen (Komma getrennt)</label><input type="text" id="route-stops" placeholder="Hbf, Marktplatz, Rathaus" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white"></div>
-                    </div>
-                    <button onclick="window.addRoute()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded font-medium shadow transition">Linie in System speichern</button>
+        <!-- ================= ATRON IBIS APP ================= -->
+        <div id="app-ibis" class="os-window absolute w-[1000px] h-[750px] top-[2%] left-[15%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('ibis')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-ibis')"></div>
                 </div>
-                <div class="bg-slate-900/50 rounded-xl overflow-hidden shadow-lg border border-slate-700"><table class="w-full text-left"><tbody id="route-table-body" class="divide-y divide-slate-700/50"></tbody></table></div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Atron AFR410 Terminal</div>
             </div>
-        </div>
-
-        <!-- APP: Personal -->
-        <div id="app-personnel" class="app-window flex-col w-full max-w-4xl h-[70vh] glass-panel rounded-xl shadow-2xl relative transition-all duration-300">
-            <div class="h-8 bg-slate-800/80 rounded-t-xl border-b border-slate-700 flex items-center px-3 gap-2 shrink-0 cursor-default">
-                <button class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400" onclick="window.switchTab('')"></button>
-                <button class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400"></button>
-                <button class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 cursor-pointer" onclick="window.toggleMaximize('app-personnel')"></button>
-                <div class="mx-auto text-xs font-semibold text-slate-400">Personal-Akte</div>
-            </div>
-            <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
-                <table class="w-full text-left bg-slate-900/50 rounded-xl overflow-hidden border border-slate-700">
-                    <thead class="bg-slate-800 text-sm"><tr><th class="p-3">ID</th><th class="p-3">Name</th><th class="p-3">Qualifikation</th></tr></thead>
-                    <tbody id="personnel-table" class="divide-y divide-slate-700"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- APP: Betriebshof -->
-        <div id="app-depot" class="app-window flex-col w-full max-w-4xl h-[70vh] glass-panel rounded-xl shadow-2xl relative transition-all duration-300">
-            <div class="h-8 bg-slate-800/80 rounded-t-xl border-b border-slate-700 flex items-center px-3 gap-2 shrink-0 cursor-default">
-                <button class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400" onclick="window.switchTab('')"></button>
-                <button class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400"></button>
-                <button class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 cursor-pointer" onclick="window.toggleMaximize('app-depot')"></button>
-                <div class="mx-auto text-xs font-semibold text-slate-400">Betriebshof Fuhrpark</div>
-            </div>
-            <div class="flex-1 overflow-y-auto custom-scrollbar p-6">
-                <div id="depot-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-            </div>
-        </div>
-
-        <!-- APP: Atron IBIS / Fahrtmodus -->
-        <div id="app-fahrtmodus" class="app-window active flex-col w-full max-w-[1400px] h-[90vh] glass-panel rounded-xl shadow-2xl relative transition-all duration-300">
-            <div class="h-8 bg-slate-800/80 rounded-t-xl border-b border-slate-700 flex items-center px-3 gap-2 shrink-0 cursor-default">
-                <button class="w-3 h-3 rounded-full bg-red-500 hover:bg-red-400" onclick="window.switchTab('')"></button>
-                <button class="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-400"></button>
-                <button class="w-3 h-3 rounded-full bg-green-500 hover:bg-green-400 cursor-pointer" onclick="window.toggleMaximize('app-fahrtmodus')"></button>
-                <div class="mx-auto text-xs font-semibold text-slate-400">Atron AFR410 Hardware-IBIS</div>
-            </div>
-
-            <div class="flex-1 flex flex-col items-center justify-center p-4 md:p-8 overflow-y-auto bg-slate-900/40 rounded-b-xl relative">
+            <div class="flex-1 flex flex-col items-center justify-center bg-gray-300 overflow-y-auto p-4">
                 
-                <div id="fm-setup" class="bg-slate-800 p-8 rounded-xl border border-slate-600 shadow-2xl max-w-lg w-full text-center z-10">
-                    <h2 class="text-2xl font-bold text-white mb-2">Atron System-Login</h2>
-                    <p class="text-sm text-slate-400 mb-6">Bitte Schicht-Code eingeben (z.B. SN-1000), um das Bordrechner-Terminal hochzufahren.</p>
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="fm-shift-code" placeholder="SN-1000" class="w-full bg-slate-900 border border-slate-600 text-white font-mono text-center text-xl rounded px-4 py-3 uppercase tracking-widest focus:outline-none focus:border-blue-500">
-                        <button onclick="window.checkShiftCode()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 rounded shadow-lg transition-colors">Prüfen</button>
-                    </div>
-                    <div id="fm-shift-info" class="hidden space-y-4 mb-4 bg-slate-900 p-4 rounded-lg text-left text-sm border border-slate-700 shadow-inner">
-                        <div><span class="text-slate-500 block text-xs uppercase tracking-wider">Fahrer</span><span id="fm-info-driver" class="text-white font-bold">---</span></div>
-                        <div><span class="text-slate-500 block text-xs uppercase tracking-wider">Linie & Takt</span><span id="fm-info-line" class="text-amber-500 font-bold text-lg">---</span></div>
-                    </div>
-                    <button id="fm-start-btn" onclick="window.startFahrt()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded shadow-lg transition-all text-lg">IBIS Starten</button>
+                <!-- LOGIN SCREEN -->
+                <div id="ibis-login" class="bg-white text-black p-8 rounded-lg shadow-xl w-96 text-center border-4 border-gray-400">
+                    <h2 class="text-2xl font-bold mb-2">Atron AFR410</h2>
+                    <p class="text-gray-500 mb-6 text-sm">Fahrer-Anmeldung</p>
+                    <input type="text" id="login-code" class="w-full bg-gray-100 p-3 rounded mb-4 text-center font-mono text-xl border border-gray-300" placeholder="Linie (z.B. 100)">
+                    <button onclick="startFahrt()" class="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded font-bold transition">Dienst beginnen</button>
                 </div>
 
-                <div id="fm-cockpit" class="hidden w-full max-w-[1200px] aspect-[16/10] atron-chassis p-6 flex flex-col justify-between">
-                    <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-64 h-16 bg-[#2a2a2a] rounded-t-2xl border-t-6 border-l-6 border-r-6 border-[#1a1a1a] shadow-2xl flex items-center justify-center">
-                        <div class="w-32 h-6 bg-slate-900 rounded border-2 border-slate-800"></div>
-                    </div>
-
-                    <div id="atron-tft" class="atron-screen flex-1 p-4 flex flex-col relative overflow-hidden">
-                        
-                        <div class="flex justify-between items-center mb-4 shrink-0 bg-teal-700/10 p-2 rounded">
-                            <div class="flex items-center gap-3">
-                                <div class="bg-yellow-400 text-black px-4 py-2 font-bold border-2 border-yellow-600 text-2xl">↓</div>
-                                <div class="bg-slate-200 text-slate-400 px-4 py-2 font-bold border-2 border-slate-300 text-2xl">↑</div>
-                                <div id="atron-line-dest" class="text-2xl font-bold bg-white border-2 border-slate-300 atron-box px-4 py-2 w-96 truncate">L -- - Ziel</div>
-                            </div>
-                            <div class="text-right flex flex-col items-end bg-teal-800/90 px-4 py-1 rounded text-white shadow-inner">
-                                <div id="atron-clock" class="text-3xl font-black font-mono tracking-wider">00:00:00</div>
-                                <div id="atron-delay" class="text-2xl font-black font-mono mt-1 text-emerald-400">+0:00</div>
-                            </div>
+                <!-- HARDWARE SHELL -->
+                <div id="ibis-hardware" class="hidden flex-col items-center w-full max-w-[950px]">
+                    <!-- Top Printer/Card Reader Module -->
+                    <div class="w-[55%] h-24 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
+                        <div class="absolute top-2 right-6 flex space-x-2">
+                            <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                            <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
+                            <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
                         </div>
-
-                        <div class="flex-1 flex gap-4 min-h-0">
-                            <div class="w-1/2 bg-white atron-box border-2 border-slate-300 flex flex-col p-2 shadow-inner">
-                                <div id="atron-route-list" class="flex-1 overflow-y-auto custom-scrollbar space-y-1"></div>
-                            </div>
+                        <div class="w-32 h-6 bg-gray-800 rounded mb-2 flex items-center justify-center border-b-2 border-gray-500 shadow-inner">
+                            <span class="text-[8px] text-green-400 font-mono tracking-widest">OK</span>
+                        </div>
+                        <div class="w-40 h-1.5 bg-black rounded-full shadow-inner"></div>
+                    </div>
+                    
+                    <!-- Main Tablet -->
+                    <div class="w-full bg-black p-3 rounded-xl shadow-2xl border-[16px] border-black z-10 -mt-2">
+                        <!-- Screen -->
+                        <div id="ibis-screen" class="atron-screen w-full flex flex-col relative" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
                             
-                            <div class="w-1/2 grid grid-cols-2 gap-3 content-start">
-                                <button onclick="window.nextHaltestelle()" class="bg-teal-50 hover:bg-teal-100 atron-box border-2 border-teal-300 p-4 text-left transition-colors flex flex-col justify-center h-28">
-                                    <span class="font-bold text-teal-800 text-lg">Nächste Hst.</span><span class="text-xs text-teal-600">Manuell weiterschalten</span>
-                                </button>
-                                <button onclick="window.playSonderansage('Der nächste Halt ist erreicht.')" class="bg-white hover:bg-slate-50 atron-box border-2 border-slate-300 p-4 text-left transition-colors flex flex-col justify-center h-28">
-                                    <span class="font-bold text-slate-800 text-lg">Ansage</span><span class="text-xs text-slate-500">Erneut abspielen</span>
-                                </button>
-                                <button onclick="window.startReturnTrip()" id="btn-return-trip" class="bg-white hover:bg-slate-50 atron-box border-2 border-slate-300 p-4 text-left transition-colors flex flex-col justify-center h-28 opacity-50 cursor-not-allowed">
-                                    <span class="font-bold text-slate-800 text-lg">Wende / Rückfahrt</span><span class="text-xs text-slate-500">Nur an Endstation</span>
-                                </button>
-                                <button onclick="window.playSonderansage('Fahrscheinkontrolle. Bitte halten Sie Ihre Ausweise bereit.')" class="bg-white hover:bg-slate-50 atron-box border-2 border-slate-300 p-4 text-left transition-colors flex flex-col justify-center h-28">
-                                    <span class="font-bold text-slate-800 text-lg">Sonderansage</span><span class="text-xs text-slate-500">Fahrscheinkontrolle</span>
-                                </button>
-                                <button onclick="window.playSonderansage('Bitte rücken Sie im Fahrzeug durch.')" class="bg-white hover:bg-slate-50 atron-box border-2 border-slate-300 p-4 text-left transition-colors flex flex-col justify-center h-28">
-                                    <span class="font-bold text-slate-800 text-lg">Sonderansage</span><span class="text-xs text-slate-500">Bitte aufrücken</span>
-                                </button>
-                                <button onclick="window.playSonderansage('Der Verzehr von Speisen und Getränken ist untersagt.')" class="bg-white hover:bg-slate-50 atron-box border-2 border-slate-300 p-4 text-left transition-colors flex flex-col justify-center h-28">
-                                    <span class="font-bold text-slate-800 text-lg">Sonderansage</span><span class="text-xs text-slate-500">Essen & Trinken</span>
-                                </button>
+                            <!-- Top Bar -->
+                            <div class="atron-header h-12 flex items-center justify-between px-2 font-bold shadow-sm">
+                                <div class="flex items-center space-x-1">
+                                    <div class="bg-yellow-200 text-black px-2 py-1 shadow border border-yellow-400 text-lg">↓</div>
+                                    <div class="bg-white text-gray-400 px-2 py-1 shadow border border-gray-200 text-lg">↑</div>
+                                    <div class="bg-white text-black px-3 py-1 shadow ml-2 min-w-[250px] border border-gray-300 text-sm" id="ibis-line-dest">824 - Hennigsdorf</div>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex space-x-px">
+                                        <span class="bg-[#84cc16] text-black px-1 text-[10px] font-black border border-gray-400">RFID</span>
+                                        <span class="bg-[#ef4444] text-white px-1 text-[10px] font-black border border-gray-400">WLAN</span>
+                                        <span class="bg-[#ef4444] text-white px-1 text-[10px] font-black border border-gray-400">GPS</span>
+                                    </div>
+                                    <div class="text-right leading-tight min-w-[80px]">
+                                        <div id="ibis-clock" class="text-lg">15:56:46</div>
+                                        <div id="ibis-delay" class="text-yellow-300 text-sm">-37:46</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="flex-1 flex p-2 gap-2 text-sm font-semibold">
+                                <!-- Route List (Left) -->
+                                <div class="w-5/12 flex flex-col gap-1 overflow-hidden relative border-r-2 border-[#008080] pr-2" id="ibis-route-list">
+                                    <!-- Rendered dynamically -->
+                                </div>
+                                
+                                <!-- Ansagen / Actions (Right, styled like Tickets) -->
+                                <div class="w-7/12 flex flex-col gap-2">
+                                    <!-- Row 1 -->
+                                    <div class="flex gap-2 h-1/4">
+                                        <button onclick="nextHaltestelle()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                            <span class="font-bold text-sm">Nächste Hst.</span>
+                                            <span class="font-normal text-[10px] text-gray-600">Manuell weiterschalten</span>
+                                        </button>
+                                        <button onclick="playSonderansage('fahrscheinkontrolle')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                            <span class="font-bold text-sm">Sonderansage</span>
+                                            <span class="font-normal text-[10px] text-gray-600">Ticketkontrolle</span>
+                                        </button>
+                                    </div>
+                                    <!-- Row 2 -->
+                                    <div class="flex gap-2 h-1/4">
+                                        <button onclick="wendeZug()" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                            <span class="font-bold text-sm">Wende / Rückfahrt</span>
+                                            <span class="font-normal text-[10px] text-gray-600">Route umkehren</span>
+                                        </button>
+                                        <button onclick="playSonderansage('aufrucken')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                            <span class="font-bold text-sm">Sonderansage</span>
+                                            <span class="font-normal text-[10px] text-gray-600">Bitte aufrücken</span>
+                                        </button>
+                                    </div>
+                                    <!-- Row 3 -->
+                                    <div class="flex gap-2 h-1/4">
+                                        <button onclick="playAnsage(currentStopName)" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                            <span class="font-bold text-sm">Ansage WH</span>
+                                            <span class="font-normal text-[10px] text-gray-600">Erneut abspielen</span>
+                                        </button>
+                                        <button onclick="playSonderansage('essen')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black hover:bg-gray-100 active:bg-gray-200">
+                                            <span class="font-bold text-sm">Sonderansage</span>
+                                            <span class="font-normal text-[10px] text-gray-600">Essen & Trinken</span>
+                                        </button>
+                                    </div>
+                                    <!-- Row 4 -->
+                                    <div class="flex gap-2 h-1/4">
+                                        <div class="flex-1"></div> <!-- Empty space for alignment -->
+                                        <div class="flex gap-2 items-end pb-1 pr-1">
+                                            <button class="bg-white border-2 border-gray-400 p-2 text-black text-2xl font-bold w-12 h-12 flex items-center justify-center shadow">↓</button>
+                                            <button class="bg-white border-2 border-gray-400 p-2 text-gray-400 text-2xl font-bold w-12 h-12 flex items-center justify-center shadow">↑</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hardware Bottom Bar (Exactly like image) -->
+                            <div class="atron-bottom-bar h-[60px] flex items-center px-2 gap-1 py-1 w-full absolute bottom-0">
+                                <button onclick="toggleDarkMode()" class="btn-moon h-full w-14 rounded shadow flex items-center justify-center text-2xl" title="Dark Mode">🌙</button>
+                                <button onclick="beendeDienst()" class="btn-storno h-full w-14 rounded shadow flex items-center justify-center">STORNO</button>
+                                <button class="btn-f h-full w-12 rounded shadow flex items-center justify-center">F</button>
+                                <button class="btn-ziel h-full w-24 rounded shadow flex items-center justify-center text-center leading-tight">Zielwahl,<br>Abgangsort</button>
+                                <button onclick="wendeZug()" class="btn-yellow h-full w-12 rounded shadow flex items-center justify-center">⤴</button>
+                                <button class="btn-yellow h-full w-12 rounded shadow flex items-center justify-center text-xl">🔧</button>
+                                <div class="flex-1"></div>
+                                <button class="btn-grey h-full w-14 rounded shadow flex items-center justify-center">→</button>
+                                <button onclick="beendeDienst()" class="btn-stop h-full w-16 rounded shadow flex items-center justify-center">STOP</button>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="mt-6 flex gap-4 shrink-0 h-20 items-end">
-                        <button onclick="window.toggleIbisDarkMode()" class="atron-btn w-20 h-16 rounded-md text-3xl flex items-center justify-center" title="Nachtdesign">🌙</button>
-                        <button onclick="window.endFahrt()" class="atron-btn w-24 h-16 rounded-md text-sm font-black text-red-600 tracking-wider">STORNO</button>
-                        <button onclick="window.showToast('Info', 'Fahrer-Infos: 42 Gäste geschätzt.')" class="atron-btn-cyan w-20 h-16 rounded-md text-3xl font-black text-white">F</button>
-                        <button onclick="window.showToast('Zielwahl', 'Zielwahl aktiv: Normalbetrieb')" class="atron-btn flex-1 h-16 rounded-md text-lg font-bold">Zielwahl,<br>Abgangsort</button>
-                        <button onclick="window.startReturnTrip()" class="atron-btn-yellow w-20 h-16 rounded-md text-3xl font-black flex items-center justify-center text-blue-800" title="Wende erzwingen">⤵</button>
-                        <button onclick="window.showToast('Diagnose', 'System OK. IP: 192.168.1.55')" class="atron-btn-yellow w-20 h-16 rounded-md text-2xl flex items-center justify-center">🔧</button>
-                        <button onclick="window.endFahrt()" class="atron-btn-red w-32 h-20 rounded-md text-2xl font-black ml-auto border-4 border-red-900">STOP</button>
                     </div>
                 </div>
             </div>
         </div>
-    </main>
+
+        <!-- ================= PERSONAL & DIENSTPLAN ================= -->
+        <div id="app-personal" class="os-window absolute w-[850px] h-[600px] top-[10%] left-[20%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('personal')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-personal')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Personalverwaltung & Dienstpläne</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
+                <!-- Dienstplan erstellen / Mitarbeiter hinzufügen -->
+                <div class="bg-slate-800 p-4 rounded-lg shadow-lg border border-slate-700">
+                    <h3 class="text-lg font-bold mb-3 text-blue-400">Neuen Mitarbeiter anlegen / Dienstplan erstellen</h3>
+                    <div class="flex gap-3">
+                        <input type="text" id="p-name" placeholder="Name des Mitarbeiters" class="flex-1 bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
+                        <select id="p-role" class="bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
+                            <option>Busfahrer/in</option>
+                            <option>Straßenbahnfahrer/in</option>
+                            <option>Disponent/in</option>
+                            <option>Werkstatt</option>
+                        </select>
+                        <button onclick="addEmployee()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded text-sm font-bold transition">Anlegen</button>
+                    </div>
+                </div>
+
+                <!-- Personal Liste -->
+                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto flex-1 border border-slate-700">
+                    <h3 class="text-lg font-bold mb-3">Mitarbeiterübersicht</h3>
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-700 text-gray-300">
+                            <tr>
+                                <th class="p-3 rounded-tl-lg">Name</th>
+                                <th class="p-3">Position</th>
+                                <th class="p-3">Aktueller Status</th>
+                                <th class="p-3 rounded-tr-lg">Dienstplan Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personal-list" class="divide-y divide-slate-700">
+                            <!-- Rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= BETRIEBSHOF & WERKSTATT ================= -->
+        <div id="app-betriebshof" class="os-window absolute w-[900px] h-[600px] top-[15%] left-[25%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('betriebshof')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-betriebshof')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Betriebshof & Werkstatt</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="flex justify-between items-end mb-4">
+                    <h2 class="text-xl font-bold">Fahrzeugflotte & Wartung</h2>
+                    <span class="text-xs text-gray-400">TÜV / HU Überwachung aktiv</span>
+                </div>
+                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto border border-slate-700">
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-700 text-gray-300">
+                            <tr>
+                                <th class="p-3 rounded-tl-lg">Fahrzeug-ID</th>
+                                <th class="p-3">Fahrzeugtyp</th>
+                                <th class="p-3">TÜV / HU Status</th>
+                                <th class="p-3">Einsatzstatus</th>
+                                <th class="p-3 rounded-tr-lg">Werkstatt-Aktion</th>
+                            </tr>
+                        </thead>
+                        <tbody id="betriebshof-list" class="divide-y divide-slate-700">
+                            <!-- Rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= ROUTEN EDITOR ================= -->
+        <div id="app-routen" class="os-window absolute w-[900px] h-[600px] top-[12%] left-[12%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('routen')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-routen')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Routen-Editor & Taktplanung</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="bg-slate-800 p-5 rounded-lg mb-6 shadow-lg border border-slate-700">
+                    <h3 class="text-lg font-bold mb-4 text-blue-400">Fahrplan & Takt anlegen</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-9 gap-4 mb-4 text-sm">
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Typ</label><select id="n-typ" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Bus</option><option>Tram</option></select></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Art</label><select id="n-art" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Stadt</option><option>Überland</option></select></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Verlauf</label><select id="n-verlauf" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white"><option>Pendel</option><option>Ring</option></select></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Linie</label><input type="text" id="n-nr" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="101"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Dauer(m)</label><input type="number" id="n-dauer" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="45"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Pause(m)</label><input type="number" id="n-pause" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="10"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Umläufe</label><input type="number" id="n-uml" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="1"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Start(Uhr)</label><input type="text" id="n-start" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="06:00"></div>
+                        <div class="col-span-1"><label class="block text-gray-400 mb-1">Takt(m)</label><input type="number" id="n-takt" class="w-full bg-slate-900 p-2 border border-slate-600 rounded text-white" placeholder="20"></div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-1 text-sm">Haltestellen (Komma getrennt)</label>
+                        <input type="text" id="n-stops" class="w-full bg-slate-900 p-2 border border-slate-600 rounded mb-4 text-white" placeholder="Hbf, Marktplatz, Rathaus">
+                    </div>
+                    <button onclick="addRoute()" class="bg-blue-600 hover:bg-blue-500 px-6 py-2 rounded font-bold shadow-lg transition">Linie speichern</button>
+                </div>
+                <div id="routen-list" class="space-y-4"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- AUDIO SYSTEM -->
+    <audio id="tts-audio" style="display:none;"></audio>
 
     <script>
-        window.playerShift = null; 
-        window.activeEmailId = null;
-        
-        // Voll funktionsfähige Datenbank
-        window.routes = [
-            { id: '1', type: 'bus', kind: 'Stadtbus', isRing: false, line: '100', stops: ['Hauptbahnhof', 'Marktplatz', 'Rathaus', 'Klinikum', 'Stadion'], startTime: '06:00', takt: 20, duration: 45, pause: 10 },
-            { id: '2', type: 'tram', kind: 'Straßenbahn', isRing: true, line: '1', stops: ['Hbf', 'Oper', 'Theater', 'Messe'], startTime: '05:00', takt: 15, duration: 30, pause: 5 }
-        ];
-
-        window.personnel = [
-            { id: 'P01', name: 'Müller, T.', qual: 'Bus', schedule: { '2026-10-10': { shiftCode: 'SN-1000', routes: ['1_0'] } } }
-        ];
-
-        window.vehicles = [
-            { id: 'W-01', model: 'Citaro C2', type: 'Bus' },
-            { id: 'W-02', model: 'Flexity', type: 'Tram' }
-        ];
-
-        window.emails = [
-            { id: 'm1', sender: 'B.Schmidt@rheinbahn.de', subject: 'Bewerbung als Busfahrer', body: 'Sehr geehrte Leitstelle,\n\nich möchte mich hiermit als Busfahrer bei Ihnen bewerben. Ich habe 5 Jahre Erfahrung auf Gelenkbussen und suche neue Herausforderungen.\n\nMit freundlichen Grüßen\nB. Schmidt', unread: true, isApp: true, appName: 'Schmidt, B.', appQual: 'Bus' },
-            { id: 'm2', sender: 'vertrieb@evobus.com', subject: 'Sonderangebot: Citaro Gelenkbus', body: 'Guten Tag,\n\nbrauchen Sie Verstärkung für Ihren Fuhrpark? Antworten Sie einfach auf diese E-Mail mit dem Wort "Kaufen", um einen Citaro Gelenkbus direkt in Ihren Betriebshof zu erwerben.\n\nEvoBus Vertrieb', unread: true, isAd: true, adModel: 'Citaro G', adType: 'Bus' }
-        ];
-
-        window.showToast = function(title, message) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'bg-slate-800 border border-slate-600 rounded-lg p-3 shadow-lg flex flex-col gap-1 w-64 toast-enter pointer-events-auto z-50';
-            toast.innerHTML = `<div class="font-bold text-sm text-white">${title}</div><div class="text-xs text-slate-300 line-clamp-2">${message}</div>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; setTimeout(()=>toast.remove(), 300); }, 4000);
-        };
-
-        window.switchTab = function(tabId) {
-            document.querySelectorAll('.app-window').forEach(el => el.classList.remove('active'));
-            if(tabId) document.getElementById(tabId)?.classList.add('active');
-            
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
-                btn.classList.add('bg-slate-800', 'text-slate-300');
+        // --- DRAG & DROP FÜR FENSTER ---
+        let highestZ = 10;
+        document.querySelectorAll('.os-window').forEach(win => {
+            win.addEventListener('mousedown', () => { win.style.zIndex = ++highestZ; });
+            const header = win.querySelector('.window-header');
+            let isDragging = false, startX, startY, initialX, initialY;
+            header.addEventListener('mousedown', e => {
+                if(e.target.closest('div.cursor-pointer')) return;
+                if(win.classList.contains('maximized')) return;
+                isDragging = true;
+                startX = e.clientX; startY = e.clientY;
+                initialX = win.offsetLeft; initialY = win.offsetTop;
             });
-            
-            const activeBtn = document.querySelector(`button[onclick="window.switchTab('${tabId}')"]`);
-            if(activeBtn) {
-                activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
-                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
-            }
-            if(tabId === 'app-email') document.getElementById('email-badge').classList.add('hidden');
-        };
-
-        window.toggleMaximize = function(tabId) { document.getElementById(tabId)?.classList.toggle('maximized'); };
-        window.toggleIbisDarkMode = function() { document.getElementById('atron-tft')?.classList.toggle('dark-mode'); };
-
-        window.renderEmails = function() {
-            const list = document.getElementById('email-list');
-            list.innerHTML = '';
-            window.emails.forEach(mail => {
-                let unreadDot = mail.unread ? '<div class="w-2 h-2 rounded-full bg-blue-500 shrink-0 shadow-[0_0_5px_#3b82f6]"></div>' : '';
-                let repliedTag = mail.replied ? '<div class="text-green-500 text-xs font-bold">↩ Beantwortet</div>' : '';
-                list.innerHTML += `<div onclick="window.openEmail('${mail.id}')" class="p-3 border-b border-slate-700/50 hover:bg-slate-700/50 cursor-pointer flex items-center gap-3 transition">
-                    ${unreadDot}
-                    <div class="flex-1 min-w-0"><div class="font-bold text-sm text-white truncate">${mail.sender}</div><div class="text-xs text-slate-400 truncate">${mail.subject}</div>${repliedTag}</div>
-                </div>`;
+            document.addEventListener('mousemove', e => {
+                if(!isDragging) return;
+                win.style.left = (initialX + e.clientX - startX) + 'px';
+                win.style.top = (initialY + e.clientY - startY) + 'px';
             });
-        };
+            document.addEventListener('mouseup', () => isDragging = false);
+        });
 
-        window.openEmail = function(id) {
-            window.activeEmailId = id;
-            const mail = window.emails.find(m => m.id === id);
-            mail.unread = false;
-            window.renderEmails();
-            
-            document.getElementById('email-content').innerHTML = `<h2 class="text-xl font-bold text-white mb-4 border-b border-slate-700 pb-2">${mail.subject}</h2><div class="whitespace-pre-line text-sm leading-relaxed">${mail.body}</div>`;
-            
-            if(!mail.replied && (mail.isApp || mail.isAd)) {
-                document.getElementById('email-reply-box').classList.remove('hidden');
-                document.getElementById('email-reply-box').classList.add('flex');
-            } else {
-                document.getElementById('email-reply-box').classList.add('hidden');
-                document.getElementById('email-reply-box').classList.remove('flex');
-            }
-            document.getElementById('email-reply-text').value = '';
-        };
+        function openApp(id) {
+            const win = document.getElementById('app-' + id);
+            win.style.display = 'flex';
+            win.style.zIndex = ++highestZ;
+            if(id === 'mail') renderMails();
+            if(id === 'personal') renderPersonal();
+            if(id === 'betriebshof') renderBetriebshof();
+            if(id === 'routen') renderRoutes();
+        }
+        function closeApp(id) { document.getElementById('app-' + id).style.display = 'none'; }
+        function toggleMaximize(id) { document.getElementById(id).classList.toggle('maximized'); }
 
-        window.sendEmailReply = function() {
-            const text = document.getElementById('email-reply-text').value.trim().toLowerCase();
-            if(!text || !window.activeEmailId) return;
-            
-            const mail = window.emails.find(m => m.id === window.activeEmailId);
-            mail.replied = true;
-            
-            if(mail.isApp && (text.includes('zusage') || text.includes('eingestellt') || text.includes('willkommen'))) {
-                window.personnel.push({ id: 'P0' + (window.personnel.length+1), name: mail.appName, qual: mail.appQual, schedule: {} });
-                window.showToast('Personalabteilung', `${mail.appName} wurde erfolgreich eingestellt! Akte angelegt.`);
-                window.renderPersonnel();
-            } else if (mail.isAd && (text.includes('kaufen') || text.includes('bestellen') || text.includes('nehme'))) {
-                window.vehicles.push({ id: 'W-0' + (window.vehicles.length+1), model: mail.adModel, type: mail.adType });
-                window.showToast('Fuhrpark', `Neues Fahrzeug (${mail.adModel}) wurde dem Betriebshof hinzugefügt!`);
-                window.renderDepot();
-            } else {
-                window.showToast('Gesendet', 'Formelle Antwort wurde verschickt.');
-            }
-            window.openEmail(mail.id); 
-        };
-
-        window.renderPersonnel = function() {
-            const tbody = document.getElementById('personnel-table');
-            tbody.innerHTML = '';
-            window.personnel.forEach(p => {
-                tbody.innerHTML += `<tr class="border-b border-slate-700/50 hover:bg-slate-800/40"><td class="p-3 text-slate-300 font-mono">${p.id}</td><td class="p-3 font-bold text-white">${p.name}</td><td class="p-3 text-sm text-blue-400">${p.qual}</td></tr>`;
-            });
-        };
-
-        window.renderDepot = function() {
-            const grid = document.getElementById('depot-grid');
-            grid.innerHTML = '';
-            window.vehicles.forEach(v => {
-                grid.innerHTML += `<div class="bg-slate-800 border border-slate-600 rounded-lg p-4 shadow-lg"><div class="text-xs text-slate-400 mb-1 font-mono">${v.id}</div><div class="font-bold text-white text-lg">${v.model}</div><div class="mt-2 text-xs bg-slate-700 inline-block px-2 py-1 rounded text-slate-300">${v.type}</div></div>`;
-            });
-        };
-
-        window.addRoute = function() {
-            const type = document.getElementById('route-type').value;
-            const kind = document.getElementById('route-kind').value;
-            const isRing = document.getElementById('route-is-ring').value === 'true';
-            const line = document.getElementById('route-line').value.trim();
-            const start = document.getElementById('route-start').value;
-            const takt = parseInt(document.getElementById('route-takt').value) || 20;
-            const duration = parseInt(document.getElementById('route-duration').value) || 45;
-            const pause = parseInt(document.getElementById('route-pause').value) || 10;
-            const stopsRaw = document.getElementById('route-stops').value;
-            
-            if(!line || !stopsRaw) return window.showToast('Fehler', 'Linie und Haltestellen fehlen.');
-            
-            window.routes.push({ id: Date.now().toString(), type, kind, isRing, line, stops: stopsRaw.split(',').map(s=>s.trim()).filter(s=>s), startTime: start, takt, duration, pause });
-            window.renderRoutes();
-            window.showToast('Erfolg', `Linie ${line} im Fahrplan gespeichert.`);
-        };
-
-        window.renderRoutes = function() {
-            const tbody = document.getElementById('route-table-body');
-            tbody.innerHTML = '';
-            window.routes.forEach(r => {
-                let badge = r.type === 'tram' ? '🚋' : '🚌';
-                tbody.innerHTML += `<tr class="hover:bg-slate-800/40 border-b border-slate-700/50"><td class="p-4"><div class="font-bold text-white text-lg">L ${r.line} ${badge} <span class="text-[10px] ml-2 text-blue-300">${r.isRing?'Ring':'Pendel'}</span></div><div class="text-xs text-slate-400 mt-1">Ab ${r.startTime} Uhr | ${r.takt}-Min Takt | ⏱️ ${r.duration} Min Fahrt, ${r.pause} Min Pause</div><div class="text-sm text-slate-300 mt-2">${r.stops.join(' ➔ ')}</div></td><td class="p-4 text-right"><button onclick="window.routes=window.routes.filter(x=>x.id!=='${r.id}');window.renderRoutes()" class="text-xs text-red-400">Löschen</button></td></tr>`;
-            });
-        };
-
-        window.checkShiftCode = function() {
-            const codeInput = document.getElementById('fm-shift-code').value.trim().toUpperCase();
-            if(!codeInput) return;
-            let routeId = window.routes[0].id;
-            
-            document.getElementById('fm-info-driver').innerText = "T. Müller";
-            document.getElementById('fm-info-line').innerText = `Linie ${window.routes[0].line} (${window.routes[0].takt}-Min Takt)`;
-            window.currentVerifiedShift = { routeId: routeId };
-
-            document.getElementById('fm-shift-info').classList.remove('hidden');
-            document.getElementById('fm-start-btn').classList.remove('hidden');
-        };
-
-        window.generateExpectedTimes = function(isReturn = false) {
-            const route = window.routes.find(r => r.id === window.playerShift.routeId);
-            const durationMs = route.duration * 60000;
-            const msPerSegment = durationMs / Math.max(1, window.playerShift.currentStops.length - 1);
-            
-            let baseTime = new Date();
-            let now = new Date();
-            
-            if (isReturn && window.playerShift.plannedStart) {
-                baseTime = window.playerShift.plannedStart;
-            } else {
-                let [sHour, sMin] = (route.startTime || "06:00").split(':').map(Number);
-                let scheduleStart = new Date(); scheduleStart.setHours(sHour, sMin, 0, 0);
-                let taktMs = (route.takt || 20) * 60000;
-                
-                if (now > scheduleStart && taktMs > 0) {
-                    let tripsPassed = Math.floor((now - scheduleStart) / taktMs);
-                    let currentTrip = new Date(scheduleStart.getTime() + tripsPassed * taktMs);
-                    let nextTrip = new Date(currentTrip.getTime() + taktMs);
-                    baseTime = (now - currentTrip < taktMs/2) ? currentTrip : nextTrip; 
-                } else {
-                    baseTime = scheduleStart;
-                }
-            }
-            
-            const times = [];
-            for(let i=0; i<window.playerShift.currentStops.length; i++) times.push(new Date(baseTime.getTime() + (i * msPerSegment)));
-            window.playerShift.expectedTimes = times;
-        };
-
-        window.startFahrt = function() {
-            if(!window.currentVerifiedShift) return;
-            const route = window.routes.find(r => r.id === window.currentVerifiedShift.routeId);
-            window.playerShift = { routeId: window.currentVerifiedShift.routeId, stopIndex: 0, currentStops: [...route.stops] };
-            
-            window.generateExpectedTimes();
-            document.getElementById('fm-setup').classList.add('hidden');
-            document.getElementById('fm-cockpit').classList.remove('hidden');
-            document.getElementById('atron-line-dest').innerText = `L ${route.line} - ${window.playerShift.currentStops[window.playerShift.currentStops.length-1]}`;
-            window.renderCockpitStops();
-        };
-
-        window.renderCockpitStops = function() {
-            if(!window.playerShift) return;
-            const container = document.getElementById('atron-route-list');
-            const stops = window.playerShift.currentStops;
-            const times = window.playerShift.expectedTimes;
-            
-            let html = '';
-            stops.forEach((stop, idx) => {
-                let statusClass = 'opacity-60 text-slate-500'; 
-                let bgClass = 'bg-transparent border-transparent';
-                let timeStr = times[idx] ? String(times[idx].getHours()).padStart(2, '0') + ':' + String(times[idx].getMinutes()).padStart(2, '0') : '--:--';
-                
-                if(idx < window.playerShift.stopIndex) {
-                    statusClass = 'opacity-30 line-through text-slate-600';
-                } else if(idx === window.playerShift.stopIndex) {
-                    statusClass = 'font-bold text-lg';
-                    bgClass = 'atron-box-highlight border-blue-500 shadow-md rounded';
-                }
-                
-                html += `<div class="flex justify-between items-center ${statusClass} ${bgClass} py-4 px-3 border-b border-slate-300 transition-all">
-                    <div class="flex items-center gap-3"><div class="w-3 h-3 rounded-full ${idx===window.playerShift.stopIndex?'bg-blue-600':'bg-slate-400'}"></div><span class="truncate">${stop}</span></div>
-                    <div class="font-mono">${timeStr}</div>
-                </div>`;
-            });
-            container.innerHTML = html;
-            
-            const btnReturn = document.getElementById('btn-return-trip');
-            if(window.playerShift.stopIndex >= stops.length - 1) {
-                btnReturn.classList.remove('opacity-50', 'cursor-not-allowed');
-                btnReturn.classList.add('bg-emerald-100', 'border-emerald-400', 'cursor-pointer');
-            } else {
-                btnReturn.classList.add('opacity-50', 'cursor-not-allowed');
-                btnReturn.classList.remove('bg-emerald-100', 'border-emerald-400', 'cursor-pointer');
-            }
-        };
-
-        window.nextHaltestelle = function() {
-            if(window.playerShift && window.playerShift.stopIndex < window.playerShift.currentStops.length - 1) {
-                window.playerShift.stopIndex++;
-                window.renderCockpitStops();
-                window.playSonderansage(`Nächster Halt: ${window.playerShift.currentStops[window.playerShift.stopIndex]}`);
-            }
-        };
-
-        window.startReturnTrip = function() {
-            if(!window.playerShift) return;
-            const route = window.routes.find(r => r.id === window.playerShift.routeId);
-            if(window.playerShift.stopIndex < window.playerShift.currentStops.length - 1) return;
-            
-            if(!route.isRing) window.playerShift.currentStops.reverse(); 
-            window.playerShift.stopIndex = 0;
-            
-            let lastArrival = window.playerShift.expectedTimes[window.playerShift.expectedTimes.length - 1];
-            window.playerShift.plannedStart = new Date(lastArrival.getTime() + (route.pause || 10) * 60000);
-            
-            window.generateExpectedTimes(true); 
-            window.renderCockpitStops();
-            document.getElementById('atron-line-dest').innerText = `L ${route.line} - ${window.playerShift.currentStops[window.playerShift.currentStops.length-1]}`;
-            window.showToast('IBIS', route.isRing ? 'Neue Runde!' : 'Rückfahrt nach Pause.');
-        };
-
-        window.endFahrt = function() {
-            window.playerShift = null;
-            document.getElementById('fm-setup').classList.remove('hidden');
-            document.getElementById('fm-cockpit').classList.add('hidden');
-            window.showToast('Atron', 'Schicht beendet.');
-        };
-
-        window.updateClock = function() {
+        // --- UHRZEIT ---
+        setInterval(() => {
             const now = new Date();
-            const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock-display').innerText = timeStr;
-            document.getElementById('atron-clock').innerText = timeStr;
-
-            if (window.playerShift && window.playerShift.expectedTimes) {
-                const target = window.playerShift.expectedTimes[window.playerShift.stopIndex];
-                if (target) {
-                    const diffSeconds = Math.floor((now.getTime() - target.getTime()) / 1000);
-                    const delayEl = document.getElementById('atron-delay');
-                    const absDiff = Math.abs(diffSeconds);
-                    const min = Math.floor(absDiff / 60);
-                    const sec = String(absDiff % 60).padStart(2, '0');
-                    
-                    if (diffSeconds > 30) { delayEl.innerText = `+${min}:${sec}`; delayEl.className = 'text-2xl font-black font-mono mt-1 text-red-500'; } 
-                    else if (diffSeconds < -30) { delayEl.innerText = `-${min}:${sec}`; delayEl.className = 'text-2xl font-black font-mono mt-1 text-blue-500'; } 
-                    else { delayEl.innerText = `±0:00`; delayEl.className = 'text-2xl font-black font-mono mt-1 text-emerald-500'; }
-                }
+            document.getElementById('os-clock').innerText = now.toLocaleTimeString('de-DE');
+            if(currentRoute && document.getElementById('ibis-hardware').classList.contains('flex')) {
+                document.getElementById('ibis-clock').innerText = now.toLocaleTimeString('de-DE');
+                updateDelay();
             }
-        };
+        }, 1000);
 
-        window.playSonderansage = function(txt) { window.showToast('Sprachausgabe', txt); };
+        // --- DATENBANKEN ---
+        let routes = [
+            { id: "824", type: "Bus", art: "Überland", verlauf: "Pendel", dauer: 38, pause: 12, start: "05:00", takt: 20, stops: ["S Oranienburg", "Bernauer Str.", "Breite Str.", "Kremmener Str.", "Umspannwerk", "Hennigsdorf"] },
+            { id: "100", type: "Bus", art: "Stadtbus", verlauf: "Pendel", dauer: 45, pause: 10, start: "06:00", takt: 20, stops: ["Hauptbahnhof", "Marktplatz", "Rathaus", "Klinikum", "Stadion"] }
+        ];
 
-        window.onload = () => {
-            window.renderRoutes();
-            window.renderPersonnel();
-            window.renderDepot();
-            window.renderEmails();
-            window.switchTab('app-email');
-            setInterval(window.updateClock, 1000);
-            document.getElementById('email-badge').classList.remove('hidden');
+        let employees = [
+            { name: "Jürgen Wagner", role: "Busfahrer/in", status: "Im Dienst" },
+            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", status: "Frei" },
+            { name: "Tom Meier", role: "Busfahrer/in", status: "Überstundenabbau" }
+        ];
+
+        let vehicles = [
+            { id: "KOM 1042", type: "Mercedes-Benz Citaro (Gelenk)", tuev: "10/2027", hu: "05/2027", status: "Einsatzbereit" },
+            { id: "KOM 1015", type: "Solaris Urbino 18", tuev: "04/2028", hu: "02/2028", status: "Einsatzbereit" },
+            { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "In Werkstatt" }
+        ];
+
+        let emails = [
+            {
+                id: 1, sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false,
+                content: "Sehr geehrter Herr Backhaus,\n\nmit großem Interesse habe ich Ihre Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn war ich stets für die sichere Beförderung der Fahrgäste im Überland- und Stadtverkehr verantwortlich. Dabei bin ich bestens mit den gängigen Systemen, insbesondere den IBIS-Geräten der Firma Atron, vertraut. Auch der Umgang mit anspruchsvollen Verkehrssituationen, Ticketverkäufen und der Kommunikation mit der Leitstelle ist für mich selbstverständlich.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Gerne möchte ich mein Fachwissen in Ihr Unternehmen einbringen.\n\nÜber eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
+            },
+            {
+                id: 2, sender: "Andrea Schmidt (Rheinbahn AG)", subject: "Bewerbung als Straßenbahnfahrerin (FiF)", read: false, replied: false,
+                content: "Sehr geehrter Herr Backhaus,\n\nhiermit bewerbe ich mich um die offene Stelle als Straßenbahnfahrerin in Ihrem Verkehrsbetrieb. Nach meiner erfolgreich abgeschlossenen Ausbildung zur Fachkraft im Fahrbetrieb (FiF) bin ich nun seit drei Jahren bei der Rheinbahn AG in Düsseldorf im aktiven Fahrdienst tätig und suche nun nach einer neuen beruflichen Herausforderung.\n\nZu meinen täglichen Aufgaben gehört die sichere Führung von Niederflur- und Stadtbahnwagen, die präzise Fahrgastinformation über die Bordsysteme sowie die schnelle und routinierte Störungsbeseitigung an den Fahrzeugen. Ich behalte auch in stressigen Situationen, wie etwa bei Großveranstaltungen, Schienenersatzverkehr oder widrigen Wetterbedingungen, stets einen kühlen Kopf und halte mich exakt an die Dienstpläne.\n\nDa ich von den modernen Strukturen und dem Fuhrpark Ihres Unternehmens gehört habe, sehe ich hier den idealen nächsten Schritt für meine Karriere. Meine Unterlagen liegen bei, und ich stehe für ein Probearbeiten jederzeit zur Verfügung.\n\nMit freundlichen Grüßen\nAndrea Schmidt"
+            },
+            {
+                id: 3, sender: "EvoBus Vertrieb Deutschland", subject: "Angebot: Neuer Mercedes-Benz eCitaro für Ihre Flotte", read: false, replied: false,
+                content: "Sehr geehrter Herr Backhaus,\n\nwir bedanken uns für Ihr Interesse an der Elektrifizierung Ihrer Flotte und die gute Zusammenarbeit in den vergangenen Jahren. Anbei erhalten Sie unser unverbindliches Angebot für einen neuen Mercedes-Benz eCitaro G (Gelenkbus) der neuesten Generation, inklusive kompletter Ladeinfrastruktur für Ihren Betriebshof.\n\nFahrzeugdaten:\n- Modell: eCitaro G (18 Meter)\n- Batteriekapazität: 441 kWh (Festkörperbatterie)\n- Reichweite: Garantiert 250 km auch im Winterbetrieb\n- Ausstattung: Klimaautomatik, Atron AFR410 Vorrüstung, WLAN für Fahrgäste\n\nFahrzeugpreis: 650.000 € netto\nLieferzeit: 4 Monate ab Bestelleingang\n\nWenn Sie dieses Angebot annehmen und das Fahrzeug in Ihren Betriebshof aufnehmen möchten, antworten Sie bitte einfach auf diese Mail mit den Worten 'Kaufen' oder 'Bestellen'. Wir leiten dann umgehend alles in die Wege.\n\nMit freundlichen Grüßen\nIhr EvoBus Vertriebsteam"
+            }
+        ];
+        let currentMail = null;
+
+        // --- MAIL SYSTEM ---
+        function renderMails() {
+            const list = document.getElementById('mail-list');
+            list.innerHTML = '';
+            emails.forEach((mail, idx) => {
+                const el = document.createElement('div');
+                el.className = `p-4 border-b border-slate-700 cursor-pointer hover:bg-slate-700 transition ${mail.read ? 'text-gray-400' : 'font-bold text-white'}`;
+                el.innerHTML = `
+                    <div class="text-sm truncate">${mail.sender} ${mail.replied ? '<span class="text-green-500 font-bold ml-2">↩</span>' : ''}</div>
+                    <div class="text-xs truncate text-blue-400">${mail.subject}</div>
+                `;
+                el.onclick = () => openMail(idx);
+                list.appendChild(el);
+            });
+        }
+        function openMail(idx) {
+            currentMail = emails[idx];
+            currentMail.read = true;
+            renderMails();
+            document.getElementById('mail-content').innerHTML = `
+                <h2 class="text-xl font-bold mb-2">${currentMail.subject}</h2>
+                <p class="text-sm text-blue-400 mb-6">Von: ${currentMail.sender}</p>
+                <div class="text-gray-300 text-sm whitespace-pre-wrap leading-relaxed">${currentMail.content}</div>
+            `;
+            document.getElementById('mail-reply').value = '';
+        }
+        function sendReply() {
+            if(!currentMail) return alert('Bitte wähle zuerst eine E-Mail aus.');
+            const text = document.getElementById('mail-reply').value.toLowerCase();
+            if(text.trim() === '') return;
             
-            // Verzögerte Werbemail einblenden
-            setTimeout(() => {
-                window.emails.push({ id: 'm3', sender: 'vertrieb@evobus.com', subject: 'Sonderangebot: Citaro Gelenkbus', body: 'Guten Tag,\n\nbrauchen Sie Verstärkung für Ihren Fuhrpark? Antworten Sie einfach auf diese E-Mail mit dem Wort "Kaufen", um einen Citaro Gelenkbus direkt in Ihren Betriebshof zu erwerben.\n\nEvoBus Vertrieb', unread: true, isAd: true, adModel: 'Citaro G', adType: 'Bus' });
-                window.renderEmails();
-                document.getElementById('email-badge').classList.remove('hidden');
-                window.showToast('Neues Postfach', 'Sie haben eine neue Werbemail erhalten.');
-            }, 30000);
-        };
+            if(text.includes('zusage') || text.includes('eingestellt')) {
+                const name = currentMail.sender.split('(')[0].trim();
+                employees.push({ name: name, role: currentMail.subject.includes('Straßenbahn') ? 'Straßenbahnfahrer/in' : 'Busfahrer/in', status: 'Im Dienst' });
+                alert(`${name} wurde erfolgreich eingestellt und in den Dienstplan aufgenommen!`);
+                renderPersonal();
+            }
+            if(text.includes('kaufen') || text.includes('bestellen')) {
+                vehicles.push({ id: `KOM ${Math.floor(Math.random()*9000)+1000}`, type: "Mercedes-Benz eCitaro (Elektro)", tuev: "10/2029", hu: "10/2029", status: "Einsatzbereit" });
+                alert(`Der Mercedes-Benz eCitaro wurde bestellt und dem Betriebshof hinzugefügt!`);
+                renderBetriebshof();
+            }
+            
+            currentMail.replied = true;
+            document.getElementById('mail-reply').value = '';
+            renderMails();
+        }
+
+        // --- PERSONAL & DIENSTPLAN ---
+        function addEmployee() {
+            const name = document.getElementById('p-name').value;
+            const role = document.getElementById('p-role').value;
+            if(!name) return alert("Bitte Namen eingeben.");
+            employees.push({ name: name, role: role, status: "Im Dienst" });
+            document.getElementById('p-name').value = '';
+            renderPersonal();
+        }
+        function renderPersonal() {
+            const tbody = document.getElementById('personal-list');
+            tbody.innerHTML = '';
+            employees.forEach((emp, idx) => {
+                let statusColor = emp.status === 'Im Dienst' ? 'text-green-400' : (emp.status === 'Frei' ? 'text-blue-400' : (emp.status === 'Krank' ? 'text-red-400' : 'text-yellow-400'));
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700 transition">
+                        <td class="p-3 font-semibold">${emp.name}</td>
+                        <td class="p-3 text-gray-400">${emp.role}</td>
+                        <td class="p-3 font-bold ${statusColor}">${emp.status}</td>
+                        <td class="p-3">
+                            <select onchange="updateEmployeeStatus(${idx}, this.value)" class="bg-slate-900 border border-slate-600 rounded text-xs p-2 text-white outline-none focus:border-blue-500 w-40">
+                                <option ${emp.status === 'Im Dienst' ? 'selected' : ''}>Im Dienst</option>
+                                <option ${emp.status === 'Frei' ? 'selected' : ''}>Frei</option>
+                                <option ${emp.status === 'Überstundenabbau' ? 'selected' : ''}>Überstundenabbau</option>
+                                <option ${emp.status === 'Krank' ? 'selected' : ''}>Krank</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        function updateEmployeeStatus(idx, newStatus) {
+            employees[idx].status = newStatus;
+            renderPersonal();
+        }
+
+        // --- BETRIEBSHOF & WERKSTATT ---
+        function renderBetriebshof() {
+            const tbody = document.getElementById('betriebshof-list');
+            tbody.innerHTML = '';
+            vehicles.forEach((v, idx) => {
+                let statusColor = v.status === 'Einsatzbereit' ? 'text-green-400' : 'text-red-400';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700 transition">
+                        <td class="p-3 font-bold text-blue-300">${v.id}</td>
+                        <td class="p-3 text-gray-300">${v.type}</td>
+                        <td class="p-3 text-gray-400 text-xs">
+                            <div class="flex flex-col gap-1">
+                                <span><span class="font-bold text-gray-300">TÜV:</span> ${v.tuev}</span>
+                                <span><span class="font-bold text-gray-300">HU:</span> ${v.hu}</span>
+                            </div>
+                        </td>
+                        <td class="p-3 font-bold ${statusColor}">${v.status}</td>
+                        <td class="p-3">
+                            <button onclick="toggleWerkstatt(${idx})" class="font-bold border rounded text-xs px-3 py-1.5 transition ${v.status === 'Einsatzbereit' ? 'border-yellow-600 text-yellow-500 hover:bg-yellow-900' : 'border-green-600 text-green-500 hover:bg-green-900'}">
+                                ${v.status === 'Einsatzbereit' ? 'In Werkstatt schicken' : 'Als repariert melden'}
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        function toggleWerkstatt(idx) {
+            vehicles[idx].status = vehicles[idx].status === 'Einsatzbereit' ? 'In Werkstatt' : 'Einsatzbereit';
+            renderBetriebshof();
+        }
+
+        // --- ROUTEN EDITOR ---
+        function addRoute() {
+            const r = {
+                id: document.getElementById('n-nr').value,
+                type: document.getElementById('n-typ').value,
+                art: document.getElementById('n-art').value,
+                verlauf: document.getElementById('n-verlauf').value,
+                dauer: parseInt(document.getElementById('n-dauer').value) || 0,
+                pause: parseInt(document.getElementById('n-pause').value) || 0,
+                start: document.getElementById('n-start').value || "06:00",
+                takt: parseInt(document.getElementById('n-takt').value) || 20,
+                stops: document.getElementById('n-stops').value.split(',').map(s=>s.trim())
+            };
+            if(!r.id || r.stops.length < 2) return alert("Fehlerhafte Eingabe.");
+            routes.push(r);
+            renderRoutes();
+            alert("Linie gespeichert!");
+        }
+        function deleteRoute(idx) { routes.splice(idx, 1); renderRoutes(); }
+        function renderRoutes() {
+            const list = document.getElementById('routen-list');
+            list.innerHTML = '';
+            routes.forEach((r, idx) => {
+                list.innerHTML += `
+                    <div class="bg-slate-800 p-4 rounded-lg shadow border border-slate-700">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="flex items-center space-x-3">
+                                <span class="font-bold text-xl text-white">L ${r.id}</span>
+                                <span class="text-xs font-semibold px-2 py-1 rounded ${r.verlauf==='Ring'?'bg-purple-900 text-purple-300':'bg-emerald-900 text-emerald-300'}">${r.verlauf}</span>
+                                <span class="text-xs bg-slate-700 text-gray-300 px-2 py-1 rounded">${r.type} ${r.art}</span>
+                            </div>
+                            <button onclick="deleteRoute(${idx})" class="text-red-400 hover:text-red-300 text-sm border border-red-900 px-2 rounded">Löschen</button>
+                        </div>
+                        <div class="text-gray-400 text-sm mb-1">${r.stops.join(' → ')}</div>
+                        <div class="text-gray-500 text-xs">⏱ ${r.dauer} Min Fahrt, ${r.pause} Min Pause | Ab ${r.start} Uhr im ${r.takt}-Min-Takt</div>
+                    </div>`;
+            });
+        }
+
+        // --- IBIS ATRON LOGIK ---
+        let currentRoute = null;
+        let currentStopIdx = 0;
+        let routeStartTime = null;
+        let currentStopName = "";
+        let isDarkMode = false;
+
+        function startFahrt() {
+            const code = document.getElementById('login-code').value;
+            currentRoute = routes.find(r => r.id === code);
+            if(!currentRoute) return alert("Linie nicht gefunden!");
+            
+            const now = new Date();
+            const [sh, sm] = currentRoute.start.split(':').map(Number);
+            let taktStart = new Date(now);
+            taktStart.setHours(sh, sm, 0);
+            
+            if(now < taktStart) {
+                routeStartTime = taktStart;
+            } else {
+                const diffMin = (now - taktStart) / 60000;
+                const fahrtenBisher = Math.floor(diffMin / currentRoute.takt);
+                routeStartTime = new Date(taktStart.getTime() + (fahrtenBisher * currentRoute.takt * 60000));
+            }
+
+            currentStopIdx = 0;
+            document.getElementById('ibis-login').classList.add('hidden');
+            document.getElementById('ibis-hardware').classList.remove('hidden');
+            document.getElementById('ibis-hardware').classList.add('flex');
+            
+            document.getElementById('ibis-line-dest').innerText = `${currentRoute.id} - ${currentRoute.stops[currentRoute.stops.length-1]}`;
+            renderIbisStops();
+            playAnsage(currentRoute.stops[0]);
+        }
+
+        function beendeDienst() {
+            currentRoute = null;
+            document.getElementById('ibis-hardware').classList.add('hidden');
+            document.getElementById('ibis-hardware').classList.remove('flex');
+            document.getElementById('ibis-login').classList.remove('hidden');
+            document.getElementById('login-code').value = '';
+        }
+
+        function nextHaltestelle() {
+            if(currentStopIdx < currentRoute.stops.length - 1) {
+                currentStopIdx++;
+                renderIbisStops();
+                playAnsage(currentRoute.stops[currentStopIdx]);
+            }
+        }
+
+        function wendeZug() {
+            if(!currentRoute) return;
+            currentRoute.stops.reverse();
+            currentStopIdx = 0;
+            routeStartTime = new Date(routeStartTime.getTime() + (currentRoute.dauer + currentRoute.pause) * 60000);
+            document.getElementById('ibis-line-dest').innerText = `${currentRoute.id} - ${currentRoute.stops[currentRoute.stops.length-1]}`;
+            renderIbisStops();
+            playAnsage(currentRoute.stops[0]);
+        }
+
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            const screen = document.getElementById('ibis-screen');
+            if(isDarkMode) screen.classList.add('atron-dark');
+            else screen.classList.remove('atron-dark');
+        }
+
+        function updateDelay() {
+            const now = new Date();
+            const halteDauer = currentRoute.dauer / (currentRoute.stops.length - 1 || 1);
+            const expectedTime = new Date(routeStartTime.getTime() + (currentStopIdx * halteDauer * 60000));
+            
+            const diffSec = Math.floor((now - expectedTime) / 1000);
+            const m = Math.abs(Math.floor(diffSec / 60)).toString().padStart(2, '0');
+            const s = Math.abs(diffSec % 60).toString().padStart(2, '0');
+            
+            const delayEl = document.getElementById('ibis-delay');
+            if(diffSec > 60) {
+                delayEl.innerText = `+${m}:${s}`;
+                delayEl.className = 'text-red-600 font-bold';
+            } else if(diffSec < -60) {
+                delayEl.innerText = `-${m}:${s}`;
+                delayEl.className = 'text-yellow-300 font-bold';
+            } else {
+                delayEl.innerText = `±00:00`;
+                delayEl.className = 'text-green-600 font-bold';
+            }
+        }
+
+        function renderIbisStops() {
+            const list = document.getElementById('ibis-route-list');
+            list.innerHTML = '';
+            const halteDauer = currentRoute.dauer / (currentRoute.stops.length - 1 || 1);
+            
+            // Draw route line background (cyan)
+            list.innerHTML += `<div class="absolute left-[13px] top-6 bottom-6 w-0.5 bg-[#008080] z-0"></div>`;
+
+            currentRoute.stops.forEach((stop, idx) => {
+                const stopTime = new Date(routeStartTime.getTime() + (idx * halteDauer * 60000));
+                const timeStr = stopTime.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+                
+                let dot = `<div class="w-2.5 h-2.5 rounded-full bg-white border border-[#008080] z-10 mr-2"></div>`;
+                let boxClass = "stop-box text-black shadow-sm font-semibold text-xs py-1.5 px-2";
+                
+                if (idx < currentStopIdx) {
+                    dot = `<div class="w-2.5 h-2.5 rounded-full bg-[#008080] z-10 mr-2"></div>`;
+                    boxClass = "stop-box bg-gray-50 text-gray-500 opacity-70 py-1.5 px-2 text-xs";
+                } else if (idx === currentStopIdx) {
+                    dot = `<div class="w-2.5 h-2.5 rounded-full bg-red-600 border border-white ring-1 ring-red-600 z-10 mr-2"></div>`;
+                    boxClass = "stop-box bg-white font-bold border-2 border-teal-500 shadow-md py-1.5 px-2 text-xs";
+                    currentStopName = stop;
+                }
+
+                list.innerHTML += `
+                    <div class="flex items-center w-full relative z-10 mt-1">
+                        ${dot}
+                        <div class="flex-1 flex justify-between items-center ${boxClass} rounded-sm w-full">
+                            <span class="truncate pr-2">${stop}</span>
+                            <span class="text-[10px] text-teal-600 whitespace-nowrap">${timeStr}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- AUDIO / TTS ---
+        function playAnsage(station) {
+            const text = encodeURIComponent(`Nächster Halt: ${station}.`);
+            const audio = document.getElementById('tts-audio');
+            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${text}`;
+            audio.play();
+        }
+        function playSonderansage(type) {
+            let text = "";
+            if(type === 'fahrscheinkontrolle') text = "Sehr geehrte Fahrgäste, bitte halten Sie Ihre Fahrausweise zur Kontrolle bereit.";
+            if(type === 'aufrucken') text = "Bitte rücken Sie im Wagen durch, um anderen Fahrgästen das Einsteigen zu ermöglichen.";
+            if(type === 'essen') text = "Wir weisen Sie darauf hin, dass der Verzehr von Speisen und Getränken in diesem Fahrzeug nicht gestattet ist.";
+            const audio = document.getElementById('tts-audio');
+            audio.src = `https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=de&q=${encodeURIComponent(text)}`;
+            audio.play();
+        }
+        
+        // Start apps
+        openApp('mail');
+        openApp('ibis'); // Show ibis on start to check design
     </script>
 </body>
 </html>
