@@ -53,6 +53,10 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
+
+        /* Excel Table Styles */
+        .excel-cell { transition: background 0.1s; }
+        .excel-cell:hover { background-color: rgba(59, 130, 246, 0.2) !important; }
     </style>
 </head>
 <body class="text-white h-screen w-screen flex flex-col">
@@ -64,7 +68,7 @@
             <button onclick="openApp('mail')" class="hover:text-blue-300 transition">CTS Mail</button>
             <button onclick="openApp('ibis')" class="hover:text-blue-300 transition">Atron IBIS</button>
             <button onclick="openApp('routen')" class="hover:text-blue-300 transition">Routen-Editor</button>
-            <button onclick="openApp('personal')" class="hover:text-blue-300 transition">Dienstplan</button>
+            <button onclick="openApp('personal')" class="hover:text-blue-300 transition flex items-center gap-1">📅 Dienstplan</button>
             <button onclick="openApp('betriebshof')" class="hover:text-blue-300 transition">Betriebshof</button>
             <button onclick="openApp('werkstatt')" class="hover:text-yellow-400 text-yellow-500 transition flex items-center gap-1">🔧 Werkstatt</button>
             <button onclick="openApp('shop')" class="hover:text-green-400 text-green-500 transition flex items-center gap-1">🛒 Fahrzeughandel</button>
@@ -102,59 +106,72 @@
             </div>
         </div>
 
-        <!-- ================= PERSONAL & DIENSTPLAN ================= -->
-        <div id="app-personal" class="os-window absolute w-[950px] h-[650px] top-[8%] left-[18%] rounded-xl hidden flex flex-col">
+        <!-- ================= EXCEL DIENSTPLAN APP ================= -->
+        <div id="app-personal" class="os-window absolute w-[1100px] h-[650px] top-[8%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
                     <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('personal')"></div>
                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-personal')"></div>
                 </div>
-                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Personalverwaltung & Dienstpläne</div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Dienstplanung (Wochen-Kalender)</div>
             </div>
-            <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-                <!-- Dienstplan Zuweisung -->
-                <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700">
-                    <h3 class="text-lg font-bold mb-4 text-blue-400">Schicht & Dienstplan generieren</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Mitarbeiter wählen</label>
-                            <select id="shift-emp" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white"></select>
+            <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
+                
+                <!-- Werkzeugkasten (Paint Tool) -->
+                <div class="bg-slate-800 p-4 rounded-lg shadow-lg border border-slate-700 flex flex-wrap gap-6 items-end">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-blue-400 mb-1">1. Werkzeug auswählen</h3>
+                        <p class="text-xs text-gray-400 mb-3">Stelle ein, was du in den Kalender eintragen möchtest.</p>
+                        <div class="flex gap-4">
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Aktion / Schicht</label>
+                                <select id="tool-type" onchange="updateToolDisplay()" class="w-40 bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
+                                    <option value="F">Frühschicht</option>
+                                    <option value="S">Spätschicht</option>
+                                    <option value="N">Nachtschicht</option>
+                                    <option value="Frei">Frei / Wochenende</option>
+                                    <option value="Krank">Krank</option>
+                                    <option value="Urlaub">Urlaub</option>
+                                    <option value="Abbau">Überstundenabbau</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs text-gray-400 mb-1">Linie (nur bei Schichten)</label>
+                                <select id="tool-line" onchange="updateToolDisplay()" class="w-48 bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white"></select>
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Schichtart</label>
-                            <select id="shift-type" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white">
-                                <option value="F">Frühschicht (04:00 - 12:00)</option>
-                                <option value="S">Spätschicht (12:00 - 20:00)</option>
-                                <option value="N">Nachtschicht (20:00 - 04:00)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs text-gray-400 mb-1">Linie zuweisen</label>
-                            <select id="shift-line" class="w-full bg-slate-900 border border-slate-600 rounded p-2 text-sm text-white"></select>
-                        </div>
-                        <div>
-                            <button onclick="generateShift()" class="w-full bg-blue-600 hover:bg-blue-500 py-2 rounded text-sm font-bold transition shadow-lg">Schicht generieren</button>
-                        </div>
+                    </div>
+                    
+                    <div class="flex-1 bg-slate-900 border border-blue-500 rounded p-4 text-center">
+                        <div class="text-xs text-blue-300 mb-1 uppercase font-bold tracking-widest">Aktueller Pinsel</div>
+                        <div id="current-tool-display" class="font-mono text-xl font-bold text-white">-</div>
+                        <div class="text-xs text-gray-500 mt-1">2. Klicke auf ein Feld im Kalender zum Zuweisen</div>
+                    </div>
+
+                    <div>
+                        <button onclick="addEmployeeDemo()" class="bg-teal-700 hover:bg-teal-600 border border-teal-500 px-4 py-2 rounded text-sm font-bold transition shadow">+ Neuer Mitarbeiter</button>
                     </div>
                 </div>
-                <!-- Personal Liste -->
-                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto flex-1 border border-slate-700">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-bold">Aktuelle Dienstpläne</h3>
-                        <button onclick="addEmployeeDemo()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded transition">+ Neuer Mitarbeiter</button>
-                    </div>
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-slate-700 text-gray-300">
+
+                <!-- Excel Grid / Kalender -->
+                <div class="bg-slate-900 rounded shadow-lg overflow-x-auto border-2 border-slate-700 flex-1">
+                    <table class="w-full text-left text-sm whitespace-nowrap border-collapse">
+                        <thead class="bg-slate-800 text-gray-300 border-b-2 border-slate-600">
                             <tr>
-                                <th class="p-3 rounded-tl-lg">Mitarbeiter</th>
-                                <th class="p-3">Status</th>
-                                <th class="p-3">Schichtcode</th>
-                                <th class="p-3">Zeiten / Linie</th>
-                                <th class="p-3 rounded-tr-lg">Aktion (Abweichung)</th>
+                                <th class="p-3 border-r border-slate-700 w-48 sticky left-0 bg-slate-800 z-10">Mitarbeiter</th>
+                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-0">Montag</th>
+                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-1">Dienstag</th>
+                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-2">Mittwoch</th>
+                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-3">Donnerstag</th>
+                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-4">Freitag</th>
+                                <th class="p-2 border-r border-slate-700 text-center w-32 bg-slate-700/50" id="th-5">Samstag</th>
+                                <th class="p-2 text-center w-32 bg-slate-700/50" id="th-6">Sonntag</th>
                             </tr>
                         </thead>
-                        <tbody id="personal-list" class="divide-y divide-slate-700"></tbody>
+                        <tbody id="excel-list" class="divide-y divide-slate-700">
+                            <!-- Rendered dynamically -->
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -171,9 +188,7 @@
                 <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Fahrzeughandel (Neu- & Gebrauchtfahrzeuge)</div>
             </div>
             <div class="flex-1 flex overflow-hidden">
-                <!-- Marken Sidebar -->
                 <div class="w-1/4 bg-slate-800 border-r border-slate-700 overflow-y-auto" id="shop-brands"></div>
-                <!-- Fahrzeuge Anzeige -->
                 <div class="w-3/4 bg-slate-900 p-6 overflow-y-auto" id="shop-vehicles"></div>
             </div>
         </div>
@@ -280,7 +295,6 @@
             </div>
             
             <div class="flex-1 flex flex-col items-center justify-center bg-gray-300 overflow-y-auto p-4">
-                <!-- HARDWARE SHELL -->
                 <div id="ibis-hardware" class="flex flex-col items-center w-full max-w-[950px]">
                     <div class="w-[55%] h-24 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
                         <div class="absolute top-2 right-6 flex space-x-2">
@@ -413,7 +427,7 @@
             win.style.display = 'flex';
             win.style.zIndex = ++highestZ;
             if(id === 'mail') renderMails();
-            if(id === 'personal') { populateShiftSelects(); renderPersonal(); }
+            if(id === 'personal') { updateToolDisplay(); renderExcel(); }
             if(id === 'betriebshof') renderBetriebshof();
             if(id === 'werkstatt') renderWerkstatt();
             if(id === 'routen') renderRoutes();
@@ -422,7 +436,7 @@
         function closeApp(id) { document.getElementById('app-' + id).style.display = 'none'; }
         function toggleMaximize(id) { document.getElementById(id).classList.toggle('maximized'); }
 
-        // --- UHRZEIT & WERKSTATT TIMER ---
+        // --- UHRZEIT & TIMER ---
         setInterval(() => {
             const now = new Date();
             document.getElementById('os-clock').innerText = now.toLocaleTimeString('de-DE');
@@ -454,10 +468,11 @@
             { id: "1", type: "Tram", art: "Straßenbahn", verlauf: "Ring", dauer: 30, pause: 5, start: "05:30", takt: 15, stops: ["Hbf", "Oper", "Theater", "Messe"] }
         ];
 
+        // schedule-Array für Montag(0) bis Sonntag(6)
         let employees = [
-            { name: "Jürgen Wagner", role: "Busfahrer/in", status: "Ruhezeit", shift: null },
-            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", status: "Ruhezeit", shift: null },
-            { name: "Tom Meier", role: "Busfahrer/in", status: "Überstundenabbau", shift: null }
+            { name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"] },
+            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] },
+            { name: "Tom Meier", role: "Busfahrer/in", schedule: ["Krank", "Krank", "Krank", "Frei", "S-100", "S-100", "F-100"] }
         ];
 
         let vehicles = [
@@ -468,10 +483,103 @@
         let emails = [
             {
                 id: 1, sender: "Lukas Müller (DB Regio Bus)", subject: "Bewerbung als Busfahrer im Linienverkehr", read: false, replied: false,
-                content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIn meiner bisherigen Laufbahn war ich stets für die sichere Beförderung der Fahrgäste im Überland- und Stadtverkehr verantwortlich. Dabei bin ich bestens mit den gängigen Systemen, insbesondere den IBIS-Geräten der Firma Atron, vertraut. Auch der Umgang mit anspruchsvollen Verkehrssituationen, Ticketverkäufen und der Kommunikation mit der Leitstelle ist für mich selbstverständlich.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
+                content: "Guten Tag Max,\n\nmit großem Interesse habe ich die Stellenausschreibung für die Position als Busfahrer in der Leitstelle CTS 2026 gelesen. Als ausgebildeter Eisenbahner im Betriebsdienst und späterer Berufskraftfahrer mit mehr als fünf Jahren Erfahrung bei der DB Regio Bus bringe ich sowohl das technische Verständnis als auch die nötige Fahrpraxis für diese verantwortungsvolle Aufgabe mit.\n\nIch bin hochmotiviert, schichtbereit und pflege stets einen freundlichen Umgang mit den Fahrgästen. Über eine Einladung zu einem persönlichen Vorstellungsgespräch oder einer Probefahrt würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\nLukas Müller"
             }
         ];
         let currentMail = null;
+
+        // --- EXCEL / KALENDER LOGIK ---
+        let currentPaintTool = "";
+
+        function updateToolDisplay() {
+            const type = document.getElementById('tool-type').value;
+            const lineSelect = document.getElementById('tool-line');
+            const display = document.getElementById('current-tool-display');
+            
+            // Lade Linien ins Dropdown, falls noch nicht passiert
+            if(lineSelect.options.length === 0) {
+                routes.forEach(r => {
+                    lineSelect.innerHTML += `<option value="${r.id}">Linie ${r.id}</option>`;
+                });
+            }
+
+            if(type === 'F' || type === 'S' || type === 'N') {
+                lineSelect.disabled = false;
+                const line = lineSelect.value;
+                currentPaintTool = `${type}-${line}`;
+                let typeName = type === 'F' ? 'Frühschicht' : (type === 'S' ? 'Spätschicht' : 'Nachtschicht');
+                display.innerHTML = `<span class="text-teal-400">${typeName} (L ${line})</span>`;
+            } else {
+                lineSelect.disabled = true;
+                currentPaintTool = type;
+                if(type === 'Frei') display.innerHTML = `<span class="text-gray-400">Frei / Wochenende</span>`;
+                if(type === 'Krank') display.innerHTML = `<span class="text-red-400">Krankgemeldet</span>`;
+                if(type === 'Urlaub') display.innerHTML = `<span class="text-yellow-400">Urlaub</span>`;
+                if(type === 'Abbau') display.innerHTML = `<span class="text-purple-400">Überstundenabbau</span>`;
+            }
+        }
+
+        function assignCell(empIdx, dayIdx) {
+            employees[empIdx].schedule[dayIdx] = currentPaintTool;
+            renderExcel();
+        }
+
+        function renderExcel() {
+            const tbody = document.getElementById('excel-list');
+            tbody.innerHTML = '';
+            
+            // Bestimme den heutigen Tag (0=Mo, 6=So) für die Markierung
+            let realDay = new Date().getDay(); 
+            const todayIdx = realDay === 0 ? 6 : realDay - 1; 
+
+            // Highlighte Spaltenkopf
+            for(let i=0; i<7; i++) {
+                const th = document.getElementById('th-'+i);
+                if(i === todayIdx) th.className = "p-2 border-r border-slate-700 text-center w-32 bg-yellow-900/40 border-b-2 border-yellow-500 text-yellow-300";
+                else th.className = "p-2 border-r border-slate-700 text-center w-32 " + (i>=5 ? "bg-slate-700/50" : "");
+            }
+
+            employees.forEach((emp, eIdx) => {
+                let rowHtml = `
+                    <tr class="border-b border-slate-700">
+                        <td class="p-3 border-r border-slate-700 font-semibold bg-slate-800 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">
+                            ${emp.name}<br><span class="text-xs text-gray-400 font-normal">${emp.role}</span>
+                        </td>
+                `;
+
+                for(let dIdx = 0; dIdx < 7; dIdx++) {
+                    let val = emp.schedule[dIdx] || "";
+                    let bgClass = "bg-transparent";
+                    let textClass = "text-white";
+                    
+                    if(val === 'Frei') { bgClass = "bg-gray-800"; textClass = "text-gray-500"; }
+                    else if(val === 'Krank') { bgClass = "bg-red-900/30"; textClass = "text-red-400 font-bold"; }
+                    else if(val === 'Urlaub') { bgClass = "bg-yellow-900/30"; textClass = "text-yellow-500"; }
+                    else if(val === 'Abbau') { bgClass = "bg-purple-900/30"; textClass = "text-purple-400"; }
+                    else if(val.startsWith('F-')) { bgClass = "bg-teal-900/40"; textClass = "text-teal-300 font-bold font-mono"; }
+                    else if(val.startsWith('S-')) { bgClass = "bg-orange-900/40"; textClass = "text-orange-300 font-bold font-mono"; }
+                    else if(val.startsWith('N-')) { bgClass = "bg-blue-900/40"; textClass = "text-blue-300 font-bold font-mono"; }
+
+                    // Heutiger Tag bekommt einen leichten Rahmen
+                    if(dIdx === todayIdx) bgClass += " ring-inset ring-2 ring-yellow-700/50";
+
+                    rowHtml += `
+                        <td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell ${bgClass}">
+                            <span class="${textClass}">${val}</span>
+                        </td>
+                    `;
+                }
+                rowHtml += `</tr>`;
+                tbody.innerHTML += rowHtml;
+            });
+        }
+
+        function addEmployeeDemo() {
+            const name = prompt("Name des neuen Mitarbeiters:");
+            if(!name) return;
+            employees.push({ name: name, role: "Fahrer/in (Flexibel)", schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
+            renderExcel();
+        }
 
         // --- FAHRZEUGHANDEL (SHOP) DATEN & LOGIK ---
         const shopData = {
@@ -524,10 +632,7 @@
             renderShopVehicles();
         }
 
-        function selectShopBrand(brand) {
-            currentShopBrand = brand;
-            renderShopBrands(); 
-        }
+        function selectShopBrand(brand) { currentShopBrand = brand; renderShopBrands(); }
 
         function renderShopVehicles() {
             const container = document.getElementById('shop-vehicles');
@@ -559,26 +664,16 @@
         function buyVehicle(brand, idx) {
             const vehicle = shopData[brand][idx];
             const newId = (vehicle.isTram ? 'TW ' : 'KOM ') + (Math.floor(Math.random()*9000)+1000);
-            
             const year = new Date().getFullYear() + Math.floor(Math.random()*3) + 1;
             const month = String(Math.floor(Math.random()*12) + 1).padStart(2, '0');
             const tuevDate = `${month}/${year}`;
             
             vehicles.push({
-                id: newId,
-                type: vehicle.type,
-                tuev: tuevDate,
-                hu: tuevDate,
-                status: "Einsatzbereit",
-                repairUntil: null,
-                problem: ""
+                id: newId, type: vehicle.type, tuev: tuevDate, hu: tuevDate,
+                status: "Einsatzbereit", repairUntil: null, problem: ""
             });
-            
             alert(`Herzlichen Glückwunsch!\nEin ${vehicle.type} wurde erfolgreich gekauft.\nDas Fahrzeug wurde mit der ID ${newId} deinem Betriebshof hinzugefügt!`);
-            
-            if(document.getElementById('app-betriebshof').style.display === 'flex') {
-                renderBetriebshof();
-            }
+            if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }
 
         // --- MAIL SYSTEM ---
@@ -614,185 +709,74 @@
             
             if(text.includes('zusage') || text.includes('eingestellt')) {
                 const name = currentMail.sender.split('(')[0].trim();
-                employees.push({ name: name, role: currentMail.subject.includes('Straßenbahn') ? 'Straßenbahnfahrer/in' : 'Busfahrer/in', status: 'Ruhezeit', shift: null });
-                alert(`${name} wurde erfolgreich eingestellt! Du kannst nun Schichten im Reiter Personal zuweisen.`);
-                if(document.getElementById('app-personal').style.display === 'flex') { populateShiftSelects(); renderPersonal(); }
+                employees.push({ name: name, role: currentMail.subject.includes('Straßenbahn') ? 'Straßenbahnfahrer/in' : 'Busfahrer/in', schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
+                alert(`${name} wurde erfolgreich eingestellt! Du kannst nun Schichten im Kalender zuweisen.`);
+                if(document.getElementById('app-personal').style.display === 'flex') renderExcel();
             }
-            
             currentMail.replied = true;
             document.getElementById('mail-reply').value = '';
             renderMails();
         }
 
-        // --- PERSONAL & DIENSTPLAN ---
-        function populateShiftSelects() {
-            const empSelect = document.getElementById('shift-emp');
-            const lineSelect = document.getElementById('shift-line');
-            empSelect.innerHTML = '';
-            lineSelect.innerHTML = '';
-            
-            employees.forEach((emp, idx) => {
-                empSelect.innerHTML += `<option value="${idx}">${emp.name} (${emp.role})</option>`;
-            });
-            routes.forEach(r => {
-                lineSelect.innerHTML += `<option value="${r.id}">Linie ${r.id} (${r.stops[0]} -> ${r.stops[r.stops.length-1]})</option>`;
-            });
-        }
-
-        function generateShift() {
-            const empIdx = document.getElementById('shift-emp').value;
-            const type = document.getElementById('shift-type').value;
-            const lineId = document.getElementById('shift-line').value;
-            
-            if(empIdx === "" || !lineId) return;
-            
-            const emp = employees[empIdx];
-            let times = "04:00 - 12:00";
-            if(type === 'S') times = "12:00 - 20:00";
-            if(type === 'N') times = "20:00 - 04:00";
-            
-            const umlauf = Math.floor(Math.random() * 5) + 1;
-            const code = `${type}-${lineId}-U${umlauf}`;
-            
-            emp.shift = { code: code, times: times, line: lineId };
-            emp.status = "Schicht geplant";
-            
-            renderPersonal();
-        }
-
-        function addEmployeeDemo() {
-            const name = prompt("Name des Mitarbeiters:");
-            if(!name) return;
-            employees.push({ name: name, role: "Fahrer/in (Flexibel)", status: "Ruhezeit", shift: null });
-            populateShiftSelects();
-            renderPersonal();
-        }
-
-        function updateManualStatus(idx, newStatus) {
-            employees[idx].status = newStatus;
-            if(newStatus === 'Krank' || newStatus === 'Frei' || newStatus === 'Überstundenabbau') {
-                employees[idx].shift = null;
-            }
-            renderPersonal();
-        }
-
-        function renderPersonal() {
-            const tbody = document.getElementById('personal-list');
-            tbody.innerHTML = '';
-            employees.forEach((emp, idx) => {
-                let statusColor = 'text-gray-400';
-                if(emp.status === 'Schicht geplant' || emp.status === 'Im Dienst') statusColor = 'text-green-400';
-                if(emp.status === 'Frei' || emp.status === 'Ruhezeit') statusColor = 'text-blue-400';
-                if(emp.status === 'Krank') statusColor = 'text-red-400';
-                if(emp.status === 'Überstundenabbau') statusColor = 'text-yellow-400';
-
-                let shiftStr = emp.shift ? `<span class="font-bold text-white bg-slate-900 px-2 py-1 rounded border border-slate-600">${emp.shift.code}</span>` : '<span class="text-gray-600">-</span>';
-                let timeStr = emp.shift ? `${emp.shift.times} | Linie ${emp.shift.line}` : '-';
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-700 transition">
-                        <td class="p-3 font-semibold">${emp.name}<br><span class="text-xs text-gray-400">${emp.role}</span></td>
-                        <td class="p-3 font-bold ${statusColor}">${emp.status}</td>
-                        <td class="p-3">${shiftStr}</td>
-                        <td class="p-3 text-xs text-gray-300">${timeStr}</td>
-                        <td class="p-3">
-                            <select onchange="updateManualStatus(${idx}, this.value)" class="bg-slate-900 border border-slate-600 rounded text-xs p-1 text-white outline-none w-32">
-                                <option value="" disabled selected>Aktion...</option>
-                                <option value="Krank">Krankmelden</option>
-                                <option value="Frei">In Frei schicken</option>
-                                <option value="Überstundenabbau">Überstundenabbau</option>
-                                <option value="Ruhezeit">Ruhezeit</option>
-                            </select>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
         // --- BETRIEBSHOF & WERKSTATT ---
-        const problems = ["Getriebeschaden", "Motorkontrollleuchte an", "Bremse defekt (TÜV-relevant)", "Unfallschaden Front", "Elektronik-Ausfall (IBIS/Bordrechner)", "Klimakompressor defekt"];
+        const problems = ["Getriebeschaden", "Motorkontrollleuchte an", "Bremse defekt", "Unfallschaden Front", "Elektronik-Ausfall", "Klimakompressor defekt"];
 
         function renderBetriebshof() {
             const tbody = document.getElementById('betriebshof-list');
             tbody.innerHTML = '';
             vehicles.forEach((v, idx) => {
                 if(v.status !== 'Einsatzbereit') return;
-                
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700 transition">
                         <td class="p-3 font-bold text-blue-300">${v.id}</td>
                         <td class="p-3 text-gray-300">${v.type}</td>
-                        <td class="p-3 text-gray-400 text-xs">
-                            <div class="flex flex-col gap-1">
-                                <span><span class="font-bold text-gray-300">TÜV:</span> ${v.tuev}</span>
-                                <span><span class="font-bold text-gray-300">HU:</span> ${v.hu}</span>
-                            </div>
-                        </td>
+                        <td class="p-3 text-gray-400 text-xs">TÜV: ${v.tuev}<br>HU: ${v.hu}</td>
                         <td class="p-3 font-bold text-green-400">${v.status}</td>
                         <td class="p-3">
-                            <button onclick="sendToWerkstatt(${idx})" class="font-bold border border-yellow-600 text-yellow-500 hover:bg-yellow-900 rounded text-xs px-3 py-1.5 transition">
-                                🔧 Zur Reparatur anmelden
-                            </button>
+                            <button onclick="sendToWerkstatt(${idx})" class="font-bold border border-yellow-600 text-yellow-500 hover:bg-yellow-900 rounded text-xs px-3 py-1.5 transition">🔧 Zur Reparatur</button>
                         </td>
                     </tr>
                 `;
             });
-            if(tbody.innerHTML === '') tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Alle Fahrzeuge sind in der Werkstatt.</td></tr>';
         }
 
         function sendToWerkstatt(idx) {
             const v = vehicles[idx];
             v.status = "In Werkstatt";
             v.problem = problems[Math.floor(Math.random() * problems.length)];
-            
             const repairDays = Math.floor(Math.random() * 5) + 1;
             v.repairUntil = new Date(Date.now() + repairDays * 24 * 60 * 60 * 1000); 
-            
             renderBetriebshof();
-            if(document.getElementById('app-werkstatt').style.display === 'flex') {
-                renderWerkstatt();
-            } else {
-                alert(`Fahrzeug ${v.id} ist in der Werkstatt wegen: ${v.problem}. Reparaturdauer: ca. ${repairDays} Tage.`);
-            }
+            if(document.getElementById('app-werkstatt').style.display === 'flex') renderWerkstatt();
+            else alert(`Fahrzeug ${v.id} in Werkstatt (${v.problem}). Dauer: ca. ${repairDays} Tage.`);
         }
 
         function renderWerkstatt() {
             const tbody = document.getElementById('werkstatt-list');
             tbody.innerHTML = '';
             const now = new Date();
-            
             vehicles.forEach((v, idx) => {
                 if(v.status !== 'In Werkstatt') return;
-                
-                let timeStr = "Reparatur abgeschlossen";
+                let timeStr = "Abgeschlossen";
                 if(v.repairUntil && v.repairUntil > now) {
                     const diffSec = Math.floor((v.repairUntil - now) / 1000);
                     const d = Math.floor(diffSec / 86400);
                     const h = Math.floor((diffSec % 86400) / 3600).toString().padStart(2, '0');
                     const m = Math.floor((diffSec % 3600) / 60).toString().padStart(2, '0');
                     const s = (diffSec % 60).toString().padStart(2, '0');
-                    
-                    if (d > 0) {
-                        timeStr = `⏱ ${d} Tage, ${h}:${m}:${s} Std.`;
-                    } else {
-                        timeStr = `⏱ ${h}:${m}:${s} Std. verbleibend`;
-                    }
+                    timeStr = d > 0 ? `⏱ ${d} Tage, ${h}:${m}:${s} Std.` : `⏱ ${h}:${m}:${s} Std.`;
                 }
-
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700 transition">
                         <td class="p-3 font-bold text-yellow-400">${v.id}</td>
                         <td class="p-3 text-gray-300 text-xs">${v.problem}</td>
                         <td class="p-3 font-mono text-blue-300">${timeStr}</td>
                         <td class="p-3">
-                            <button onclick="forceRepair(${idx})" class="font-bold border border-green-600 text-green-500 hover:bg-green-900 rounded text-xs px-3 py-1.5 transition">
-                                Sofort reparieren (Notfall)
-                            </button>
+                            <button onclick="forceRepair(${idx})" class="font-bold border border-green-600 text-green-500 hover:bg-green-900 rounded text-xs px-3 py-1.5 transition">Sofort reparieren</button>
                         </td>
                     </tr>
                 `;
             });
-            if(tbody.innerHTML === '') tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-gray-500">Keine Fahrzeuge in der Werkstatt.</td></tr>';
         }
 
         function forceRepair(idx) {
@@ -819,7 +803,7 @@
             if(!r.id || r.stops.length < 2) return alert("Fehlerhafte Eingabe.");
             routes.push(r);
             renderRoutes();
-            if(document.getElementById('app-personal').style.display === 'flex') populateShiftSelects();
+            if(document.getElementById('app-personal').style.display === 'flex') updateToolDisplay(); // Refreshes dropdown
             alert("Linie gespeichert!");
         }
         function deleteRoute(idx) { routes.splice(idx, 1); renderRoutes(); }
@@ -854,25 +838,12 @@
                 window.speechSynthesis.speak(utterance);
             }
         }
-
-        function playWelcomeMessage(destination) {
-            speakText(`Willkommen an Bord. Unsere Fahrt geht nach ${destination}.`);
-        }
-
-        function playAnsage(station, isEnd = false) {
-            let text = `Nächste Haltestelle: ${station}.`;
-            if (isEnd) {
-                text += " Endstation. Bitte alle aussteigen. Auf Wiedersehen!";
-            }
-            speakText(text);
-        }
-
+        function playWelcomeMessage(destination) { speakText(`Willkommen an Bord. Unsere Fahrt geht nach ${destination}.`); }
+        function playAnsage(station, isEnd = false) { speakText(`Nächste Haltestelle: ${station}.` + (isEnd ? " Endstation. Bitte alle aussteigen. Auf Wiedersehen!" : "")); }
         function playSonderansage(type) {
-            let text = "";
-            if(type === 'fahrscheinkontrolle') text = "Sehr geehrte Fahrgäste, bitte halten Sie Ihre Fahrausweise zur Kontrolle bereit.";
-            if(type === 'aufrucken') text = "Bitte rücken Sie im Wagen durch, um anderen Fahrgästen das Einsteigen zu ermöglichen.";
-            if(type === 'essen') text = "Wir weisen Sie darauf hin, dass der Verzehr von Speisen und Getränken in diesem Fahrzeug nicht gestattet ist.";
-            speakText(text);
+            if(type === 'fahrscheinkontrolle') speakText("Sehr geehrte Fahrgäste, bitte halten Sie Ihre Fahrausweise zur Kontrolle bereit.");
+            if(type === 'aufrucken') speakText("Bitte rücken Sie im Wagen durch, um anderen Fahrgästen das Einsteigen zu ermöglichen.");
+            if(type === 'essen') speakText("Wir weisen Sie darauf hin, dass der Verzehr von Speisen und Getränken in diesem Fahrzeug nicht gestattet ist.");
         }
 
         // --- IBIS ATRON LOGIK ---
@@ -885,11 +856,7 @@
         function startFahrt() {
             const code = document.getElementById('hw-login-code').value.toUpperCase().trim();
             if(!code) return alert("Bitte Code eingeben!");
-
-            let foundLineId = code;
-            if(code.includes('-')) {
-                foundLineId = code.split('-')[1]; 
-            }
+            let foundLineId = code.includes('-') ? code.split('-')[1] : code; 
             
             currentRoute = routes.find(r => r.id === foundLineId);
             if(!currentRoute) return alert("Linie oder Schicht nicht im Fahrplan gefunden!");
@@ -899,23 +866,19 @@
             let taktStart = new Date(now);
             taktStart.setHours(sh, sm, 0);
             
-            if(now < taktStart) {
-                routeStartTime = taktStart;
-            } else {
+            if(now < taktStart) routeStartTime = taktStart;
+            else {
                 const diffMin = (now - taktStart) / 60000;
                 const fahrtenBisher = Math.floor(diffMin / currentRoute.takt);
                 routeStartTime = new Date(taktStart.getTime() + (fahrtenBisher * currentRoute.takt * 60000));
             }
 
             currentStopIdx = 0;
-            
             document.getElementById('ibis-state-login').classList.add('hidden');
             document.getElementById('ibis-state-drive').classList.remove('hidden');
             document.getElementById('ibis-state-drive').classList.add('flex');
-            
             document.getElementById('ibis-line-dest').innerText = `${currentRoute.id} - ${currentRoute.stops[currentRoute.stops.length-1]}`;
             renderIbisStops();
-            
             playWelcomeMessage(currentRoute.stops[currentRoute.stops.length-1]);
         }
 
@@ -934,9 +897,7 @@
             if(currentStopIdx < currentRoute.stops.length - 1) {
                 currentStopIdx++;
                 renderIbisStops();
-                
-                const isEndstation = (currentStopIdx === currentRoute.stops.length - 1);
-                playAnsage(currentRoute.stops[currentStopIdx], isEndstation);
+                playAnsage(currentRoute.stops[currentStopIdx], currentStopIdx === currentRoute.stops.length - 1);
             }
         }
 
@@ -952,39 +913,26 @@
 
         function toggleDarkMode() {
             isDarkMode = !isDarkMode;
-            const screen = document.getElementById('ibis-screen');
-            if(isDarkMode) screen.classList.add('atron-dark');
-            else screen.classList.remove('atron-dark');
+            if(isDarkMode) document.getElementById('ibis-screen').classList.add('atron-dark');
+            else document.getElementById('ibis-screen').classList.remove('atron-dark');
         }
 
         function updateDelay() {
             const now = new Date();
-            const halteDauer = currentRoute.dauer / (currentRoute.stops.length - 1 || 1);
-            const expectedTime = new Date(routeStartTime.getTime() + (currentStopIdx * halteDauer * 60000));
-            
+            const expectedTime = new Date(routeStartTime.getTime() + (currentStopIdx * (currentRoute.dauer / (currentRoute.stops.length - 1 || 1)) * 60000));
             const diffSec = Math.floor((now - expectedTime) / 1000);
             const m = Math.abs(Math.floor(diffSec / 60)).toString().padStart(2, '0');
             const s = Math.abs(diffSec % 60).toString().padStart(2, '0');
-            
             const delayEl = document.getElementById('ibis-delay');
-            if(diffSec > 60) {
-                delayEl.innerText = `+${m}:${s}`;
-                delayEl.className = 'text-red-600 font-bold';
-            } else if(diffSec < -60) {
-                delayEl.innerText = `-${m}:${s}`;
-                delayEl.className = 'text-yellow-300 font-bold';
-            } else {
-                delayEl.innerText = `±00:00`;
-                delayEl.className = 'text-green-600 font-bold';
-            }
+            if(diffSec > 60) { delayEl.innerText = `+${m}:${s}`; delayEl.className = 'text-red-600 font-bold'; }
+            else if(diffSec < -60) { delayEl.innerText = `-${m}:${s}`; delayEl.className = 'text-yellow-300 font-bold'; }
+            else { delayEl.innerText = `±00:00`; delayEl.className = 'text-green-600 font-bold'; }
         }
 
         function renderIbisStops() {
             const list = document.getElementById('ibis-route-list');
-            list.innerHTML = '';
+            list.innerHTML = `<div class="absolute left-[13px] top-6 bottom-6 w-0.5 bg-[#008080] z-0"></div>`;
             const halteDauer = currentRoute.dauer / (currentRoute.stops.length - 1 || 1);
-            
-            list.innerHTML += `<div class="absolute left-[13px] top-6 bottom-6 w-0.5 bg-[#008080] z-0"></div>`;
 
             currentRoute.stops.forEach((stop, idx) => {
                 const stopTime = new Date(routeStartTime.getTime() + (idx * halteDauer * 60000));
@@ -1015,7 +963,7 @@
         }
         
         // Start apps
-        openApp('shop');
+        openApp('personal');
     </script>
 </body>
 </html>
