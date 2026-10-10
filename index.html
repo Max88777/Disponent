@@ -318,6 +318,24 @@
         window.switchTab = function(tabId) {
             document.querySelectorAll('.app-window').forEach(el => el.classList.remove('active'));
             if(tabId) document.getElementById(tabId)?.classList.add('active');
+            
+            // Die Menü-Knöpfe optisch anpassen (welcher aktiv ist)
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            
+            const activeBtn = document.querySelector(`button[onclick="window.switchTab('${tabId}')"]`);
+            if(activeBtn) {
+                activeBtn.classList.remove('bg-slate-800', 'text-slate-300');
+                activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+            }
+
+            // Badge verstecken, wenn E-Mail-App geöffnet wird
+            if(tabId === 'app-email') {
+                const badge = document.getElementById('email-badge');
+                if(badge) badge.classList.add('hidden');
+            }
         };
 
         window.toggleMaximize = function(tabId) {
@@ -602,8 +620,15 @@
         };
 
         window.onload = () => {
+            window.initEmails();
             window.renderRoutes();
             window.switchTab('app-fahrtmodus'); 
+            
+            // Simuliert eine reinkommende Werbemail nach 45 Sekunden
+            setTimeout(() => {
+                window.addEmail('sales@krauth-technology.de', 'Modernisierung Ihrer Leitstelle', 'Sehr geehrte Damen und Herren,\n\nist Ihr aktuelles IBIS-System noch zeitgemäß? Wir bieten modernste Touch-Terminals für eine reibungslose Fahrzeugdisposition.\n\nProfitieren Sie von unserem Sonderangebot für Neukunden.\n\nMit freundlichen Grüßen\nKrauth Technology Vertrieb');
+                window.showToast('Postfach', 'Neue E-Mail eingetroffen!');
+            }, 45000);
         };
     </script>
 </body>
