@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leitstelle CTS 2026 OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js für realistische Drucker-Sounds -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; }
         
@@ -27,8 +29,6 @@
         /* Atron AFR410 Classic Design */
         .atron-screen { background-color: #B2FFFF; color: #000; font-family: 'Arial', sans-serif; }
         .atron-header { background-color: #008080; color: white; }
-        
-        /* Atron Dark Mode override */
         .atron-dark { background-color: #111827; color: #E5E7EB; }
         .atron-dark .atron-header { background-color: #064E3B; }
         .atron-dark .ticket-btn { background-color: #1F2937; border-color: #374151; color: #fff; }
@@ -58,6 +58,28 @@
         .notif-show { transform: translateX(0); opacity: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .excel-cell { transition: background 0.1s; }
         .excel-cell:hover { background-color: rgba(59, 130, 246, 0.4) !important; }
+
+        /* Animationen für den Drucker */
+        @keyframes printTicketAnim {
+            0% { transform: translateY(100%); opacity: 1; }
+            20% { transform: translateY(0%); opacity: 1; }
+            80% { transform: translateY(0%); opacity: 1; }
+            100% { transform: translateY(-30%); opacity: 0; }
+        }
+
+        /* EBE Ticket stottert beim Drucken */
+        @keyframes printEBEAnim {
+            0% { transform: translateY(100%); opacity: 1; }
+            15% { transform: translateY(75%); opacity: 1; }
+            20% { transform: translateY(75%); opacity: 1; }
+            35% { transform: translateY(50%); opacity: 1; }
+            40% { transform: translateY(50%); opacity: 1; }
+            55% { transform: translateY(25%); opacity: 1; }
+            60% { transform: translateY(25%); opacity: 1; }
+            75% { transform: translateY(0%); opacity: 1; }
+            90% { transform: translateY(0%); opacity: 1; }
+            100% { transform: translateY(-20%); opacity: 0; }
+        }
     </style>
 </head>
 <body class="text-white h-screen w-screen flex flex-col relative overflow-hidden">
@@ -120,7 +142,8 @@
                 <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Dienstplanung (Wochen-Kalender)</div>
             </div>
             <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
-                <div class="bg-slate-800 p-4 rounded-lg shadow-lg border border-slate-700 flex flex-wrap gap-6 items-end">
+                
+                <div class="bg-slate-800 p-4 rounded-lg shadow-lg border border-slate-700 flex flex-wrap gap-6 items-center">
                     <div class="flex-1">
                         <h3 class="text-lg font-bold text-blue-400 mb-1">1. Schicht-Pinsel konfigurieren</h3>
                         <div class="flex gap-4">
@@ -142,15 +165,18 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="flex-1 bg-slate-900 border border-blue-500 rounded p-3 text-center">
                         <div class="text-[10px] text-blue-300 mb-1 uppercase font-bold tracking-widest">Aktueller Pinsel</div>
                         <div id="current-tool-display" class="font-mono text-lg font-bold text-white leading-tight">-</div>
                         <div class="text-[10px] text-gray-400 mt-1">2. Klicke mehrmals auf ein Feld, um Routen zu stapeln.</div>
                     </div>
+
                     <div>
                         <button onclick="addEmployeeDemo()" class="bg-teal-700 hover:bg-teal-600 border border-teal-500 px-4 py-2 rounded text-sm font-bold transition shadow">+ Neuer Mitarbeiter</button>
                     </div>
                 </div>
+
                 <div class="bg-slate-900 rounded shadow-lg overflow-x-auto border-2 border-slate-700 flex-1">
                     <table class="w-full text-left text-sm whitespace-nowrap border-collapse">
                         <thead class="bg-slate-800 text-gray-300 border-b-2 border-slate-600">
@@ -289,6 +315,7 @@
             </div>
             <div class="flex-1 flex flex-col items-center justify-center bg-gray-300 overflow-y-auto p-4">
                 <div id="ibis-hardware" class="flex flex-col items-center w-full max-w-[950px]">
+                    <!-- Drucker Einheit -->
                     <div class="w-[55%] h-24 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
                         <div class="absolute top-2 right-6 flex space-x-2">
                             <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
@@ -298,13 +325,22 @@
                         <div class="w-32 h-6 bg-gray-800 rounded mb-2 flex items-center justify-center border-b-2 border-gray-500 shadow-inner">
                             <span class="text-[8px] text-green-400 font-mono tracking-widest">OK</span>
                         </div>
-                        <div class="w-40 h-1.5 bg-black rounded-full shadow-inner"></div>
+                        
+                        <!-- Papierschlitz und Animation -->
+                        <div class="relative w-40 flex justify-center mt-[-10px] mb-2">
+                            <div class="absolute bottom-0 w-32 h-36 overflow-hidden flex items-end justify-center pointer-events-none z-0">
+                                <div id="printed-ticket" class="w-full bg-white text-black font-mono border-t border-l border-r border-gray-300 shadow-md flex flex-col p-1.5 transform translate-y-full opacity-0"></div>
+                            </div>
+                        </div>
+                        <div class="w-40 h-1.5 bg-black rounded-full shadow-inner relative z-10"></div>
                     </div>
                     
                     <div class="w-full bg-black p-3 rounded-xl shadow-2xl border-[16px] border-black z-10 -mt-2 relative">
-                        <div id="ibis-screen" class="atron-screen w-full flex flex-col relative" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
+                        <!-- WICHTIG: pb-[60px] damit die Hardware-Leiste den Inhalt nicht verdeckt! -->
+                        <div id="ibis-screen" class="atron-screen w-full flex flex-col relative pb-[60px]" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
                             
-                            <div class="atron-header h-12 flex items-center justify-between px-2 font-bold shadow-sm z-20 relative">
+                            <!-- Top Bar -->
+                            <div class="atron-header h-12 flex items-center justify-between px-2 font-bold shadow-sm z-20 relative shrink-0">
                                 <div class="flex items-center space-x-1">
                                     <div class="bg-yellow-200 text-black px-2 py-1 shadow border border-yellow-400 text-lg">↓</div>
                                     <div class="bg-white text-gray-400 px-2 py-1 shadow border border-gray-200 text-lg">↑</div>
@@ -323,15 +359,15 @@
                                 </div>
                             </div>
 
-                            <div id="ibis-state-boot" class="flex-1 flex flex-col items-center justify-center p-4 bg-black text-green-400 font-mono text-sm text-left w-full hidden z-10 relative">
+                            <!-- STATES -->
+                            <div id="ibis-state-boot" class="flex-1 flex flex-col items-center justify-center p-4 bg-black text-green-400 font-mono text-sm text-left w-full hidden z-10 relative overflow-y-auto">
                                 <div class="w-full max-w-lg">
                                     <h2 class="text-xl mb-4 border-b border-green-700 pb-2">ATRON AFR410 Boot-Sequenz</h2>
                                     <div id="boot-text" class="leading-relaxed"></div>
                                 </div>
                             </div>
 
-                            <!-- NEUES 2-SCHRITT LOGIN -->
-                            <div id="ibis-state-login" class="flex-1 flex flex-col items-center justify-center p-4 hidden">
+                            <div id="ibis-state-login" class="flex-1 flex flex-col items-center justify-center p-4 hidden overflow-y-auto">
                                 <div class="bg-white border-2 border-[#008080] p-6 shadow-lg text-center max-w-md w-full">
                                     <h3 class="text-xl font-bold mb-4">Atron AFR410 Anmeldung</h3>
                                     
@@ -345,7 +381,7 @@
                                 </div>
                             </div>
 
-                            <div id="ibis-state-drive" class="flex-1 flex p-2 gap-2 text-sm font-semibold hidden">
+                            <div id="ibis-state-drive" class="flex-1 flex p-2 gap-2 text-sm font-semibold hidden overflow-y-auto">
                                 <div class="w-5/12 flex flex-col gap-1 overflow-hidden relative border-r-2 border-[#008080] pr-2" id="ibis-route-list"></div>
                                 <div class="w-7/12 flex flex-col gap-2">
                                     <div class="flex gap-2 h-1/4">
@@ -388,7 +424,7 @@
                                 </div>
                             </div>
 
-                            <div id="ibis-state-menu" class="flex-1 flex flex-col p-2 gap-2 text-sm font-semibold hidden menu-panel bg-gray-50">
+                            <div id="ibis-state-menu" class="flex-1 flex flex-col p-2 gap-2 text-sm font-semibold hidden menu-panel bg-gray-50 overflow-y-auto">
                                 <h3 class="bg-[#008080] text-white px-3 py-2 shadow font-bold tracking-wide">Hauptmenü / Schicht- und Kassenverwaltung</h3>
                                 <div class="grid grid-cols-2 gap-3 flex-1 p-2">
                                     <button onclick="ibisVerkauf()" class="ticket-btn flex flex-col items-center justify-center text-black">
@@ -414,6 +450,93 @@
                                 </div>
                             </div>
 
+                            <div id="ibis-state-verkauf" class="flex-1 flex flex-col p-2 gap-2 text-sm font-semibold hidden menu-panel bg-gray-50 overflow-y-auto">
+                                <h3 class="bg-[#008080] text-white px-3 py-2 shadow font-bold tracking-wide flex justify-between items-center shrink-0">
+                                    <span>Fahrkartenverkauf</span>
+                                    <span id="verkauf-umsatz" class="font-mono text-yellow-300">Umsatz: 0.00 €</span>
+                                </h3>
+                                <div class="grid grid-cols-3 gap-2 flex-1 p-1">
+                                    <button onclick="buyTicket(3.20, 'Einzelticket')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
+                                        <span class="font-bold text-base text-[#008080]">Einzelticket</span>
+                                        <span class="font-normal text-xs text-gray-600">3.20 €</span>
+                                    </button>
+                                    <button onclick="buyTicket(1.80, 'Kinder Ticket')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
+                                        <span class="font-bold text-base text-[#008080]">Kinder Ticket</span>
+                                        <span class="font-normal text-xs text-gray-600">1.80 €</span>
+                                    </button>
+                                    <button onclick="buyTicket(12.00, '4er Ticket')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
+                                        <span class="font-bold text-base text-[#008080]">4er Ticket</span>
+                                        <span class="font-normal text-xs text-gray-600">12.00 €</span>
+                                    </button>
+                                    <button onclick="buyTicket(8.50, 'Tageskarte')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
+                                        <span class="font-bold text-base text-[#008080]">Tageskarte</span>
+                                        <span class="font-normal text-xs text-gray-600">8.50 €</span>
+                                    </button>
+                                    <button onclick="buyTicket(19.50, 'Gruppenticket')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
+                                        <span class="font-bold text-base text-[#008080]">Gruppenticket</span>
+                                        <span class="font-normal text-xs text-gray-600">19.50 €</span>
+                                    </button>
+                                    <button onclick="buyTicket(1.80, 'Anschlussticket')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
+                                        <span class="font-bold text-base text-[#008080]">Anschluss</span>
+                                        <span class="font-normal text-xs text-gray-600">1.80 €</span>
+                                    </button>
+                                    
+                                    <button onclick="buyTicket(0.00, 'Patti-Ticket')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
+                                        <span class="font-bold text-base text-[#008080]">Patti-Ticket</span>
+                                        <span class="font-normal text-xs text-gray-600">0.00 €</span>
+                                    </button>
+                                    
+                                    <div class="col-span-1"></div>
+                                    <button onclick="closeVerkauf()" class="ticket-btn flex flex-col items-center justify-center bg-gray-200 border-gray-400 text-black py-1">
+                                        <span class="font-bold text-base text-red-600">Zurück</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="ibis-state-ebe" class="flex-1 flex flex-col p-2 gap-2 text-sm font-semibold hidden menu-panel bg-gray-50 overflow-y-auto">
+                                <h3 class="bg-red-600 text-white px-3 py-2 shadow font-bold tracking-wide flex justify-between items-center shrink-0">
+                                    <span>EBE-Erfassungsmaske</span>
+                                    <span id="ebe-counter" class="font-mono text-yellow-300">Erfasst: 0</span>
+                                </h3>
+                                <div class="flex-1 p-2 flex flex-col gap-2">
+                                    <div class="flex gap-2 shrink-0">
+                                        <div class="flex-1">
+                                            <label class="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Vorname</label>
+                                            <input type="text" id="ebe-vorname" class="w-full border border-gray-400 p-2 text-black bg-white outline-none focus:border-red-500" placeholder="Max">
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Nachname</label>
+                                            <input type="text" id="ebe-nachname" class="w-full border border-gray-400 p-2 text-black bg-white outline-none focus:border-red-500" placeholder="Mustermann">
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2 shrink-0">
+                                        <div class="w-1/3">
+                                            <label class="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">PLZ</label>
+                                            <input type="text" id="ebe-plz" class="w-full border border-gray-400 p-2 text-black bg-white outline-none focus:border-red-500" placeholder="12345">
+                                        </div>
+                                        <div class="w-2/3">
+                                            <label class="text-[10px] text-gray-500 uppercase tracking-wider block mb-1">Grund / Vergehen</label>
+                                            <select id="ebe-grund" class="w-full border border-gray-400 p-2 text-black bg-white outline-none focus:border-red-500">
+                                                <option>Ohne gültigen Fahrausweis (60 €)</option>
+                                                <option>Fahrausweis abgelaufen (60 €)</option>
+                                                <option>Personengebunden ungültig (60 €)</option>
+                                                <option>Ticketfälschung (Polizei rufen)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-4 flex gap-2 shrink-0 pb-2">
+                                        <button onclick="closeEBE()" class="flex-1 ticket-btn flex flex-col items-center justify-center bg-gray-200 border-gray-400 text-black py-3 rounded">
+                                            <span class="font-bold text-base text-gray-700">Abbrechen</span>
+                                        </button>
+                                        <button onclick="submitEBE()" class="flex-1 ticket-btn flex flex-col items-center justify-center border-red-500 bg-red-100 text-red-700 py-3 rounded shadow-md">
+                                            <span class="font-bold text-base">EBE Ausstellen (Druck)</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Hardware Bottom Bar absolute -->
                             <div class="atron-bottom-bar h-[60px] flex items-center px-2 gap-1 py-1 w-full absolute bottom-0 z-20">
                                 <button onclick="toggleDarkMode()" class="btn-moon h-full w-14 rounded shadow flex items-center justify-center text-2xl" title="Dark Mode">🌙</button>
                                 <button onclick="beendeDienst()" class="btn-storno h-full w-14 rounded shadow flex items-center justify-center">STORNO</button>
@@ -502,7 +625,7 @@
             if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }, 1000);
 
-        // --- PUSH BENACHRICHTIGUNGEN & LIVE-EMAILS (DYNAMIC GENERATOR) ---
+        // --- PUSH BENACHRICHTIGUNGEN & LIVE-EMAILS ---
         function showNotification(title, message) {
             const container = document.getElementById('notification-container');
             const notif = document.createElement('div');
@@ -615,9 +738,11 @@
         ];
 
         let currentMail = null;
+        let currentDriverId = null;
+
         setTimeout(updateMailBadge, 500);
 
-        // --- E-MAIL ACTION SYSTEM (BUTTONS) ---
+        // --- E-MAIL ACTION SYSTEM ---
         function renderMails() {
             const list = document.getElementById('mail-list');
             list.innerHTML = '';
@@ -1094,6 +1219,62 @@
             if(type === 'essen') speakText("Wir weisen Sie darauf hin, dass der Verzehr von Speisen und Getränken in diesem Fahrzeug nicht gestattet ist.");
         }
 
+        // --- NEUER KASSEN SOUND (Tone.js) ---
+        async function playPrinterSound(isLong) {
+            await Tone.start(); // Audio Context aktivieren
+            
+            const now = Tone.now();
+
+            // 1. Elektronischer Tasten-Beep (Kasse)
+            const beep = new Tone.Synth({
+                oscillator: { type: "square" },
+                envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 },
+                volume: -12
+            }).toDestination();
+            
+            // Beep beim Drücken der Taste
+            beep.triggerAttackRelease("A5", 0.05, now);
+
+            if (!isLong) {
+                // Klassisches Kassen-Klingeln (Cha-Ching) für normalen Verkauf
+                const noise = new Tone.NoiseSynth({
+                    noise: { type: "white" },
+                    envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 },
+                    volume: -15
+                }).toDestination();
+                
+                const bell = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.01, decay: 1.5, sustain: 0, release: 1.5 },
+                    volume: -5
+                }).toDestination();
+                
+                // Mechanisches "Cha"
+                noise.triggerAttackRelease(0.05, now + 0.15);
+                // Helles "Ching"
+                bell.triggerAttackRelease(["E6", "G6", "C7"], 1.5, now + 0.2);
+                
+                setTimeout(() => { beep.dispose(); noise.dispose(); bell.dispose(); }, 3000);
+            } else {
+                // Für EBE: Mehrere Kassen-Beeps passend zum Stotter-Druck
+                const stutters = [0.8, 1.9, 3.0, 4.2];
+                stutters.forEach(time => {
+                    beep.triggerAttackRelease("A5", 0.05, now + time);
+                });
+                
+                const bell = new Tone.PolySynth(Tone.Synth, {
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.01, decay: 1.0, sustain: 0, release: 1.0 },
+                    volume: -5
+                }).toDestination();
+                
+                // Abschluss-Ping, wenn das EBE Ticket fertig ist
+                bell.triggerAttackRelease(["C6", "E6"], 1.0, now + 5.0);
+                
+                setTimeout(() => { beep.dispose(); bell.dispose(); }, 6500);
+            }
+        }
+
         // --- IBIS ATRON LOGIK & KASSENSYSTEM ---
         let currentRoute = null;
         let currentStopIdx = 0;
@@ -1101,12 +1282,14 @@
         let currentStopName = "";
         let isDarkMode = false;
         
-        let transaktionsSpeicher = { verkauf: 0, umsatz: 0.00 };
+        let transaktionsSpeicher = { verkauf: 0, umsatz: 0.00, ebe: 0 };
 
         function bootIbisSequence() {
             document.getElementById('ibis-state-login').classList.add('hidden');
             document.getElementById('ibis-state-drive').classList.add('hidden');
             document.getElementById('ibis-state-menu').classList.add('hidden');
+            document.getElementById('ibis-state-verkauf').classList.add('hidden');
+            document.getElementById('ibis-state-ebe').classList.add('hidden');
             
             const bootContainer = document.getElementById('ibis-state-boot');
             bootContainer.classList.remove('hidden');
@@ -1159,6 +1342,8 @@
                 return alert(`LIZENZ-FEHLER: Mitarbeiter ${driver.name} hat keine Fahrberechtigung für Busse!`);
             }
             
+            currentDriverId = pId;
+
             const now = new Date();
             const [sh, sm] = currentRoute.start.split(':').map(Number);
             let taktStart = new Date(now);
@@ -1184,10 +1369,14 @@
             if(!currentRoute) return alert("Funktion gesperrt: Bitte erst Schicht beginnen!");
             const drive = document.getElementById('ibis-state-drive');
             const menu = document.getElementById('ibis-state-menu');
+            const verkauf = document.getElementById('ibis-state-verkauf');
+            const ebe = document.getElementById('ibis-state-ebe');
             
             if(drive.classList.contains('hidden')) {
                 drive.classList.remove('hidden'); drive.classList.add('flex');
                 menu.classList.add('hidden'); menu.classList.remove('flex');
+                verkauf.classList.add('hidden'); verkauf.classList.remove('flex');
+                ebe.classList.add('hidden'); ebe.classList.remove('flex');
             } else {
                 drive.classList.add('hidden'); drive.classList.remove('flex');
                 menu.classList.remove('hidden'); menu.classList.add('flex');
@@ -1195,25 +1384,116 @@
         }
 
         function ibisVerkauf() {
-            const auswahl = prompt("Verkaufs-Maske | Bitte Ticket wählen:\n1: Einzelticket (3.20 €)\n2: Tageskarte (8.50 €)\n3: Anschlussticket (1.80 €)\n\nEingabe (1-3):");
-            if(auswahl === "1") { transaktionsSpeicher.umsatz += 3.20; transaktionsSpeicher.verkauf++; alert("Einzelticket (3.20 €) gedruckt.\nDaten verschlüsselt im Transaktionsspeicher abgelegt."); }
-            else if(auswahl === "2") { transaktionsSpeicher.umsatz += 8.50; transaktionsSpeicher.verkauf++; alert("Tageskarte (8.50 €) gedruckt.\nDaten verschlüsselt im Transaktionsspeicher abgelegt."); }
-            else if(auswahl === "3") { transaktionsSpeicher.umsatz += 1.80; transaktionsSpeicher.verkauf++; alert("Anschlussticket (1.80 €) gedruckt.\nDaten verschlüsselt im Transaktionsspeicher abgelegt."); }
+            document.getElementById('ibis-state-menu').classList.add('hidden');
+            document.getElementById('ibis-state-menu').classList.remove('flex');
+            document.getElementById('ibis-state-verkauf').classList.remove('hidden');
+            document.getElementById('ibis-state-verkauf').classList.add('flex');
+            updateVerkaufUmsatz();
+        }
+
+        function closeVerkauf() {
+            document.getElementById('ibis-state-verkauf').classList.add('hidden');
+            document.getElementById('ibis-state-verkauf').classList.remove('flex');
+            document.getElementById('ibis-state-menu').classList.remove('hidden');
+            document.getElementById('ibis-state-menu').classList.add('flex');
+        }
+
+        function buyTicket(price, name) {
+            transaktionsSpeicher.umsatz += price;
+            transaktionsSpeicher.verkauf++;
+            updateVerkaufUmsatz();
+            
+            // Drucker Sound abspielen
+            playPrinterSound(false);
+            
+            const ticketEl = document.getElementById('printed-ticket');
+            if(ticketEl) {
+                ticketEl.style.animation = 'none';
+                ticketEl.offsetHeight; // Reflow erzwingen
+                
+                ticketEl.innerHTML = `
+                    <div class="border-b border-black pb-0.5 mb-1 text-[8px] font-bold text-center tracking-widest uppercase">CTS OS</div>
+                    <div class="text-[10px] font-bold text-center leading-tight mb-1">${name}</div>
+                    <div class="text-[12px] font-black text-center">${price.toFixed(2)} EUR</div>
+                    <div class="text-[5px] text-gray-500 text-center mt-1">${new Date().toLocaleTimeString('de-DE')} - L${currentRoute ? currentRoute.id : '---'}</div>
+                `;
+                
+                ticketEl.style.animation = 'printTicketAnim 3.5s forwards';
+            }
+        }
+
+        function updateVerkaufUmsatz() {
+            const el = document.getElementById('verkauf-umsatz');
+            if(el) el.innerText = `Umsatz: ${transaktionsSpeicher.umsatz.toFixed(2)} €`;
+        }
+
+        function ibisEBE() {
+            document.getElementById('ibis-state-menu').classList.add('hidden');
+            document.getElementById('ibis-state-menu').classList.remove('flex');
+            document.getElementById('ibis-state-ebe').classList.remove('hidden');
+            document.getElementById('ibis-state-ebe').classList.add('flex');
+            updateEBECounter();
+        }
+
+        function closeEBE() {
+            document.getElementById('ibis-state-ebe').classList.add('hidden');
+            document.getElementById('ibis-state-ebe').classList.remove('flex');
+            document.getElementById('ibis-state-menu').classList.remove('hidden');
+            document.getElementById('ibis-state-menu').classList.add('flex');
+        }
+
+        function submitEBE() {
+            const vorname = document.getElementById('ebe-vorname').value.trim();
+            const nachname = document.getElementById('ebe-nachname').value.trim();
+            const plz = document.getElementById('ebe-plz').value.trim();
+            const grund = document.getElementById('ebe-grund').value;
+
+            if(!vorname || !nachname || !plz) {
+                return alert("Fehler: Bitte Vorname, Nachname und PLZ des Fahrgasts ausfüllen!");
+            }
+
+            if(plz.length !== 5 || isNaN(plz)) {
+                return alert("Fehler: Die Postleitzahl ist nicht plausibel. Sie muss aus exakt 5 Ziffern bestehen.");
+            }
+
+            transaktionsSpeicher.ebe++;
+            updateEBECounter();
+            
+            // Drucker Sound abspielen (stotternd)
+            playPrinterSound(true);
+
+            const ticketEl = document.getElementById('printed-ticket');
+            if(ticketEl) {
+                ticketEl.style.animation = 'none';
+                ticketEl.offsetHeight; // Reflow erzwingen
+                
+                ticketEl.innerHTML = `
+                    <div class="bg-red-600 text-white text-[8px] font-bold text-center tracking-widest uppercase mb-1">EBE BELEG</div>
+                    <div class="text-[9px] font-bold leading-tight">Name: ${vorname} ${nachname}</div>
+                    <div class="text-[9px] leading-tight mb-1">PLZ: ${plz}</div>
+                    <div class="text-[8px] leading-tight pb-1 border-t border-gray-300 pt-1 text-red-700 font-bold">${grund}</div>
+                    <div class="text-[5px] text-gray-500 text-center mt-1 border-t border-gray-300 pt-1">${new Date().toLocaleTimeString('de-DE')} - ID: ${currentDriverId || '---'}</div>
+                `;
+                
+                ticketEl.style.animation = 'printEBEAnim 5.5s forwards';
+            }
+
+            document.getElementById('ebe-vorname').value = '';
+            document.getElementById('ebe-nachname').value = '';
+            document.getElementById('ebe-plz').value = '';
+            
+            setTimeout(() => {
+                closeEBE();
+            }, 5500); 
+        }
+
+        function updateEBECounter() {
+            const el = document.getElementById('ebe-counter');
+            if(el) el.innerText = `Erfasst: ${transaktionsSpeicher.ebe}`;
         }
 
         function ibisPruefen() {
             alert("Prüf-Modus (Validierung) aktiv.\n\nBitte Barcode scannen oder eTicket-Chipkarte auflegen...\n\n✅ Prüfung erfolgreich!\nSicherheitszertifikat gültig (Geprüft gegen VDV-KA Sperrliste).");
-        }
-
-        function ibisEBE() {
-            const plz = prompt("EBE-Erfassungsmaske (Erhöhtes Beförderungsentgelt)\n\nBitte zur Plausibilitätsprüfung die Postleitzahl des Fahrgasts eingeben:");
-            if(plz) {
-                if(plz.length === 5 && !isNaN(plz)) {
-                    alert(`PLZ ${plz} ist plausibel. Adresse validiert.\n\nPersonalien wurden erfasst und das Ticket zur Fahrpreisnachforderung ausgedruckt.`);
-                } else {
-                    alert(`Fehler: PLZ '${plz}' ist ungültig oder nicht plausibel. Erfassung abgebrochen.`);
-                }
-            }
         }
 
         function ibisNachrichten() {
@@ -1222,19 +1502,24 @@
 
         function ibisKassensturz() {
             if(!currentRoute) return alert("Bitte erst Schicht beginnen, um einen Kassensturz durchzuführen.");
-            const bestaetigung = confirm(`Schicht- und Kassenverwaltung\n\nAktuelle Zwischenabrechnung:\nVerkaufte Tickets: ${transaktionsSpeicher.verkauf}\nBargeldbestand / Umsatz: ${transaktionsSpeicher.umsatz.toFixed(2)} €\n\nMöchtest du den Kassensturz durchführen, die Daten übertragen und die Schicht beenden?`);
+            const bestaetigung = confirm(`Schicht- und Kassenverwaltung\n\nAktuelle Zwischenabrechnung:\nVerkaufte Tickets: ${transaktionsSpeicher.verkauf}\nBargeldbestand / Umsatz: ${transaktionsSpeicher.umsatz.toFixed(2)} €\nErfasste EBEs: ${transaktionsSpeicher.ebe}\n\nMöchtest du den Kassensturz durchführen, die Daten übertragen und die Schicht beenden?`);
             
             if(bestaetigung) {
                 alert("Datenpakete an zentrales Hintergrundsystem übertragen.\nKasse abgemeldet. Schicht beendet.");
-                transaktionsSpeicher = { verkauf: 0, umsatz: 0.00 }; // Reset
+                transaktionsSpeicher = { verkauf: 0, umsatz: 0.00, ebe: 0 }; 
                 beendeDienst();
             }
         }
 
         function beendeDienst() {
             currentRoute = null;
+            currentDriverId = null;
             document.getElementById('ibis-state-menu').classList.add('hidden');
             document.getElementById('ibis-state-menu').classList.remove('flex');
+            document.getElementById('ibis-state-verkauf').classList.add('hidden');
+            document.getElementById('ibis-state-verkauf').classList.remove('flex');
+            document.getElementById('ibis-state-ebe').classList.add('hidden');
+            document.getElementById('ibis-state-ebe').classList.remove('flex');
             document.getElementById('ibis-state-drive').classList.add('hidden');
             document.getElementById('ibis-state-drive').classList.remove('flex');
             document.getElementById('ibis-state-login').classList.remove('hidden');
