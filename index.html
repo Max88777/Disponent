@@ -27,6 +27,8 @@
         /* Atron AFR410 Classic Design */
         .atron-screen { background-color: #B2FFFF; color: #000; font-family: 'Arial', sans-serif; }
         .atron-header { background-color: #008080; color: white; }
+        
+        /* Atron Dark Mode override */
         .atron-dark { background-color: #111827; color: #E5E7EB; }
         .atron-dark .atron-header { background-color: #064E3B; }
         .atron-dark .ticket-btn { background-color: #1F2937; border-color: #374151; color: #fff; }
@@ -54,8 +56,6 @@
         
         .notif-enter { transform: translateX(120%); opacity: 0; }
         .notif-show { transform: translateX(0); opacity: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
-        /* Excel Table Styles */
         .excel-cell { transition: background 0.1s; }
         .excel-cell:hover { background-color: rgba(59, 130, 246, 0.4) !important; }
     </style>
@@ -120,8 +120,7 @@
                 <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Dienstplanung (Wochen-Kalender)</div>
             </div>
             <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
-                
-                <div class="bg-slate-800 p-4 rounded-lg shadow-lg border border-slate-700 flex flex-wrap gap-6 items-center">
+                <div class="bg-slate-800 p-4 rounded-lg shadow-lg border border-slate-700 flex flex-wrap gap-6 items-end">
                     <div class="flex-1">
                         <h3 class="text-lg font-bold text-blue-400 mb-1">1. Schicht-Pinsel konfigurieren</h3>
                         <div class="flex gap-4">
@@ -143,18 +142,15 @@
                             </div>
                         </div>
                     </div>
-                    
                     <div class="flex-1 bg-slate-900 border border-blue-500 rounded p-3 text-center">
                         <div class="text-[10px] text-blue-300 mb-1 uppercase font-bold tracking-widest">Aktueller Pinsel</div>
                         <div id="current-tool-display" class="font-mono text-lg font-bold text-white leading-tight">-</div>
                         <div class="text-[10px] text-gray-400 mt-1">2. Klicke mehrmals auf ein Feld, um Routen zu stapeln.</div>
                     </div>
-
                     <div>
                         <button onclick="addEmployeeDemo()" class="bg-teal-700 hover:bg-teal-600 border border-teal-500 px-4 py-2 rounded text-sm font-bold transition shadow">+ Neuer Mitarbeiter</button>
                     </div>
                 </div>
-
                 <div class="bg-slate-900 rounded shadow-lg overflow-x-auto border-2 border-slate-700 flex-1">
                     <table class="w-full text-left text-sm whitespace-nowrap border-collapse">
                         <thead class="bg-slate-800 text-gray-300 border-b-2 border-slate-600">
@@ -334,12 +330,18 @@
                                 </div>
                             </div>
 
+                            <!-- NEUES 2-SCHRITT LOGIN -->
                             <div id="ibis-state-login" class="flex-1 flex flex-col items-center justify-center p-4 hidden">
                                 <div class="bg-white border-2 border-[#008080] p-6 shadow-lg text-center max-w-md w-full">
-                                    <h3 class="text-xl font-bold mb-2">Atron AFR410 Anmeldung</h3>
-                                    <p class="text-sm text-gray-600 mb-4">Bitte Schichtcode oder PIN eingeben</p>
-                                    <input type="text" id="hw-login-code" class="w-full border border-gray-400 p-2 mb-4 text-center text-lg uppercase font-mono" placeholder="z.B. F-100-U1">
-                                    <button onclick="startFahrt()" class="bg-[#008080] text-white font-bold py-2 px-6 shadow hover:bg-teal-700 w-full uppercase">Anmelden / OK</button>
+                                    <h3 class="text-xl font-bold mb-4">Atron AFR410 Anmeldung</h3>
+                                    
+                                    <p class="text-xs text-gray-500 mb-1 text-left font-bold uppercase tracking-wider">1. Personalnummer</p>
+                                    <input type="text" id="hw-login-personal" class="w-full border border-gray-400 p-2 mb-4 text-center text-lg font-mono" placeholder="z.B. 1001">
+                                    
+                                    <p class="text-xs text-gray-500 mb-1 text-left font-bold uppercase tracking-wider">2. Schichtcode / Linie</p>
+                                    <input type="text" id="hw-login-code" class="w-full border border-gray-400 p-2 mb-6 text-center text-lg uppercase font-mono" placeholder="z.B. F-100-U1">
+                                    
+                                    <button onclick="startFahrt()" class="bg-[#008080] text-white font-bold py-3 px-6 shadow hover:bg-teal-700 w-full uppercase transition active:scale-95">Anmelden / OK</button>
                                 </div>
                             </div>
 
@@ -603,8 +605,8 @@
         ];
 
         let employees = [
-            { name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"] },
-            { name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] }
+            { id: "1001", name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"] },
+            { id: "1002", name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] }
         ];
 
         let vehicles = [
@@ -684,8 +686,9 @@
                 }
             } else if(currentMail.type === 'hr_feedback') {
                 if(actionType === 'annehmen') {
-                    employees.push({ name: currentMail.candidateName, role: currentMail.role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
-                    alert(`${currentMail.candidateName} wurde erfolgreich eingestellt!`);
+                    const newId = Math.floor(1000 + Math.random() * 9000).toString();
+                    employees.push({ id: newId, name: currentMail.candidateName, role: currentMail.role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
+                    alert(`${currentMail.candidateName} wurde erfolgreich eingestellt!\nDie zugewiesene Personalnummer (für den Atron Login) lautet: ${newId}`);
                     if(document.getElementById('app-personal').style.display === 'flex') renderExcel();
                     currentMail.replied = true;
                 } else if(actionType === 'ablehnen') {
@@ -715,7 +718,7 @@
             let content = `Guten Tag Max,\n\nwir hatten soeben das Vorstellungsgespräch mit ${candidateName} für die Position als ${role}.\n\n`;
             
             if (rand > 0.6) {
-                content += `Das Gespräch verlief äußerst positiv. Der Bewerber hat unsere fachlichen Fragen zur Fahrzeugtechnik und zum Tarifsystem einwandfrei beantwortet. Auch im simulierten Kundengespräch am Atron-System zeigte er/sie sich sehr kundenorientiert und stressresistent. Alle nötigen Lizenzen und Nachweise sind gültig und fehlerfrei.\n\nAus Sicht der Personalabteilung geben wir absolut grünes Licht für diesen Kandidaten. Sollen wir den Arbeitsvertrag aufsetzen?`;
+                content += `Das Gespräch verlief äußerst positiv. Der Bewerber hat unsere fachlichen Fragen zur Fahrzeugtechnik und zum Tarifsystem einwandfrei beantwortet. Auch im simulierten Kundengespräch am Atron-System zeigte er sich sehr kundenorientiert und stressresistent. Alle nötigen Lizenzen und Nachweise sind gültig und fehlerfrei.\n\nAus Sicht der Personalabteilung geben wir absolut grünes Licht für diesen Kandidaten. Sollen wir den Arbeitsvertrag aufsetzen?`;
             } else if (rand > 0.2) {
                 content += `Das Gespräch war durchwachsen. Fachlich ist grundlegendes Wissen vorhanden, jedoch gab es spürbare Lücken bei den komplexeren Tarifzonen und der Bedienung des Atron-Systems. Der Bewerber wirkte zudem recht nervös bei unseren Stressfragen.\n\nWir könnten eine Einstellung in Betracht ziehen, müssten aber definitiv noch 1-2 Wochen intensives Streckentraining einplanen. Wie möchtest du entscheiden? Sollen wir das Risiko eingehen oder lieber direkt absagen?`;
             } else {
@@ -819,7 +822,7 @@
             }
 
             employees.forEach((emp, eIdx) => {
-                let rowHtml = `<tr class="border-b border-slate-700"><td class="p-3 border-r border-slate-700 font-semibold bg-slate-800 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">${emp.name}<br><span class="text-xs text-gray-400 font-normal">${emp.role}</span></td>`;
+                let rowHtml = `<tr class="border-b border-slate-700"><td class="p-3 border-r border-slate-700 font-semibold bg-slate-800 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">${emp.name} <span class="text-yellow-500 font-mono text-[10px] ml-1">(ID: ${emp.id})</span><br><span class="text-xs text-gray-400 font-normal">${emp.role}</span></td>`;
                 for(let dIdx = 0; dIdx < 7; dIdx++) {
                     let val = emp.schedule[dIdx] || "";
                     let cellHtml = "";
@@ -862,7 +865,9 @@
             if(roleInput === "2") role = "Straßenbahnfahrer/in";
             if(roleInput === "3") role = "Fahrer/in (Flexibel)";
             
-            employees.push({ name: name, role: role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
+            const newId = Math.floor(1000 + Math.random() * 9000).toString();
+            employees.push({ id: newId, name: name, role: role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
+            alert(`Mitarbeiter erfolgreich angelegt.\nDie zugewiesene Personalnummer lautet: ${newId}`);
             renderExcel();
         }
 
@@ -1046,7 +1051,7 @@
             if(!r.id || r.stops.length < 2) return alert("Fehlerhafte Eingabe.");
             routes.push(r);
             renderRoutes();
-            if(document.getElementById('app-personal').style.display === 'flex') updateToolDisplay(); 
+            if(document.getElementById('app-personal').style.display === 'flex') updateToolDisplay(); // Refreshes dropdown
             alert("Linie gespeichert!");
         }
         function deleteRoute(idx) { routes.splice(idx, 1); renderRoutes(); }
@@ -1133,13 +1138,26 @@
         }
 
         function startFahrt() {
+            const pId = document.getElementById('hw-login-personal').value.trim();
             const code = document.getElementById('hw-login-code').value.toUpperCase().trim();
-            if(!code) return alert("Bitte Schichtcode oder PIN eingeben!");
+            
+            if(!pId) return alert("Fehler: Bitte eine Personalnummer eingeben!");
+            if(!code) return alert("Fehler: Bitte Schichtcode oder Linie eingeben!");
+
+            const driver = employees.find(e => e.id === pId);
+            if(!driver) return alert(`Fehler: Personalnummer ${pId} ist im System nicht hinterlegt!`);
 
             let foundLineId = code.includes('-') ? code.split('-')[1] : code; 
             
             currentRoute = routes.find(r => r.id === foundLineId);
             if(!currentRoute) return alert("Fehler: Linie oder Schicht nicht im Fahrplan gefunden!");
+            
+            if(driver.role === "Busfahrer/in" && currentRoute.type === "Tram") {
+                return alert(`LIZENZ-FEHLER: Mitarbeiter ${driver.name} hat keine Fahrberechtigung für Straßenbahnen!`);
+            }
+            if(driver.role === "Straßenbahnfahrer/in" && currentRoute.type === "Bus") {
+                return alert(`LIZENZ-FEHLER: Mitarbeiter ${driver.name} hat keine Fahrberechtigung für Busse!`);
+            }
             
             const now = new Date();
             const [sh, sm] = currentRoute.start.split(':').map(Number);
@@ -1220,7 +1238,10 @@
             document.getElementById('ibis-state-drive').classList.add('hidden');
             document.getElementById('ibis-state-drive').classList.remove('flex');
             document.getElementById('ibis-state-login').classList.remove('hidden');
+            
+            document.getElementById('hw-login-personal').value = '';
             document.getElementById('hw-login-code').value = '';
+            
             document.getElementById('ibis-line-dest').innerText = 'System gesperrt';
             document.getElementById('ibis-delay').innerText = '';
         }
