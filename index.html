@@ -54,6 +54,8 @@
         
         .notif-enter { transform: translateX(120%); opacity: 0; }
         .notif-show { transform: translateX(0); opacity: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        /* Excel Table Styles */
         .excel-cell { transition: background 0.1s; }
         .excel-cell:hover { background-color: rgba(59, 130, 246, 0.4) !important; }
     </style>
@@ -715,9 +717,9 @@
             if (rand > 0.6) {
                 content += `Das Gespräch verlief äußerst positiv. Der Bewerber hat unsere fachlichen Fragen zur Fahrzeugtechnik und zum Tarifsystem einwandfrei beantwortet. Auch im simulierten Kundengespräch am Atron-System zeigte er/sie sich sehr kundenorientiert und stressresistent. Alle nötigen Lizenzen und Nachweise sind gültig und fehlerfrei.\n\nAus Sicht der Personalabteilung geben wir absolut grünes Licht für diesen Kandidaten. Sollen wir den Arbeitsvertrag aufsetzen?`;
             } else if (rand > 0.2) {
-                content += `Das Gespräch war durchwachsen. Fachlich ist grundlegendes Wissen vorhanden, jedoch gab es spürbare Lücken bei den komplexeren Tarifzonen und der Bedienung des Atron-Systems. Der Bewerber wirkte zudem recht nervös bei unseren Stressfragen.\n\nWir könnten eine Einstellung in Betracht ziehen, müssten aber definitiv noch 1-2 Wochen intensives Streckentraining einplanen. Wie möchtest du entscheiden?`;
+                content += `Das Gespräch war durchwachsen. Fachlich ist grundlegendes Wissen vorhanden, jedoch gab es spürbare Lücken bei den komplexeren Tarifzonen und der Bedienung des Atron-Systems. Der Bewerber wirkte zudem recht nervös bei unseren Stressfragen.\n\nWir könnten eine Einstellung in Betracht ziehen, müssten aber definitiv noch 1-2 Wochen intensives Streckentraining einplanen. Wie möchtest du entscheiden? Sollen wir das Risiko eingehen oder lieber direkt absagen?`;
             } else {
-                content += `Leider müssen wir von einer Einstellung dringend abraten. Der Kandidat erschien 15 Minuten zu spät und zeigte im Gespräch erhebliche Wissenslücken im Bereich der Fahrzeugsicherheit und der Streckensignale. Zudem war das Auftreten im simulierten Kundengespräch unfreundlich und absolut nicht lösungsorientiert.\n\nWir empfehlen eine sofortige Absage. Bitte bestätige dies durch einen Klick auf 'Absagen'.`;
+                content += `Leider müssen wir von einer Einstellung dringend abraten. Der Kandidat erschien 15 Minuten zu spät und zeigte im Gespräch erhebliche Wissenslücken im Bereich der Fahrzeugsicherheit und der Streckensignale. Zudem war das Auftreten im simulierten Kundengespräch unfreundlich und absolut nicht lösungsorientiert.\n\nWir empfehlen eine sofortige Absage. Bitte bestätige dies durch einen Klick auf 'Absagen', es sei denn, du bestehst trotz allem auf eine Einstellung.`;
             }
 
             content += `\n\nViele Grüße\nDeine Personalabteilung`;
@@ -830,19 +832,19 @@
                         else if(val === 'Urlaub') { bgClass = "bg-yellow-900/30"; textClass = "text-yellow-500"; }
                         else if(val === 'Abbau') { bgClass = "bg-purple-900/30"; textClass = "text-purple-400"; }
                         
-                        rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell ${bgClass} ${highlight}"><span class="${textClass}">${val}</span></td>`;
+                        rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell align-middle ${bgClass} ${highlight}"><span class="${textClass}">${val}</span></td>`;
                     } else if (val !== "") {
                         let shifts = val.split(' + ');
                         let badges = shifts.map(s => {
                             let sBg = "bg-slate-700";
                             let sTxt = "text-white";
-                            if(s.startsWith('F-')) { sBg = "bg-teal-900/60"; sTxt = "text-teal-300"; }
-                            if(s.startsWith('S-')) { sBg = "bg-orange-900/60"; sTxt = "text-orange-300"; }
-                            if(s.startsWith('N-')) { sBg = "bg-blue-900/60"; sTxt = "text-blue-300"; }
-                            return `<div class="${sBg} ${sTxt} font-mono font-bold rounded px-1 py-0.5 text-[10px] mb-1 inline-block w-full">${s}</div>`;
+                            if(s.startsWith('F-')) { sBg = "bg-teal-900/80 border border-teal-500"; sTxt = "text-teal-300"; }
+                            if(s.startsWith('S-')) { sBg = "bg-orange-900/80 border border-orange-500"; sTxt = "text-orange-300"; }
+                            if(s.startsWith('N-')) { sBg = "bg-blue-900/80 border border-blue-500"; sTxt = "text-blue-300"; }
+                            return `<div class="${sBg} ${sTxt} font-mono font-bold rounded px-1.5 py-1 text-[10px] mb-1 w-full shadow-sm">${s}</div>`;
                         }).join('');
                         
-                        rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-1 text-center text-xs cursor-pointer excel-cell align-top ${highlight}">${badges}</td>`;
+                        rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-1.5 text-center text-xs cursor-pointer excel-cell align-top bg-slate-800/30 ${highlight}">${badges}</td>`;
                     } else {
                         rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell ${highlight}"></td>`;
                     }
@@ -1044,7 +1046,7 @@
             if(!r.id || r.stops.length < 2) return alert("Fehlerhafte Eingabe.");
             routes.push(r);
             renderRoutes();
-            if(document.getElementById('app-personal').style.display === 'flex') updateToolDisplay(); // Refreshes dropdown
+            if(document.getElementById('app-personal').style.display === 'flex') updateToolDisplay(); 
             alert("Linie gespeichert!");
         }
         function deleteRoute(idx) { routes.splice(idx, 1); renderRoutes(); }
