@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leitstelle CTS 2026 OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tone.js für realistische Drucker-Sounds -->
+    <!-- Tone.js für realistische Kassen-Sounds -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; }
@@ -59,7 +59,7 @@
         .excel-cell { transition: background 0.1s; }
         .excel-cell:hover { background-color: rgba(59, 130, 246, 0.4) !important; }
 
-        /* Animationen für den Drucker */
+        /* Ticket Printer Animations */
         @keyframes printTicketAnim {
             0% { transform: translateY(100%); opacity: 1; }
             20% { transform: translateY(0%); opacity: 1; }
@@ -67,7 +67,6 @@
             100% { transform: translateY(-30%); opacity: 0; }
         }
 
-        /* EBE Ticket stottert beim Drucken */
         @keyframes printEBEAnim {
             0% { transform: translateY(100%); opacity: 1; }
             15% { transform: translateY(75%); opacity: 1; }
@@ -86,7 +85,6 @@
 
     <div id="notification-container" class="absolute top-14 right-4 flex flex-col gap-2 z-[9999] pointer-events-none"></div>
 
-    <!-- Top Bar -->
     <div class="h-10 bg-slate-900 bg-opacity-90 flex items-center justify-between px-4 text-sm font-semibold z-50 border-b border-gray-700 shadow-md">
         <div class="flex space-x-6 items-center">
             <span class="text-blue-400 font-bold tracking-wider">CTS OS 2026</span>
@@ -100,6 +98,7 @@
             <button onclick="openApp('betriebshof')" class="hover:text-blue-300 transition">Betriebshof</button>
             <button onclick="openApp('werkstatt')" class="hover:text-yellow-400 text-yellow-500 transition flex items-center gap-1">🔧 Werkstatt</button>
             <button onclick="openApp('shop')" class="hover:text-green-400 text-green-500 transition flex items-center gap-1">🛒 Fahrzeughandel</button>
+            <button onclick="openApp('archiv')" class="hover:text-purple-400 text-purple-500 transition flex items-center gap-1">🗂️ Archiv</button>
         </div>
         <div class="flex items-center space-x-4">
             <span class="flex items-center"><span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span>Online</span>
@@ -110,7 +109,6 @@
     <!-- Workspace Area -->
     <div class="relative flex-1 overflow-hidden" id="workspace">
         
-        <!-- ================= MAIL APP ================= -->
         <div id="app-mail" class="os-window absolute w-[950px] h-[650px] top-[5%] left-[5%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -131,7 +129,6 @@
             </div>
         </div>
 
-        <!-- ================= EXCEL DIENSTPLAN APP ================= -->
         <div id="app-personal" class="os-window absolute w-[1100px] h-[650px] top-[8%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -197,7 +194,6 @@
             </div>
         </div>
 
-        <!-- ================= FAHRZEUGHANDEL (SHOP) ================= -->
         <div id="app-shop" class="os-window absolute w-[1000px] h-[700px] top-[8%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -213,7 +209,6 @@
             </div>
         </div>
 
-        <!-- ================= BETRIEBSHOF ================= -->
         <div id="app-betriebshof" class="os-window absolute w-[900px] h-[600px] top-[15%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -241,7 +236,6 @@
             </div>
         </div>
 
-        <!-- ================= WERKSTATT ================= -->
         <div id="app-werkstatt" class="os-window absolute w-[800px] h-[500px] top-[20%] left-[25%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -269,7 +263,26 @@
             </div>
         </div>
 
-        <!-- ================= ROUTEN EDITOR ================= -->
+        <div id="app-archiv" class="os-window absolute w-[1000px] h-[650px] top-[10%] left-[15%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('archiv')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-archiv')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-purple-400 font-semibold">Zentrales Archiv & Aktenverwaltung</div>
+            </div>
+            <div class="flex-1 flex overflow-hidden">
+                <div class="w-1/4 bg-slate-800 border-r border-slate-700 flex flex-col">
+                    <button onclick="switchArchivTab('ebe')" id="btn-archiv-ebe" class="p-4 border-b border-slate-700 text-left font-bold text-white bg-blue-600 border-l-4 border-l-white transition">🚨 EBE-Verstöße</button>
+                    <button onclick="switchArchivTab('personal')" id="btn-archiv-personal" class="p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent">👥 Personalakten</button>
+                </div>
+                <div class="w-3/4 bg-slate-900 p-6 overflow-y-auto" id="archiv-content">
+                    <!-- Wird per JS gefüllt -->
+                </div>
+            </div>
+        </div>
+
         <div id="app-routen" class="os-window absolute w-[900px] h-[600px] top-[12%] left-[12%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -303,7 +316,6 @@
             </div>
         </div>
 
-        <!-- ================= ATRON IBIS APP ================= -->
         <div id="app-ibis" class="os-window absolute w-[1000px] h-[750px] top-[2%] left-[20%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -326,7 +338,7 @@
                             <span class="text-[8px] text-green-400 font-mono tracking-widest">OK</span>
                         </div>
                         
-                        <!-- Papierschlitz und Animation -->
+                        <!-- Papierschlitz und Animation (verlängert auf h-36) -->
                         <div class="relative w-40 flex justify-center mt-[-10px] mb-2">
                             <div class="absolute bottom-0 w-32 h-36 overflow-hidden flex items-end justify-center pointer-events-none z-0">
                                 <div id="printed-ticket" class="w-full bg-white text-black font-mono border-t border-l border-r border-gray-300 shadow-md flex flex-col p-1.5 transform translate-y-full opacity-0"></div>
@@ -336,7 +348,7 @@
                     </div>
                     
                     <div class="w-full bg-black p-3 rounded-xl shadow-2xl border-[16px] border-black z-10 -mt-2 relative">
-                        <!-- WICHTIG: pb-[60px] damit die Hardware-Leiste den Inhalt nicht verdeckt! -->
+                        <!-- WICHTIG: pb-[60px] verhindert das Verstecken von Elementen durch die untere Leiste! -->
                         <div id="ibis-screen" class="atron-screen w-full flex flex-col relative pb-[60px]" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
                             
                             <!-- Top Bar -->
@@ -359,7 +371,7 @@
                                 </div>
                             </div>
 
-                            <!-- STATES -->
+                            <!-- IBIS STATES -->
                             <div id="ibis-state-boot" class="flex-1 flex flex-col items-center justify-center p-4 bg-black text-green-400 font-mono text-sm text-left w-full hidden z-10 relative overflow-y-auto">
                                 <div class="w-full max-w-lg">
                                     <h2 class="text-xl mb-4 border-b border-green-700 pb-2">ATRON AFR410 Boot-Sequenz</h2>
@@ -480,12 +492,10 @@
                                         <span class="font-bold text-base text-[#008080]">Anschluss</span>
                                         <span class="font-normal text-xs text-gray-600">1.80 €</span>
                                     </button>
-                                    
                                     <button onclick="buyTicket(0.00, 'Patti-Ticket')" class="ticket-btn flex flex-col items-center justify-center text-black py-1">
                                         <span class="font-bold text-base text-[#008080]">Patti-Ticket</span>
                                         <span class="font-normal text-xs text-gray-600">0.00 €</span>
                                     </button>
-                                    
                                     <div class="col-span-1"></div>
                                     <button onclick="closeVerkauf()" class="ticket-btn flex flex-col items-center justify-center bg-gray-200 border-gray-400 text-black py-1">
                                         <span class="font-bold text-base text-red-600">Zurück</span>
@@ -524,7 +534,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
                                     <div class="mt-4 flex gap-2 shrink-0 pb-2">
                                         <button onclick="closeEBE()" class="flex-1 ticket-btn flex flex-col items-center justify-center bg-gray-200 border-gray-400 text-black py-3 rounded">
                                             <span class="font-bold text-base text-gray-700">Abbrechen</span>
@@ -557,7 +566,6 @@
     </div>
 
     <script>
-        // --- DRAG & DROP FÜR FENSTER ---
         let highestZ = 10;
         document.querySelectorAll('.os-window').forEach(win => {
             win.addEventListener('mousedown', () => { win.style.zIndex = ++highestZ; });
@@ -590,6 +598,7 @@
             if(id === 'werkstatt') renderWerkstatt();
             if(id === 'routen') renderRoutes();
             if(id === 'shop') renderShopBrands();
+            if(id === 'archiv') switchArchivTab('ebe');
             if(id === 'ibis' && !ibisBooted) {
                 bootIbisSequence();
                 ibisBooted = true;
@@ -598,7 +607,6 @@
         function closeApp(id) { document.getElementById('app-' + id).style.display = 'none'; }
         function toggleMaximize(id) { document.getElementById(id).classList.toggle('maximized'); }
 
-        // --- UHRZEIT & TIMER ---
         setInterval(() => {
             const now = new Date();
             document.getElementById('os-clock').innerText = now.toLocaleTimeString('de-DE');
@@ -625,7 +633,6 @@
             if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }, 1000);
 
-        // --- PUSH BENACHRICHTIGUNGEN & LIVE-EMAILS ---
         function showNotification(title, message) {
             const container = document.getElementById('notification-container');
             const notif = document.createElement('div');
@@ -674,7 +681,6 @@
         }
 
         let emails = [];
-
         let initialMail = generateApplication();
         initialMail.id = Date.now();
         initialMail.read = false;
@@ -720,7 +726,6 @@
             }
         }
 
-        // --- DATENBANKEN ---
         let routes = [
             { id: "824", type: "Bus", art: "Überland", verlauf: "Pendel", dauer: 38, pause: 12, start: "05:00", takt: 20, stops: ["S Oranienburg", "Bernauer Str.", "Breite Str.", "Kremmener Str.", "Umspannwerk", "Hennigsdorf"] },
             { id: "100", type: "Bus", art: "Stadtbus", verlauf: "Pendel", dauer: 45, pause: 10, start: "06:00", takt: 20, stops: ["Hauptbahnhof", "Marktplatz", "Rathaus", "Klinikum", "Stadion"] },
@@ -728,8 +733,9 @@
         ];
 
         let employees = [
-            { id: "1001", name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"] },
-            { id: "1002", name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] }
+            { id: "1001", name: "Max (Leitung)", role: "Fahrer/in (Flexibel)", schedule: ["Frei", "Frei", "Frei", "Frei", "Frei", "Frei", "Frei"] },
+            { id: "1002", name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"] },
+            { id: "1003", name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] }
         ];
 
         let vehicles = [
@@ -737,12 +743,13 @@
             { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "Einsatzbereit", repairUntil: null, problem: "" }
         ];
 
+        let ebeArchive = []; // Central Archive for EBEs
+
         let currentMail = null;
         let currentDriverId = null;
 
         setTimeout(updateMailBadge, 500);
 
-        // --- E-MAIL ACTION SYSTEM ---
         function renderMails() {
             const list = document.getElementById('mail-list');
             list.innerHTML = '';
@@ -870,7 +877,6 @@
             if (document.getElementById('app-mail').style.display === 'flex') renderMails();
         }
 
-        // --- EXCEL / KALENDER LOGIK ---
         let currentPaintTool = "";
 
         function updateToolDisplay() {
@@ -950,7 +956,6 @@
                 let rowHtml = `<tr class="border-b border-slate-700"><td class="p-3 border-r border-slate-700 font-semibold bg-slate-800 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">${emp.name} <span class="text-yellow-500 font-mono text-[10px] ml-1">(ID: ${emp.id})</span><br><span class="text-xs text-gray-400 font-normal">${emp.role}</span></td>`;
                 for(let dIdx = 0; dIdx < 7; dIdx++) {
                     let val = emp.schedule[dIdx] || "";
-                    let cellHtml = "";
                     let highlight = dIdx === todayIdx ? "ring-inset ring-2 ring-yellow-700/50" : "";
 
                     if(val === 'Frei' || val === 'Krank' || val === 'Urlaub' || val === 'Abbau') {
@@ -996,7 +1001,70 @@
             renderExcel();
         }
 
-        // --- FAHRZEUGHANDEL (SHOP) DATEN & LOGIK ---
+        function switchArchivTab(tab) {
+            const btnEbe = document.getElementById('btn-archiv-ebe');
+            const btnPersonal = document.getElementById('btn-archiv-personal');
+            const content = document.getElementById('archiv-content');
+
+            if(tab === 'ebe') {
+                btnEbe.className = 'p-4 border-b border-slate-700 text-left font-bold text-white bg-blue-600 border-l-4 border-l-white transition';
+                btnPersonal.className = 'p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent';
+                
+                let html = '<h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">🚨 Erfasste EBE-Verstöße</h2>';
+                if(ebeArchive.length === 0) {
+                    html += '<div class="bg-slate-800 p-6 rounded-lg border border-slate-700 text-center"><p class="text-gray-400">Das Archiv ist leer. Es wurden noch keine EBEs ausgestellt.</p></div>';
+                } else {
+                    html += '<div class="bg-slate-800 rounded-lg shadow-lg border border-slate-700 overflow-x-auto"><table class="w-full text-left text-sm whitespace-nowrap"><thead class="bg-slate-700 text-gray-300 border-b border-slate-600"><tr><th class="p-3">EBE-ID</th><th class="p-3">Datum / Zeit</th><th class="p-3">Personalien</th><th class="p-3">Grund / Strafe</th><th class="p-3">Fahrer-ID</th></tr></thead><tbody class="divide-y divide-slate-700">';
+                    
+                    let reversedArchive = [...ebeArchive].reverse();
+                    reversedArchive.forEach(ebe => {
+                        html += `
+                            <tr class="hover:bg-slate-700 transition">
+                                <td class="p-3 font-mono text-red-400 font-bold">${ebe.id}</td>
+                                <td class="p-3 text-gray-300">${ebe.datum}<br><span class="text-xs text-gray-500">${ebe.zeit} Uhr</span></td>
+                                <td class="p-3 text-white font-bold">${ebe.vorname} ${ebe.nachname}<br><span class="text-xs text-gray-400 font-normal">PLZ: ${ebe.plz}</span></td>
+                                <td class="p-3 text-gray-300">${ebe.grund}</td>
+                                <td class="p-3 font-mono text-blue-300">${ebe.fahrer}</td>
+                            </tr>
+                        `;
+                    });
+                    html += '</tbody></table></div>';
+                }
+                content.innerHTML = html;
+            } else {
+                btnPersonal.className = 'p-4 border-b border-slate-700 text-left font-bold text-white bg-blue-600 border-l-4 border-l-white transition';
+                btnEbe.className = 'p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent';
+                
+                let html = '<h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">👥 Zentrale Personalakten</h2>';
+                html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
+                employees.forEach(emp => {
+                    let activeShifts = emp.schedule.filter(s => s.startsWith('F-') || s.startsWith('S-') || s.startsWith('N-')).length;
+                    let urlaubTage = emp.schedule.filter(s => s === 'Urlaub').length;
+                    let krankTage = emp.schedule.filter(s => s === 'Krank').length;
+                    
+                    html += `
+                        <div class="bg-slate-800 p-5 rounded-lg shadow-lg border border-slate-700 hover:border-blue-500 transition">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="font-bold text-lg text-white">${emp.name}</h3>
+                                    <span class="text-xs text-gray-400">${emp.role}</span>
+                                </div>
+                                <span class="bg-slate-900 border border-blue-500 text-blue-400 px-2 py-1 rounded font-mono text-xs font-bold shadow">ID: ${emp.id}</span>
+                            </div>
+                            <div class="pt-3 border-t border-slate-700 grid grid-cols-2 gap-2 text-sm text-gray-300">
+                                <div><span class="block text-[10px] uppercase text-gray-500 tracking-wider">Eingeteilte Dienste</span><span class="font-bold text-white">${activeShifts}</span></div>
+                                <div><span class="block text-[10px] uppercase text-gray-500 tracking-wider">Urlaubstage</span><span class="font-bold text-yellow-500">${urlaubTage}</span></div>
+                                <div><span class="block text-[10px] uppercase text-gray-500 tracking-wider">Krankheitstage</span><span class="font-bold text-red-500">${krankTage}</span></div>
+                                <div><span class="block text-[10px] uppercase text-gray-500 tracking-wider">Status</span><span class="font-bold text-green-400">Aktiviert</span></div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+                content.innerHTML = html;
+            }
+        }
+
         const shopData = {
             "Mercedes-Benz / EvoBus": [
                 { type: "Citybus C2 (12m)", price: "310.000 €", time: "Sofort lieferbar", isTram: false },
@@ -1091,19 +1159,46 @@
             if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }
 
-        // --- BETRIEBSHOF & WERKSTATT ---
         const problems = ["Getriebeschaden", "Motorkontrollleuchte an", "Bremse defekt", "Unfallschaden Front", "Elektronik-Ausfall", "Klimakompressor defekt"];
+
+        function isInspectionUrgent(dateStr) {
+            if(!dateStr) return false;
+            const parts = dateStr.split('/');
+            if(parts.length !== 2) return false;
+            const vMonth = parseInt(parts[0], 10);
+            const vYear = parseInt(parts[1], 10);
+            
+            const now = new Date();
+            const currentMonth = now.getMonth() + 1; 
+            const currentYear = now.getFullYear();
+            
+            if (vYear < currentYear) return true;
+            if (vYear === currentYear && vMonth <= currentMonth + 1) return true;
+            
+            return false;
+        }
 
         function renderBetriebshof() {
             const tbody = document.getElementById('betriebshof-list');
             tbody.innerHTML = '';
             vehicles.forEach((v, idx) => {
                 if(v.status !== 'Einsatzbereit') return;
+                
+                const tuevUrgent = isInspectionUrgent(v.tuev);
+                const huUrgent = isInspectionUrgent(v.hu);
+                
+                const tuevClass = tuevUrgent ? "text-red-500 font-bold bg-red-900/30 px-1 rounded" : "text-gray-400";
+                const huClass = huUrgent ? "text-red-500 font-bold bg-red-900/30 px-1 rounded" : "text-gray-400";
+                const alertIcon = (tuevUrgent || huUrgent) ? `<span class="text-red-500 ml-2" style="animation: pulse 2s infinite;" title="TÜV/HU fällig!">⚠️</span>` : '';
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700 transition">
-                        <td class="p-3 font-bold text-blue-300">${v.id}</td>
+                        <td class="p-3 font-bold text-blue-300">${v.id}${alertIcon}</td>
                         <td class="p-3 text-gray-300">${v.type}</td>
-                        <td class="p-3 text-gray-400 text-xs">TÜV: ${v.tuev}<br>HU: ${v.hu}</td>
+                        <td class="p-3 text-xs leading-relaxed">
+                            TÜV: <span class="${tuevClass}">${v.tuev}</span><br>
+                            HU: <span class="${huClass}">${v.hu}</span>
+                        </td>
                         <td class="p-3 font-bold text-green-400">${v.status}</td>
                         <td class="p-3">
                             <button onclick="sendToWerkstatt(${idx})" class="font-bold border border-yellow-600 text-yellow-500 hover:bg-yellow-900 rounded text-xs px-3 py-1.5 transition">🔧 Zur Reparatur</button>
@@ -1160,7 +1255,6 @@
             if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }
 
-        // --- ROUTEN EDITOR ---
         function addRoute() {
             const r = {
                 id: document.getElementById('n-nr').value,
@@ -1200,7 +1294,6 @@
             });
         }
 
-        // --- AUDIO SYSTEM (Web Speech API) ---
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -1219,24 +1312,18 @@
             if(type === 'essen') speakText("Wir weisen Sie darauf hin, dass der Verzehr von Speisen und Getränken in diesem Fahrzeug nicht gestattet ist.");
         }
 
-        // --- NEUER KASSEN SOUND (Tone.js) ---
         async function playPrinterSound(isLong) {
-            await Tone.start(); // Audio Context aktivieren
-            
+            await Tone.start(); 
             const now = Tone.now();
 
-            // 1. Elektronischer Tasten-Beep (Kasse)
             const beep = new Tone.Synth({
                 oscillator: { type: "square" },
                 envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 },
                 volume: -12
             }).toDestination();
-            
-            // Beep beim Drücken der Taste
             beep.triggerAttackRelease("A5", 0.05, now);
 
             if (!isLong) {
-                // Klassisches Kassen-Klingeln (Cha-Ching) für normalen Verkauf
                 const noise = new Tone.NoiseSynth({
                     noise: { type: "white" },
                     envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 },
@@ -1249,14 +1336,11 @@
                     volume: -5
                 }).toDestination();
                 
-                // Mechanisches "Cha"
                 noise.triggerAttackRelease(0.05, now + 0.15);
-                // Helles "Ching"
                 bell.triggerAttackRelease(["E6", "G6", "C7"], 1.5, now + 0.2);
                 
                 setTimeout(() => { beep.dispose(); noise.dispose(); bell.dispose(); }, 3000);
             } else {
-                // Für EBE: Mehrere Kassen-Beeps passend zum Stotter-Druck
                 const stutters = [0.8, 1.9, 3.0, 4.2];
                 stutters.forEach(time => {
                     beep.triggerAttackRelease("A5", 0.05, now + time);
@@ -1268,14 +1352,11 @@
                     volume: -5
                 }).toDestination();
                 
-                // Abschluss-Ping, wenn das EBE Ticket fertig ist
                 bell.triggerAttackRelease(["C6", "E6"], 1.0, now + 5.0);
-                
                 setTimeout(() => { beep.dispose(); bell.dispose(); }, 6500);
             }
         }
 
-        // --- IBIS ATRON LOGIK & KASSENSYSTEM ---
         let currentRoute = null;
         let currentStopIdx = 0;
         let routeStartTime = null;
@@ -1403,13 +1484,12 @@
             transaktionsSpeicher.verkauf++;
             updateVerkaufUmsatz();
             
-            // Drucker Sound abspielen
             playPrinterSound(false);
             
             const ticketEl = document.getElementById('printed-ticket');
             if(ticketEl) {
                 ticketEl.style.animation = 'none';
-                ticketEl.offsetHeight; // Reflow erzwingen
+                ticketEl.offsetHeight; 
                 
                 ticketEl.innerHTML = `
                     <div class="border-b border-black pb-0.5 mb-1 text-[8px] font-bold text-center tracking-widest uppercase">CTS OS</div>
@@ -1449,23 +1529,34 @@
             const grund = document.getElementById('ebe-grund').value;
 
             if(!vorname || !nachname || !plz) {
-                return alert("Fehler: Bitte Vorname, Nachname und PLZ des Fahrgasts ausfüllen!");
+                return alert("Fehler: Bitte Vorname, Nachname und PLZ ausfüllen!");
             }
 
             if(plz.length !== 5 || isNaN(plz)) {
-                return alert("Fehler: Die Postleitzahl ist nicht plausibel. Sie muss aus exakt 5 Ziffern bestehen.");
+                return alert("Fehler: Die Postleitzahl muss aus exakt 5 Ziffern bestehen.");
             }
+
+            const fahrerId = document.getElementById('hw-login-personal').value || 'Unbekannt';
+            ebeArchive.push({
+                id: 'EBE-' + Math.floor(10000 + Math.random() * 90000),
+                vorname: vorname,
+                nachname: nachname,
+                plz: plz,
+                grund: grund,
+                zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                datum: new Date().toLocaleDateString('de-DE'),
+                fahrer: fahrerId
+            });
 
             transaktionsSpeicher.ebe++;
             updateEBECounter();
             
-            // Drucker Sound abspielen (stotternd)
             playPrinterSound(true);
 
             const ticketEl = document.getElementById('printed-ticket');
             if(ticketEl) {
                 ticketEl.style.animation = 'none';
-                ticketEl.offsetHeight; // Reflow erzwingen
+                ticketEl.offsetHeight; 
                 
                 ticketEl.innerHTML = `
                     <div class="bg-red-600 text-white text-[8px] font-bold text-center tracking-widest uppercase mb-1">EBE BELEG</div>
@@ -1482,9 +1573,7 @@
             document.getElementById('ebe-nachname').value = '';
             document.getElementById('ebe-plz').value = '';
             
-            setTimeout(() => {
-                closeEBE();
-            }, 5500); 
+            setTimeout(() => { closeEBE(); }, 5500); 
         }
 
         function updateEBECounter() {
