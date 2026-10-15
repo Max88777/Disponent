@@ -85,6 +85,35 @@
 
     <div id="notification-container" class="absolute top-14 right-4 flex flex-col gap-2 z-[9999] pointer-events-none"></div>
 
+    <!-- Werkstatt Auftrag Modal (NEU) -->
+    <div id="werkstatt-modal" class="hidden absolute inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div class="bg-slate-800 border border-slate-600 shadow-2xl rounded-xl w-[500px] p-6 flex flex-col">
+            <h3 class="text-2xl font-bold text-yellow-400 mb-2 border-b border-slate-700 pb-3 flex items-center gap-3">
+                <span>🔧</span> Werkstatt-Auftrag erstellen
+            </h3>
+            <p id="werkstatt-modal-veh" class="text-blue-300 font-bold mb-4 font-mono text-lg bg-slate-900 p-2 rounded border border-slate-700 text-center"></p>
+
+            <p class="text-xs text-gray-400 mb-2 uppercase font-bold tracking-widest">Bitte Grund für Werkstattbesuch ankreuzen:</p>
+            <div class="space-y-2 mb-6 bg-slate-900/50 p-4 rounded-lg border border-slate-700" id="werkstatt-checkboxes">
+                <label class="flex items-center gap-3 text-sm text-gray-200 cursor-pointer p-2 hover:bg-slate-700 rounded transition"><input type="checkbox" value="TÜV / HU Inspektion" class="w-5 h-5 accent-yellow-500"> TÜV / HU Inspektion fällig</label>
+                <label class="flex items-center gap-3 text-sm text-gray-200 cursor-pointer p-2 hover:bg-slate-700 rounded transition"><input type="checkbox" value="Motor / Antrieb" class="w-5 h-5 accent-blue-500"> Motor / Antrieb / Getriebe</label>
+                <label class="flex items-center gap-3 text-sm text-gray-200 cursor-pointer p-2 hover:bg-slate-700 rounded transition"><input type="checkbox" value="Bremsanlage" class="w-5 h-5 accent-blue-500"> Bremsanlage Defekt</label>
+                <label class="flex items-center gap-3 text-sm text-gray-200 cursor-pointer p-2 hover:bg-slate-700 rounded transition"><input type="checkbox" value="Elektronik / IBIS" class="w-5 h-5 accent-blue-500"> Elektronik / IBIS-System Ausfall</label>
+                <label class="flex items-center gap-3 text-sm text-gray-200 cursor-pointer p-2 hover:bg-slate-700 rounded transition"><input type="checkbox" value="Klimaanlage" class="w-5 h-5 accent-blue-500"> Klimaanlage / Heizung defekt</label>
+                <label class="flex items-center gap-3 text-sm text-gray-200 cursor-pointer p-2 hover:bg-slate-700 rounded transition"><input type="checkbox" value="Vandalismus" class="w-5 h-5 accent-blue-500"> Vandalismus / Extremverschmutzung</label>
+                <label class="flex items-center gap-3 text-sm text-gray-200 cursor-pointer p-2 hover:bg-slate-700 rounded transition"><input type="checkbox" value="Unfallschaden (Karosserie)" class="w-5 h-5 accent-red-500"> Unfallschaden (Karosserie)</label>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-auto">
+                <button onclick="closeWerkstattModal()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded text-white font-bold transition shadow">Abbrechen</button>
+                <button onclick="submitWerkstattAuftrag()" class="px-5 py-2.5 bg-yellow-500 hover:bg-yellow-400 rounded text-black font-bold transition shadow-lg flex items-center gap-2">
+                    <span class="text-lg">✓</span> Auftrag speichern
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
     <div class="h-10 bg-slate-900 bg-opacity-90 flex items-center justify-between px-4 text-sm font-semibold z-50 border-b border-gray-700 shadow-md">
         <div class="flex space-x-6 items-center">
             <span class="text-blue-400 font-bold tracking-wider">CTS OS 2026</span>
@@ -109,6 +138,7 @@
     <!-- Workspace Area -->
     <div class="relative flex-1 overflow-hidden" id="workspace">
         
+        <!-- ================= MAIL APP ================= -->
         <div id="app-mail" class="os-window absolute w-[950px] h-[650px] top-[5%] left-[5%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -129,6 +159,7 @@
             </div>
         </div>
 
+        <!-- ================= EXCEL DIENSTPLAN APP ================= -->
         <div id="app-personal" class="os-window absolute w-[1100px] h-[650px] top-[8%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -194,6 +225,7 @@
             </div>
         </div>
 
+        <!-- ================= FAHRZEUGHANDEL (SHOP) ================= -->
         <div id="app-shop" class="os-window absolute w-[1000px] h-[700px] top-[8%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -209,6 +241,7 @@
             </div>
         </div>
 
+        <!-- ================= BETRIEBSHOF ================= -->
         <div id="app-betriebshof" class="os-window absolute w-[900px] h-[600px] top-[15%] left-[10%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -236,6 +269,7 @@
             </div>
         </div>
 
+        <!-- ================= WERKSTATT ================= -->
         <div id="app-werkstatt" class="os-window absolute w-[800px] h-[500px] top-[20%] left-[25%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -263,6 +297,7 @@
             </div>
         </div>
 
+        <!-- ================= ARCHIV ================= -->
         <div id="app-archiv" class="os-window absolute w-[1000px] h-[650px] top-[10%] left-[15%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -283,6 +318,7 @@
             </div>
         </div>
 
+        <!-- ================= ROUTEN EDITOR ================= -->
         <div id="app-routen" class="os-window absolute w-[900px] h-[600px] top-[12%] left-[12%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -316,6 +352,7 @@
             </div>
         </div>
 
+        <!-- ================= ATRON IBIS APP ================= -->
         <div id="app-ibis" class="os-window absolute w-[1000px] h-[750px] top-[2%] left-[20%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
                 <div class="flex space-x-2">
@@ -327,7 +364,7 @@
             </div>
             <div class="flex-1 flex flex-col items-center justify-center bg-gray-300 overflow-y-auto p-4">
                 <div id="ibis-hardware" class="flex flex-col items-center w-full max-w-[950px]">
-                    <!-- Drucker Einheit -->
+                    <!-- Drucker Einheit verlängert -->
                     <div class="w-[55%] h-24 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
                         <div class="absolute top-2 right-6 flex space-x-2">
                             <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
@@ -338,7 +375,7 @@
                             <span class="text-[8px] text-green-400 font-mono tracking-widest">OK</span>
                         </div>
                         
-                        <!-- Papierschlitz und Animation (verlängert auf h-36) -->
+                        <!-- Papierschlitz und Animation -->
                         <div class="relative w-40 flex justify-center mt-[-10px] mb-2">
                             <div class="absolute bottom-0 w-32 h-36 overflow-hidden flex items-end justify-center pointer-events-none z-0">
                                 <div id="printed-ticket" class="w-full bg-white text-black font-mono border-t border-l border-r border-gray-300 shadow-md flex flex-col p-1.5 transform translate-y-full opacity-0"></div>
@@ -348,7 +385,7 @@
                     </div>
                     
                     <div class="w-full bg-black p-3 rounded-xl shadow-2xl border-[16px] border-black z-10 -mt-2 relative">
-                        <!-- WICHTIG: pb-[60px] verhindert das Verstecken von Elementen durch die untere Leiste! -->
+                        <!-- SICHERHEITS-PADDING: pb-[60px] schützt vor verdeckten Buttons -->
                         <div id="ibis-screen" class="atron-screen w-full flex flex-col relative pb-[60px]" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
                             
                             <!-- Top Bar -->
@@ -534,6 +571,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                    
+                                    <!-- EBE Buttons fest unter den Eingabefeldern platziert -->
                                     <div class="mt-4 flex gap-2 shrink-0 pb-2">
                                         <button onclick="closeEBE()" class="flex-1 ticket-btn flex flex-col items-center justify-center bg-gray-200 border-gray-400 text-black py-3 rounded">
                                             <span class="font-bold text-base text-gray-700">Abbrechen</span>
@@ -545,7 +584,7 @@
                                 </div>
                             </div>
 
-                            <!-- Hardware Bottom Bar absolute -->
+                            <!-- Hardware Bottom Bar absolut verankert -->
                             <div class="atron-bottom-bar h-[60px] flex items-center px-2 gap-1 py-1 w-full absolute bottom-0 z-20">
                                 <button onclick="toggleDarkMode()" class="btn-moon h-full w-14 rounded shadow flex items-center justify-center text-2xl" title="Dark Mode">🌙</button>
                                 <button onclick="beendeDienst()" class="btn-storno h-full w-14 rounded shadow flex items-center justify-center">STORNO</button>
@@ -566,6 +605,7 @@
     </div>
 
     <script>
+        // --- DRAG & DROP FÜR FENSTER ---
         let highestZ = 10;
         document.querySelectorAll('.os-window').forEach(win => {
             win.addEventListener('mousedown', () => { win.style.zIndex = ++highestZ; });
@@ -607,6 +647,7 @@
         function closeApp(id) { document.getElementById('app-' + id).style.display = 'none'; }
         function toggleMaximize(id) { document.getElementById(id).classList.toggle('maximized'); }
 
+        // --- UHRZEIT & TIMER ---
         setInterval(() => {
             const now = new Date();
             document.getElementById('os-clock').innerText = now.toLocaleTimeString('de-DE');
@@ -624,6 +665,15 @@
                     if (now >= v.repairUntil) {
                         v.status = 'Einsatzbereit';
                         v.repairUntil = null;
+                        
+                        if(v.problem.includes("TÜV")) {
+                            const futureYear = now.getFullYear() + 2;
+                            const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+                            v.tuev = `${monthStr}/${futureYear}`;
+                            v.hu = `${monthStr}/${futureYear}`;
+                        }
+                        
+                        v.problem = "";
                         updatedWerkstatt = true;
                     }
                 }
@@ -633,6 +683,7 @@
             if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }, 1000);
 
+        // --- PUSH BENACHRICHTIGUNGEN & LIVE-EMAILS ---
         function showNotification(title, message) {
             const container = document.getElementById('notification-container');
             const notif = document.createElement('div');
@@ -681,6 +732,7 @@
         }
 
         let emails = [];
+
         let initialMail = generateApplication();
         initialMail.id = Date.now();
         initialMail.read = false;
@@ -726,6 +778,7 @@
             }
         }
 
+        // --- DATENBANKEN ---
         let routes = [
             { id: "824", type: "Bus", art: "Überland", verlauf: "Pendel", dauer: 38, pause: 12, start: "05:00", takt: 20, stops: ["S Oranienburg", "Bernauer Str.", "Breite Str.", "Kremmener Str.", "Umspannwerk", "Hennigsdorf"] },
             { id: "100", type: "Bus", art: "Stadtbus", verlauf: "Pendel", dauer: 45, pause: 10, start: "06:00", takt: 20, stops: ["Hauptbahnhof", "Marktplatz", "Rathaus", "Klinikum", "Stadion"] },
@@ -750,6 +803,7 @@
 
         setTimeout(updateMailBadge, 500);
 
+        // --- E-MAIL ACTION SYSTEM (BUTTONS) ---
         function renderMails() {
             const list = document.getElementById('mail-list');
             list.innerHTML = '';
@@ -877,6 +931,7 @@
             if (document.getElementById('app-mail').style.display === 'flex') renderMails();
         }
 
+        // --- EXCEL / KALENDER LOGIK ---
         let currentPaintTool = "";
 
         function updateToolDisplay() {
@@ -1001,6 +1056,7 @@
             renderExcel();
         }
 
+        // --- ZENTRALES ARCHIV ---
         function switchArchivTab(tab) {
             const btnEbe = document.getElementById('btn-archiv-ebe');
             const btnPersonal = document.getElementById('btn-archiv-personal');
@@ -1065,6 +1121,7 @@
             }
         }
 
+        // --- FAHRZEUGHANDEL (SHOP) DATEN & LOGIK ---
         const shopData = {
             "Mercedes-Benz / EvoBus": [
                 { type: "Citybus C2 (12m)", price: "310.000 €", time: "Sofort lieferbar", isTram: false },
@@ -1159,8 +1216,7 @@
             if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }
 
-        const problems = ["Getriebeschaden", "Motorkontrollleuchte an", "Bremse defekt", "Unfallschaden Front", "Elektronik-Ausfall", "Klimakompressor defekt"];
-
+        // --- BETRIEBSHOF & WERKSTATT ---
         function isInspectionUrgent(dateStr) {
             if(!dateStr) return false;
             const parts = dateStr.split('/');
@@ -1208,15 +1264,54 @@
             });
         }
 
+        let currentWerkstattIdx = null;
+
         function sendToWerkstatt(idx) {
+            currentWerkstattIdx = idx;
             const v = vehicles[idx];
+            const tuevUrgent = isInspectionUrgent(v.tuev);
+            const huUrgent = isInspectionUrgent(v.hu);
+
+            document.getElementById('werkstatt-modal-veh').innerText = `Gewähltes Fahrzeug: ${v.id} (${v.type})`;
+            
+            const checkboxes = document.querySelectorAll('#werkstatt-checkboxes input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+
+            if (tuevUrgent || huUrgent) {
+                const tuevCb = Array.from(checkboxes).find(cb => cb.value.includes('TÜV'));
+                if(tuevCb) tuevCb.checked = true;
+            }
+
+            document.getElementById('werkstatt-modal').classList.remove('hidden');
+        }
+
+        function closeWerkstattModal() {
+            document.getElementById('werkstatt-modal').classList.add('hidden');
+            currentWerkstattIdx = null;
+        }
+
+        function submitWerkstattAuftrag() {
+            if(currentWerkstattIdx === null) return;
+            
+            const checkboxes = document.querySelectorAll('#werkstatt-checkboxes input[type="checkbox"]:checked');
+            if(checkboxes.length === 0) {
+                return alert("Fehler: Bitte wähle mindestens einen Grund für den Werkstattbesuch aus!");
+            }
+
+            const reasons = Array.from(checkboxes).map(cb => cb.value);
+            const v = vehicles[currentWerkstattIdx];
+            
             v.status = "In Werkstatt";
-            v.problem = problems[Math.floor(Math.random() * problems.length)];
-            const repairDays = Math.floor(Math.random() * 5) + 1;
+            v.problem = reasons.join(' + ');
+            
+            const repairDays = reasons.length;
             v.repairUntil = new Date(Date.now() + repairDays * 24 * 60 * 60 * 1000); 
+
+            closeWerkstattModal();
             renderBetriebshof();
             if(document.getElementById('app-werkstatt').style.display === 'flex') renderWerkstatt();
-            else alert(`Fahrzeug ${v.id} in Werkstatt (${v.problem}). Dauer: ca. ${repairDays} Tage.`);
+            
+            showNotification("Werkstatt-Auftrag", `Fahrzeug ${v.id} wurde für ca. ${repairDays} Tag(e) in die Werkstatt geschickt.`);
         }
 
         function renderWerkstatt() {
@@ -1248,13 +1343,24 @@
         }
 
         function forceRepair(idx) {
-            vehicles[idx].status = 'Einsatzbereit';
-            vehicles[idx].repairUntil = null;
-            vehicles[idx].problem = "";
+            const v = vehicles[idx];
+            v.status = 'Einsatzbereit';
+            v.repairUntil = null;
+            
+            const now = new Date();
+            if(v.problem.includes("TÜV")) {
+                const futureYear = now.getFullYear() + 2;
+                const monthStr = String(now.getMonth() + 1).padStart(2, '0');
+                v.tuev = `${monthStr}/${futureYear}`;
+                v.hu = `${monthStr}/${futureYear}`;
+            }
+            
+            v.problem = "";
             renderWerkstatt();
             if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }
 
+        // --- ROUTEN EDITOR ---
         function addRoute() {
             const r = {
                 id: document.getElementById('n-nr').value,
@@ -1294,6 +1400,7 @@
             });
         }
 
+        // --- AUDIO SYSTEM (Web Speech API & Tone.js) ---
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -1324,22 +1431,14 @@
             beep.triggerAttackRelease("A5", 0.05, now);
 
             if (!isLong) {
-                const noise = new Tone.NoiseSynth({
-                    noise: { type: "white" },
-                    envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 },
-                    volume: -15
-                }).toDestination();
-                
                 const bell = new Tone.PolySynth(Tone.Synth, {
                     oscillator: { type: "triangle" },
                     envelope: { attack: 0.01, decay: 1.5, sustain: 0, release: 1.5 },
                     volume: -5
                 }).toDestination();
                 
-                noise.triggerAttackRelease(0.05, now + 0.15);
                 bell.triggerAttackRelease(["E6", "G6", "C7"], 1.5, now + 0.2);
-                
-                setTimeout(() => { beep.dispose(); noise.dispose(); bell.dispose(); }, 3000);
+                setTimeout(() => { beep.dispose(); bell.dispose(); }, 3000);
             } else {
                 const stutters = [0.8, 1.9, 3.0, 4.2];
                 stutters.forEach(time => {
@@ -1357,6 +1456,7 @@
             }
         }
 
+        // --- IBIS ATRON LOGIK & KASSENSYSTEM ---
         let currentRoute = null;
         let currentStopIdx = 0;
         let routeStartTime = null;
