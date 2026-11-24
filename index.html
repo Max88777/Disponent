@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leitstelle CTS 2026 OS</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tone.js für realistische Kassen-Sounds -->
+    <!-- Tone.js für realistische Kassen- und Funk-Sounds -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') no-repeat center center fixed; background-size: cover; }
@@ -50,7 +50,7 @@
         .ticket-btn:active { transform: scale(0.98); background-color: #f3f4f6; }
         .stop-box { background-color: #F0FDFA; border: 1px solid #5EEAD4; }
 
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
         
@@ -85,7 +85,27 @@
 
     <div id="notification-container" class="absolute top-14 right-4 flex flex-col gap-2 z-[9999] pointer-events-none"></div>
 
-    <!-- Werkstatt Auftrag Modal (NEU) -->
+    <!-- CUSTOM MESSAGE BOXES (Replaces standard alert/confirm) -->
+    <div id="msg-alert" class="hidden absolute inset-0 z-[999999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div class="bg-slate-800 border border-slate-600 shadow-2xl rounded-xl w-[400px] p-6 flex flex-col text-center">
+            <h3 class="text-xl font-bold text-blue-400 mb-4" id="msg-alert-title">System Hinweis</h3>
+            <p class="text-gray-200 text-sm mb-6 whitespace-pre-wrap leading-relaxed" id="msg-alert-text"></p>
+            <button onclick="document.getElementById('msg-alert').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded shadow transition focus:outline-none">OK</button>
+        </div>
+    </div>
+
+    <div id="msg-confirm" class="hidden absolute inset-0 z-[999999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div class="bg-slate-800 border border-slate-600 shadow-2xl rounded-xl w-[450px] p-6 flex flex-col text-center">
+            <h3 class="text-xl font-bold text-yellow-400 mb-4" id="msg-confirm-title">Bitte bestätigen</h3>
+            <p class="text-gray-200 text-sm mb-6 whitespace-pre-wrap leading-relaxed" id="msg-confirm-text"></p>
+            <div class="flex gap-3">
+                <button onclick="document.getElementById('msg-confirm').classList.add('hidden')" class="flex-1 bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 rounded shadow transition">Abbrechen</button>
+                <button id="msg-confirm-ok" class="flex-1 bg-yellow-600 hover:bg-yellow-500 text-black font-bold py-2 rounded shadow transition">Bestätigen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Werkstatt Auftrag Modal -->
     <div id="werkstatt-modal" class="hidden absolute inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
         <div class="bg-slate-800 border border-slate-600 shadow-2xl rounded-xl w-[500px] p-6 flex flex-col">
             <h3 class="text-2xl font-bold text-yellow-400 mb-2 border-b border-slate-700 pb-3 flex items-center gap-3">
@@ -113,6 +133,34 @@
         </div>
     </div>
 
+    <!-- Rundumfunk Modal -->
+    <div id="rundumfunk-modal" class="hidden absolute inset-0 z-[99999] flex items-center justify-center bg-black/70 backdrop-blur-sm">
+        <div class="bg-slate-800 border border-slate-600 shadow-2xl rounded-xl w-[600px] p-6 flex flex-col">
+            <h3 class="text-2xl font-bold text-blue-400 mb-2 border-b border-slate-700 pb-3 flex items-center gap-3">
+                <span>📢</span> Rundumfunk senden
+            </h3>
+            
+            <p class="text-xs text-gray-400 mb-2 uppercase font-bold tracking-widest mt-4">Kategorie / Vorlage wählen:</p>
+            <select id="rf-category" onchange="updateRundumfunkTemplate()" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 outline-none mb-4">
+                <option value="">-- Freitext (Keine Vorlage) --</option>
+                <option value="Unwetter">⛈ Unwetterwarnung</option>
+                <option value="Stau">🚗 Stau / Erhöhtes Verkehrsaufkommen</option>
+                <option value="Kontrolle">🎫 Fahrscheinkontrollen</option>
+                <option value="Notfall">🚨 NOTFALL (Netz-Stopp)</option>
+            </select>
+
+            <p class="text-xs text-gray-400 mb-2 uppercase font-bold tracking-widest">Nachricht an alle Fahrzeuge:</p>
+            <textarea id="rf-message" rows="4" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 outline-none mb-6 resize-none" placeholder="Hier deine Nachricht eingeben..."></textarea>
+
+            <div class="flex justify-end gap-3 mt-auto">
+                <button onclick="closeRundumfunkModal()" class="px-5 py-2.5 bg-gray-600 hover:bg-gray-500 rounded text-white font-bold transition shadow">Abbrechen</button>
+                <button onclick="executeRundumfunk()" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded text-white font-bold transition shadow-lg flex items-center gap-2">
+                    <span class="text-lg">📡</span> Senden
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Top Bar -->
     <div class="h-10 bg-slate-900 bg-opacity-90 flex items-center justify-between px-4 text-sm font-semibold z-50 border-b border-gray-700 shadow-md">
         <div class="flex space-x-6 items-center">
@@ -127,6 +175,11 @@
             <button onclick="openApp('betriebshof')" class="hover:text-blue-300 transition">Betriebshof</button>
             <button onclick="openApp('werkstatt')" class="hover:text-yellow-400 text-yellow-500 transition flex items-center gap-1">🔧 Werkstatt</button>
             <button onclick="openApp('shop')" class="hover:text-green-400 text-green-500 transition flex items-center gap-1">🛒 Fahrzeughandel</button>
+            <button onclick="openApp('itcs')" class="hover:text-cyan-400 text-cyan-500 transition flex items-center gap-1 shadow-sm">📡 ITCS Live</button>
+            <button onclick="openApp('funk')" class="hover:text-orange-400 text-orange-500 transition flex items-center gap-1 relative">
+                📻 Funk
+                <span id="funk-badge" class="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden shadow">0</span>
+            </button>
             <button onclick="openApp('archiv')" class="hover:text-purple-400 text-purple-500 transition flex items-center gap-1">🗂️ Archiv</button>
         </div>
         <div class="flex items-center space-x-4">
@@ -137,6 +190,42 @@
 
     <!-- Workspace Area -->
     <div class="relative flex-1 overflow-hidden" id="workspace">
+
+        <!-- ================= FUNK ZENTRALE ================= -->
+        <div id="app-funk" class="os-window absolute w-[900px] h-[550px] top-[15%] left-[20%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('funk')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-funk')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-orange-400 font-bold tracking-widest">📻 TAKTISCHER FUNK KANAL 1</div>
+            </div>
+            <div class="flex-1 flex overflow-hidden">
+                <div class="w-1/3 bg-slate-800 border-r border-slate-700 flex flex-col" id="funk-list-container">
+                    <button onclick="sendRundumfunk()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold p-3 text-sm shrink-0 border-b border-blue-800 flex justify-center items-center gap-2 shadow-md z-10 transition">
+                        📢 Rundumfunk (Alle Fahrzeuge)
+                    </button>
+                    <div id="funk-list" class="flex-1 overflow-y-auto custom-scrollbar p-2">
+                        <p class="text-gray-500 p-4 text-center text-sm">Kein aktiver Funkverkehr.</p>
+                    </div>
+                </div>
+                <div class="w-2/3 bg-slate-900 p-6 flex flex-col relative" id="funk-content">
+                    <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+                        <span class="text-9xl">📻</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-white mb-2 relative z-10" id="funk-title">Kanal 1 - Standby</h2>
+                    <div class="text-gray-400 text-sm mb-6 relative z-10" id="funk-caller">Warte auf eingehende Funksprüche...</div>
+                    
+                    <div class="bg-slate-800/80 p-4 rounded border border-slate-700 mb-6 flex-1 relative z-10 text-gray-300 italic hidden shadow-lg" id="funk-message"></div>
+                    
+                    <div class="flex gap-3 mt-auto relative z-10 hidden" id="funk-actions">
+                        <button onclick="handleFunkAction('werkstatt')" class="flex-1 bg-red-700 hover:bg-red-600 text-white font-bold py-3 rounded shadow transition">🚨 Aussetzen & Werkstatt</button>
+                        <button onclick="handleFunkAction('weiter')" class="flex-1 bg-green-700 hover:bg-green-600 text-white font-bold py-3 rounded shadow transition">✅ Weiterfahrt genehmigen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         
         <!-- ================= MAIL APP ================= -->
         <div id="app-mail" class="os-window absolute w-[950px] h-[650px] top-[5%] left-[5%] rounded-xl hidden flex flex-col">
@@ -167,7 +256,7 @@
                     <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-personal')"></div>
                 </div>
-                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Dienstplanung (Wochen-Kalender)</div>
+                <div class="flex-1 text-center text-xs text-gray-400 font-semibold">Dienstplanung (Monats-Kalender)</div>
             </div>
             <div class="p-6 overflow-y-auto flex-1 flex flex-col gap-4">
                 
@@ -205,21 +294,14 @@
                     </div>
                 </div>
 
-                <div class="bg-slate-900 rounded shadow-lg overflow-x-auto border-2 border-slate-700 flex-1">
+                <div class="bg-slate-900 rounded shadow-lg overflow-x-auto border-2 border-slate-700 flex-1 relative custom-scrollbar">
                     <table class="w-full text-left text-sm whitespace-nowrap border-collapse">
-                        <thead class="bg-slate-800 text-gray-300 border-b-2 border-slate-600">
-                            <tr>
-                                <th class="p-3 border-r border-slate-700 w-48 sticky left-0 bg-slate-800 z-10">Mitarbeiter</th>
-                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-0">Montag</th>
-                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-1">Dienstag</th>
-                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-2">Mittwoch</th>
-                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-3">Donnerstag</th>
-                                <th class="p-2 border-r border-slate-700 text-center w-32" id="th-4">Freitag</th>
-                                <th class="p-2 border-r border-slate-700 text-center w-32 bg-slate-700/50" id="th-5">Samstag</th>
-                                <th class="p-2 text-center w-32 bg-slate-700/50" id="th-6">Sonntag</th>
-                            </tr>
+                        <thead class="bg-slate-800 text-gray-300 border-b-2 border-slate-600" id="excel-header">
+                            <!-- Wird per JS dynamisch mit 31 Tagen gefüllt -->
                         </thead>
-                        <tbody id="excel-list" class="divide-y divide-slate-700"></tbody>
+                        <tbody id="excel-list" class="divide-y divide-slate-700">
+                            <!-- Wird per JS gefüllt -->
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -311,6 +393,7 @@
                 <div class="w-1/4 bg-slate-800 border-r border-slate-700 flex flex-col">
                     <button onclick="switchArchivTab('ebe')" id="btn-archiv-ebe" class="p-4 border-b border-slate-700 text-left font-bold text-white bg-blue-600 border-l-4 border-l-white transition">🚨 EBE-Verstöße</button>
                     <button onclick="switchArchivTab('personal')" id="btn-archiv-personal" class="p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent">👥 Personalakten</button>
+                    <button onclick="switchArchivTab('funk')" id="btn-archiv-funk" class="p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent">📻 Funk-Protokolle</button>
                 </div>
                 <div class="w-3/4 bg-slate-900 p-6 overflow-y-auto" id="archiv-content">
                     <!-- Wird per JS gefüllt -->
@@ -352,6 +435,38 @@
             </div>
         </div>
 
+        <!-- ================= ITCS (LIVE-RADAR) ================= -->
+        <div id="app-itcs" class="os-window absolute w-[950px] h-[600px] top-[15%] left-[15%] rounded-xl hidden flex flex-col">
+            <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
+                <div class="flex space-x-2">
+                    <div class="w-3 h-3 rounded-full bg-red-500 cursor-pointer" onclick="closeApp('itcs')"></div>
+                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div class="w-3 h-3 rounded-full bg-green-500 cursor-pointer" onclick="toggleMaximize('app-itcs')"></div>
+                </div>
+                <div class="flex-1 text-center text-xs text-cyan-400 font-bold tracking-widest">ITCS / RBL - Live Fahrten- & Verspätungsüberwachung</div>
+            </div>
+            <div class="p-6 overflow-y-auto flex-1">
+                <div class="bg-slate-800 rounded-lg p-4 shadow-lg overflow-x-auto border border-cyan-700">
+                    <div class="flex justify-between mb-4 items-center border-b border-slate-700 pb-3">
+                        <h3 class="text-xl font-bold text-cyan-400 flex items-center gap-2"><span>📡</span> Leitstellen-Radar (Ausgefahrene Kurse)</h3>
+                        <span class="text-xs text-gray-400 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]"></span> Live-Aktualisierung</span>
+                    </div>
+                    <table class="w-full text-left text-sm whitespace-nowrap">
+                        <thead class="bg-slate-700 text-gray-300">
+                            <tr>
+                                <th class="p-3 rounded-tl-lg font-semibold tracking-wider">Fahrzeug</th>
+                                <th class="p-3 font-semibold tracking-wider">Linie / Kurs</th>
+                                <th class="p-3 font-semibold tracking-wider">Ziel (Endhaltestelle)</th>
+                                <th class="p-3 text-right font-semibold tracking-wider">Abweichung</th>
+                                <th class="p-3 rounded-tr-lg text-right font-semibold tracking-wider">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itcs-list" class="divide-y divide-slate-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <!-- ================= ATRON IBIS APP ================= -->
         <div id="app-ibis" class="os-window absolute w-[1000px] h-[750px] top-[2%] left-[20%] rounded-xl hidden flex flex-col">
             <div class="h-8 bg-slate-800 rounded-t-xl flex items-center px-3 cursor-move window-header">
@@ -365,7 +480,7 @@
             <div class="flex-1 flex flex-col items-center justify-center bg-gray-300 overflow-y-auto p-4">
                 <div id="ibis-hardware" class="flex flex-col items-center w-full max-w-[950px]">
                     <!-- Drucker Einheit verlängert -->
-                    <div class="w-[55%] h-24 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
+                    <div class="w-[55%] h-36 bg-[#4B5563] rounded-t-[2.5rem] border-b-4 border-[#374151] shadow-2xl relative flex flex-col items-center justify-end pb-3 z-0">
                         <div class="absolute top-2 right-6 flex space-x-2">
                             <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
                             <div class="w-1.5 h-1.5 bg-green-400 rounded-full"></div>
@@ -377,7 +492,7 @@
                         
                         <!-- Papierschlitz und Animation -->
                         <div class="relative w-40 flex justify-center mt-[-10px] mb-2">
-                            <div class="absolute bottom-0 w-32 h-36 overflow-hidden flex items-end justify-center pointer-events-none z-0">
+                            <div class="absolute bottom-0 w-32 h-48 overflow-hidden flex items-end justify-center pointer-events-none z-0">
                                 <div id="printed-ticket" class="w-full bg-white text-black font-mono border-t border-l border-r border-gray-300 shadow-md flex flex-col p-1.5 transform translate-y-full opacity-0"></div>
                             </div>
                         </div>
@@ -388,6 +503,11 @@
                         <!-- SICHERHEITS-PADDING: pb-[60px] schützt vor verdeckten Buttons -->
                         <div id="ibis-screen" class="atron-screen w-full flex flex-col relative pb-[60px]" style="height: 480px; box-shadow: inset 0 0 10px rgba(0,0,0,0.1);">
                             
+                            <!-- Funk Info Banderole -->
+                            <div id="atron-funk-msg" class="absolute top-12 left-0 w-full bg-orange-500 text-black font-bold p-2 text-center text-sm hidden z-[99] shadow-md border-b-2 border-black animate-pulse">
+                                Nachricht der Leitstelle
+                            </div>
+
                             <!-- Top Bar -->
                             <div class="atron-header h-12 flex items-center justify-between px-2 font-bold shadow-sm z-20 relative shrink-0">
                                 <div class="flex items-center space-x-1">
@@ -454,9 +574,9 @@
                                         </button>
                                     </div>
                                     <div class="flex gap-2 h-1/4">
-                                        <button onclick="playAnsage(currentStopName)" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
-                                            <span class="font-bold text-sm">Ansage WH</span>
-                                            <span class="font-normal text-[10px] text-gray-600">Erneut abspielen</span>
+                                        <button onclick="playSonderansage('zurueckbleiben')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
+                                            <span class="font-bold text-sm">Sonderansage</span>
+                                            <span class="font-normal text-[10px] text-gray-600">Zurückbleiben bitte</span>
                                         </button>
                                         <button onclick="playSonderansage('essen')" class="ticket-btn flex-1 flex flex-col items-center justify-center p-1 text-black">
                                             <span class="font-bold text-sm">Sonderansage</span>
@@ -584,6 +704,40 @@
                                 </div>
                             </div>
 
+                            <div id="ibis-state-nachrichten" class="flex-1 flex flex-col p-2 gap-2 text-sm font-semibold hidden menu-panel bg-gray-50 overflow-y-auto">
+                                <h3 class="bg-[#008080] text-white px-3 py-2 shadow font-bold tracking-wide flex justify-between items-center shrink-0">
+                                    <span>Nachrichten-Center</span>
+                                    <span class="font-mono text-yellow-300">0 Neu</span>
+                                </h3>
+                                <div class="flex-1 p-2 flex flex-col gap-2">
+                                    <div class="bg-white border border-gray-300 p-2 text-center text-gray-500 rounded text-xs mb-1 shadow-inner">
+                                        Keine neuen Textnachrichten.
+                                    </div>
+                                    
+                                    <div class="w-full bg-slate-300 h-px my-1"></div>
+
+                                    <h4 class="text-xs text-[#008080] uppercase tracking-wider font-bold">Aktionen</h4>
+                                    
+                                    <button onclick="sendSprechwunsch()" class="w-full ticket-btn flex flex-col items-center justify-center border-red-500 bg-red-100 text-red-700 py-2 rounded shadow transition">
+                                        <span class="font-bold text-base">🎙️ Sprechwunsch</span>
+                                    </button>
+
+                                    <div class="bg-gray-200 p-2 rounded border border-gray-300 mt-2">
+                                        <div class="text-xs text-center text-gray-600 font-bold mb-2">⏱️ Verspätung melden (Daten-Telegramm)</div>
+                                        <div class="grid grid-cols-4 gap-2">
+                                            <button onclick="sendDelayTelegram(5)" class="ticket-btn py-2 text-[#008080] font-bold text-sm bg-white hover:bg-gray-100 shadow">+5</button>
+                                            <button onclick="sendDelayTelegram(10)" class="ticket-btn py-2 text-[#008080] font-bold text-sm bg-white hover:bg-gray-100 shadow">+10</button>
+                                            <button onclick="sendDelayTelegram(15)" class="ticket-btn py-2 text-[#008080] font-bold text-sm bg-white hover:bg-gray-100 shadow">+15</button>
+                                            <button onclick="sendDelayTelegram(30)" class="ticket-btn py-2 text-red-600 font-bold text-sm bg-white hover:bg-gray-100 shadow">+30</button>
+                                        </div>
+                                    </div>
+
+                                    <button onclick="closeNachrichten()" class="w-full ticket-btn flex flex-col items-center justify-center bg-gray-300 border-gray-400 text-black py-2 rounded mt-auto">
+                                        <span class="font-bold text-sm text-gray-800">Zurück zum Menü</span>
+                                    </button>
+                                </div>
+                            </div>
+
                             <!-- Hardware Bottom Bar absolut verankert -->
                             <div class="atron-bottom-bar h-[60px] flex items-center px-2 gap-1 py-1 w-full absolute bottom-0 z-20">
                                 <button onclick="toggleDarkMode()" class="btn-moon h-full w-14 rounded shadow flex items-center justify-center text-2xl" title="Dark Mode">🌙</button>
@@ -607,6 +761,23 @@
     <script>
         // --- DRAG & DROP FÜR FENSTER ---
         let highestZ = 10;
+        
+        function sysAlert(msg, title="CTS Leitstelle") {
+            document.getElementById('msg-alert-title').innerText = title;
+            document.getElementById('msg-alert-text').innerText = msg;
+            document.getElementById('msg-alert').classList.remove('hidden');
+        }
+
+        function sysConfirm(msg, onConfirm, title="Bitte bestätigen") {
+            document.getElementById('msg-confirm-title').innerText = title;
+            document.getElementById('msg-confirm-text').innerText = msg;
+            document.getElementById('msg-confirm').classList.remove('hidden');
+            document.getElementById('msg-confirm-ok').onclick = function() {
+                document.getElementById('msg-confirm').classList.add('hidden');
+                if(onConfirm) onConfirm();
+            };
+        }
+
         document.querySelectorAll('.os-window').forEach(win => {
             win.addEventListener('mousedown', () => { win.style.zIndex = ++highestZ; });
             const header = win.querySelector('.window-header');
@@ -638,7 +809,9 @@
             if(id === 'werkstatt') renderWerkstatt();
             if(id === 'routen') renderRoutes();
             if(id === 'shop') renderShopBrands();
+            if(id === 'itcs') renderItcs();
             if(id === 'archiv') switchArchivTab('ebe');
+            if(id === 'funk') renderFunkList();
             if(id === 'ibis' && !ibisBooted) {
                 bootIbisSequence();
                 ibisBooted = true;
@@ -654,7 +827,7 @@
             
             if(document.getElementById('app-ibis').style.display === 'flex') {
                 document.getElementById('ibis-clock').innerText = now.toLocaleTimeString('de-DE');
-                if(currentRoute && document.getElementById('ibis-state-drive').classList.contains('flex')) {
+                if(currentRoute) {
                     updateDelay();
                 }
             }
@@ -681,6 +854,31 @@
             
             if(document.getElementById('app-werkstatt').style.display === 'flex') renderWerkstatt();
             if(updatedWerkstatt && document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
+            if(document.getElementById('app-itcs').style.display === 'flex') renderItcs();
+            
+            // ITCS Delay Simulator (Live-Generierung)
+            vehicles.forEach(v => {
+                if (v.status === 'Ausgefahren') {
+                    if (v.isPlayer && currentRoute && routeStartTime) {
+                        const expectedTime = new Date(routeStartTime.getTime() + (currentStopIdx * (currentRoute.dauer / (currentRoute.stops.length - 1 || 1)) * 60000));
+                        v.delaySec = Math.floor((new Date() - expectedTime) / 1000);
+                    } else {
+                        if (v.delaySec === undefined) v.delaySec = Math.floor(Math.random() * 400) - 60; // Initial -1 Min bis +6 Min
+                        // Leichte Schwankungen einbauen (Ampeln, Fahrgastwechsel)
+                        if (Math.random() > 0.7) v.delaySec += Math.floor(Math.random() * 7) - 2; 
+                    }
+                    
+                    // Ablauf-Timer für die Prognose (Telegramm)
+                    if(v.telegramTime && Date.now() > v.telegramTime) {
+                        v.telegramDelaySec = undefined;
+                        v.telegramTime = undefined;
+                    }
+                } else {
+                    v.delaySec = 0;
+                    v.telegramDelaySec = undefined;
+                    v.telegramTime = undefined;
+                }
+            });
         }, 1000);
 
         // --- PUSH BENACHRICHTIGUNGEN & LIVE-EMAILS ---
@@ -732,6 +930,10 @@
         }
 
         let emails = [];
+        let ebeArchive = []; // Central Archive for EBEs
+        let funkProtokolle = []; // Funk Archiv
+        let activeFunk = []; // Aktuelle Funksprüche
+        let selectedFunkId = null;
 
         let initialMail = generateApplication();
         initialMail.id = Date.now();
@@ -786,17 +988,18 @@
         ];
 
         let employees = [
-            { id: "1001", name: "Max (Leitung)", role: "Fahrer/in (Flexibel)", schedule: ["Frei", "Frei", "Frei", "Frei", "Frei", "Frei", "Frei"] },
-            { id: "1002", name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"] },
-            { id: "1003", name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"] }
+            { id: "1001", name: "Max (Leitung)", role: "Fahrer/in (Flexibel)", schedule: Array(31).fill("Frei") },
+            { id: "1002", name: "Jürgen Wagner", role: "Busfahrer/in", schedule: ["F-100", "F-100", "F-100", "Frei", "Frei", "S-824", "S-824"].concat(Array(24).fill("Frei")) },
+            { id: "1003", name: "Sabine Bauer", role: "Straßenbahnfahrer/in", schedule: ["Frei", "Frei", "N-1", "N-1", "N-1", "N-1", "N-1"].concat(Array(24).fill("Frei")) }
         ];
 
         let vehicles = [
-            { id: "KOM 1042", type: "Mercedes-Benz Citaro (Gelenk)", tuev: "10/2027", hu: "05/2027", status: "Einsatzbereit", repairUntil: null, problem: "" },
-            { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "Einsatzbereit", repairUntil: null, problem: "" }
+            { id: "KOM 1042", type: "Mercedes-Benz Citaro (Gelenk)", tuev: "10/2027", hu: "05/2027", status: "Ausgefahren", line: "L 100", repairUntil: null, problem: "" },
+            { id: "KOM 1088", type: "MAN Lion's City 12", tuev: "11/2028", hu: "11/2028", status: "Ausgefahren", line: "L 824", repairUntil: null, problem: "" },
+            { id: "TW 301", type: "Siemens Variobahn", tuev: "01/2026", hu: "11/2025", status: "Einsatzbereit", repairUntil: null, problem: "" },
+            { id: "TW 305", type: "Siemens Variobahn", tuev: "05/2029", hu: "05/2029", status: "Ausgefahren", line: "L 1", repairUntil: null, problem: "" },
+            { id: "KOM 2011", type: "Solaris Urbino 18", tuev: "09/2027", hu: "09/2027", status: "Einsatzbereit", repairUntil: null, problem: "" }
         ];
-
-        let ebeArchive = []; // Central Archive for EBEs
 
         let currentMail = null;
         let currentDriverId = null;
@@ -862,30 +1065,30 @@
 
             if(currentMail.type === 'application') {
                 if(actionType === 'einladung') {
-                    alert(`Dem Bewerber wurde eine formelle Bestätigung geschickt.\nDas Vorstellungsgespräch findet nun statt.\n\nBitte habe etwas Geduld, die Personalabteilung wird sich in ca. 1 bis 2 Minuten mit dem Feedback bei dir melden.`);
+                    sysAlert(`Dem Bewerber wurde eine formelle Bestätigung geschickt.\nDas Vorstellungsgespräch findet nun statt.\n\nBitte habe etwas Geduld, die Personalabteilung wird sich in ca. 1 bis 2 Minuten mit dem Feedback bei dir melden.`);
                     currentMail.replied = true;
                     const interviewDauer = Math.floor(Math.random() * 60000) + 60000;
                     setTimeout(() => generateHREmail(currentMail.senderName, currentMail.role), interviewDauer);
                 } else if(actionType === 'absage') {
-                    alert(`Formelle Absage wurde an den Bewerber verschickt.`);
+                    sysAlert(`Formelle Absage wurde an den Bewerber verschickt.`);
                     currentMail.replied = true;
                 }
             } else if(currentMail.type === 'hr_feedback') {
                 if(actionType === 'annehmen') {
                     const newId = Math.floor(1000 + Math.random() * 9000).toString();
-                    employees.push({ id: newId, name: currentMail.candidateName, role: currentMail.role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
-                    alert(`${currentMail.candidateName} wurde erfolgreich eingestellt!\nDie zugewiesene Personalnummer (für den Atron Login) lautet: ${newId}`);
+                    employees.push({ id: newId, name: currentMail.candidateName, role: currentMail.role, schedule: Array(31).fill("Frei") });
+                    sysAlert(`${currentMail.candidateName} wurde erfolgreich eingestellt!\nDie zugewiesene Personalnummer (für den Atron Login) lautet: ${newId}`);
                     if(document.getElementById('app-personal').style.display === 'flex') renderExcel();
                     currentMail.replied = true;
                 } else if(actionType === 'ablehnen') {
-                    alert(`Die Einstellung wurde gestoppt. Bewerber wurde offiziell abgelehnt.`);
+                    sysAlert(`Die Einstellung wurde gestoppt. Bewerber wurde offiziell abgelehnt.`);
                     currentMail.replied = true;
                 }
             } else if(currentMail.type === 'ad') {
                 if(actionType === 'kaufen') {
                     const newId = (currentMail.isTram ? 'TW ' : 'KOM ') + (Math.floor(Math.random()*9000)+1000);
                     vehicles.push({ id: newId, type: currentMail.vehicleType, tuev: "10/2029", hu: "10/2029", status: "Einsatzbereit", repairUntil: null, problem: "" });
-                    alert(`Das Fahrzeug (${currentMail.vehicleType}) wurde bestellt und mit der ID ${newId} dem Betriebshof hinzugefügt!`);
+                    sysAlert(`Das Fahrzeug (${currentMail.vehicleType}) wurde bestellt und mit der ID ${newId} dem Betriebshof hinzugefügt!`);
                     if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
                     currentMail.replied = true;
                 } else if (actionType === 'ignorieren') {
@@ -972,10 +1175,10 @@
                 
                 if (route) {
                     if (emp.role === "Busfahrer/in" && route.type === "Tram") {
-                        return alert(`Fehler: ${emp.name} hat nur eine Lizenz für Busse!`);
+                        return sysAlert(`Fehler: ${emp.name} hat nur eine Lizenz für Busse!`);
                     }
                     if (emp.role === "Straßenbahnfahrer/in" && route.type === "Bus") {
-                        return alert(`Fehler: ${emp.name} hat nur eine Lizenz für Straßenbahnen!`);
+                        return sysAlert(`Fehler: ${emp.name} hat nur eine Lizenz für Straßenbahnen!`);
                     }
 
                     let existing = emp.schedule[dayIdx] || "";
@@ -996,76 +1199,608 @@
         }
 
         function renderExcel() {
+            const thead = document.getElementById('excel-header');
             const tbody = document.getElementById('excel-list');
-            tbody.innerHTML = '';
-            let realDay = new Date().getDay(); 
-            const todayIdx = realDay === 0 ? 6 : realDay - 1; 
-
-            for(let i=0; i<7; i++) {
-                const th = document.getElementById('th-'+i);
-                if(i === todayIdx) th.className = "p-2 border-r border-slate-700 text-center w-32 bg-yellow-900/40 border-b-2 border-yellow-500 text-yellow-300";
-                else th.className = "p-2 border-r border-slate-700 text-center w-32 " + (i>=5 ? "bg-slate-700/50" : "");
+            
+            const now = new Date();
+            
+            if (thead) {
+                let headerHtml = `<tr><th class="p-3 border-r border-slate-700 w-48 sticky left-0 bg-slate-800 z-20 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">Mitarbeiter</th>`;
+                for(let i = 0; i < 31; i++) {
+                    let dateObj = new Date();
+                    dateObj.setDate(now.getDate() + i);
+                    let weekday = dateObj.toLocaleDateString('de-DE', { weekday: 'short' });
+                    let dateStr = `${weekday}, ${String(dateObj.getDate()).padStart(2, '0')}.${String(dateObj.getMonth() + 1).padStart(2, '0')}.`;
+                    
+                    let isToday = i === 0;
+                    let bgClass = isToday ? "bg-yellow-900/40 border-b-2 border-yellow-500 text-yellow-300" : "bg-slate-800";
+                    headerHtml += `<th class="p-2 border-r border-slate-700 text-center min-w-[120px] ${bgClass}">${dateStr}</th>`;
+                }
+                headerHtml += `</tr>`;
+                thead.innerHTML = headerHtml;
             }
 
-            employees.forEach((emp, eIdx) => {
-                let rowHtml = `<tr class="border-b border-slate-700"><td class="p-3 border-r border-slate-700 font-semibold bg-slate-800 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">${emp.name} <span class="text-yellow-500 font-mono text-[10px] ml-1">(ID: ${emp.id})</span><br><span class="text-xs text-gray-400 font-normal">${emp.role}</span></td>`;
-                for(let dIdx = 0; dIdx < 7; dIdx++) {
-                    let val = emp.schedule[dIdx] || "";
-                    let highlight = dIdx === todayIdx ? "ring-inset ring-2 ring-yellow-700/50" : "";
+            if (tbody) {
+                tbody.innerHTML = '';
+                employees.forEach((emp, eIdx) => {
+                    let rowHtml = `<tr class="border-b border-slate-700"><td class="p-3 border-r border-slate-700 font-semibold bg-slate-800 sticky left-0 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.5)]">${emp.name} <span class="text-yellow-500 font-mono text-[10px] ml-1">(ID: ${emp.id})</span><br><span class="text-xs text-gray-400 font-normal">${emp.role}</span></td>`;
+                    
+                    for(let i = 0; i < 31; i++) {
+                        let dateObj = new Date();
+                        dateObj.setDate(now.getDate() + i);
+                        let dIdx = dateObj.getDate() - 1; // 0-30 based on day of month
+                        
+                        let val = emp.schedule[dIdx] || "";
+                        let isToday = i === 0;
+                        let highlight = isToday ? "ring-inset ring-2 ring-yellow-700/50" : "";
 
-                    if(val === 'Frei' || val === 'Krank' || val === 'Urlaub' || val === 'Abbau') {
-                        let bgClass = "bg-transparent", textClass = "text-white";
-                        if(val === 'Frei') { bgClass = "bg-gray-800"; textClass = "text-gray-500"; }
-                        else if(val === 'Krank') { bgClass = "bg-red-900/30"; textClass = "text-red-400 font-bold"; }
-                        else if(val === 'Urlaub') { bgClass = "bg-yellow-900/30"; textClass = "text-yellow-500"; }
-                        else if(val === 'Abbau') { bgClass = "bg-purple-900/30"; textClass = "text-purple-400"; }
-                        
-                        rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell align-middle ${bgClass} ${highlight}"><span class="${textClass}">${val}</span></td>`;
-                    } else if (val !== "") {
-                        let shifts = val.split(' + ');
-                        let badges = shifts.map(s => {
-                            let sBg = "bg-slate-700";
-                            let sTxt = "text-white";
-                            if(s.startsWith('F-')) { sBg = "bg-teal-900/80 border border-teal-500"; sTxt = "text-teal-300"; }
-                            if(s.startsWith('S-')) { sBg = "bg-orange-900/80 border border-orange-500"; sTxt = "text-orange-300"; }
-                            if(s.startsWith('N-')) { sBg = "bg-blue-900/80 border border-blue-500"; sTxt = "text-blue-300"; }
-                            return `<div class="${sBg} ${sTxt} font-mono font-bold rounded px-1.5 py-1 text-[10px] mb-1 w-full shadow-sm">${s}</div>`;
-                        }).join('');
-                        
-                        rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-1.5 text-center text-xs cursor-pointer excel-cell align-top bg-slate-800/30 ${highlight}">${badges}</td>`;
-                    } else {
-                        rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell ${highlight}"></td>`;
+                        if(val === 'Frei' || val === 'Krank' || val === 'Urlaub' || val === 'Abbau' || val === 'Dispo') {
+                            let bgClass = "bg-transparent", textClass = "text-white";
+                            if(val === 'Frei') { bgClass = "bg-gray-800"; textClass = "text-gray-500"; }
+                            else if(val === 'Krank') { bgClass = "bg-red-900/30"; textClass = "text-red-400 font-bold"; }
+                            else if(val === 'Urlaub') { bgClass = "bg-yellow-900/30"; textClass = "text-yellow-500"; }
+                            else if(val === 'Abbau') { bgClass = "bg-purple-900/30"; textClass = "text-purple-400"; }
+                            else if(val === 'Dispo') { bgClass = "bg-blue-900/40 border border-blue-500"; textClass = "text-blue-300 font-bold tracking-wider"; }
+                            
+                            rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell align-middle min-w-[120px] ${bgClass} ${highlight}"><span class="${textClass}">${val}</span></td>`;
+                        } else if (val !== "") {
+                            let shifts = val.split(' + ');
+                            let badges = shifts.map(s => {
+                                let sBg = "bg-slate-700";
+                                let sTxt = "text-white";
+                                if(s.startsWith('F-')) { sBg = "bg-teal-900/80 border border-teal-500"; sTxt = "text-teal-300"; }
+                                else if(s.startsWith('S-')) { sBg = "bg-orange-900/80 border border-orange-500"; sTxt = "text-orange-300"; }
+                                else if(s.startsWith('N-')) { sBg = "bg-blue-900/80 border border-blue-500"; sTxt = "text-blue-300"; }
+                                else if(s === 'Dispo') { sBg = "bg-blue-600 border border-blue-400"; sTxt = "text-white"; }
+                                return `<div class="${sBg} ${sTxt} font-mono font-bold rounded px-1.5 py-1 text-[10px] mb-1 w-full shadow-sm">${s}</div>`;
+                            }).join('');
+                            
+                            rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-1.5 text-center text-xs cursor-pointer excel-cell align-top min-w-[120px] bg-slate-800/30 ${highlight}">${badges}</td>`;
+                        } else {
+                            rowHtml += `<td onclick="assignCell(${eIdx}, ${dIdx})" class="border-r border-slate-700 p-2 text-center text-xs cursor-pointer excel-cell min-w-[120px] ${highlight}"></td>`;
+                        }
                     }
-                }
-                rowHtml += `</tr>`;
-                tbody.innerHTML += rowHtml;
-            });
+                    rowHtml += `</tr>`;
+                    tbody.innerHTML += rowHtml;
+                });
+            }
         }
 
         function addEmployeeDemo() {
-            const name = prompt("Name des neuen Mitarbeiters:");
-            if(!name) return;
-            const roleInput = prompt("Welche Lizenz hat der Mitarbeiter?\n1 = Bus\n2 = Straßenbahn\n3 = Flexibel (Beides)\n\nEingabe (1-3):", "1");
-            let role = "Busfahrer/in";
-            if(roleInput === "2") role = "Straßenbahnfahrer/in";
-            if(roleInput === "3") role = "Fahrer/in (Flexibel)";
-            
             const newId = Math.floor(1000 + Math.random() * 9000).toString();
-            employees.push({ id: newId, name: name, role: role, schedule: ["Frei","Frei","Frei","Frei","Frei","Frei","Frei"] });
-            alert(`Mitarbeiter erfolgreich angelegt.\nDie zugewiesene Personalnummer lautet: ${newId}`);
+            const fName = firstNames[Math.floor(Math.random() * firstNames.length)];
+            const lName = lastNames[Math.floor(Math.random() * lastNames.length)];
+            const roles = ["Busfahrer/in", "Straßenbahnfahrer/in", "Fahrer/in (Flexibel)"];
+            const role = roles[Math.floor(Math.random() * roles.length)];
+            
+            employees.push({ id: newId, name: `${fName} ${lName}`, role: role, schedule: Array(31).fill("Frei") });
+            sysAlert(`Zufälliger Mitarbeiter wurde generiert und eingestellt.\n\nName: ${fName} ${lName}\nLizenz: ${role}\nPersonalnummer: ${newId}`);
             renderExcel();
+        }
+
+        // --- FUNK SYSTEM LOGIK ---
+        const funkProbleme = [
+            "Leitstelle, hier ist Wg {veh}. Bei mir klemmt die Tür 2, ich kriege sie nicht mehr zu.",
+            "Leitstelle, ich habe hier einen Defekt am Blinker hinten links.",
+            "Leitstelle für Wg {veh}, meine Klimaanlage tropft stark in den Innenraum.",
+            "Leitstelle, ich habe hier Vandalismus. Eine Scheibe wurde zerkratzt.",
+            "Leitstelle, Wg {veh}, der Motor ruckelt beim Anfahren extrem, bitte um Anweisung."
+        ];
+
+        function triggerRandomFunk() {
+            if(Math.random() < 0.3) return; 
+            if(vehicles.length === 0) return;
+            
+            const activeVehicles = vehicles.filter(v => v.status === "Einsatzbereit" || v.status === "Ausgefahren");
+            if(activeVehicles.length === 0) return;
+
+            const veh = activeVehicles[Math.floor(Math.random() * activeVehicles.length)];
+            
+            if (veh.status !== "Ausgefahren") {
+                veh.status = "Ausgefahren";
+                const randomRoute = routes[Math.floor(Math.random() * routes.length)];
+                veh.line = "L " + (randomRoute ? randomRoute.id : "???");
+                if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
+            }
+
+            const prob = funkProbleme[Math.floor(Math.random() * funkProbleme.length)].replace('{veh}', veh.id);
+            
+            const funk = {
+                id: Date.now().toString(),
+                vehId: veh.id,
+                meldung: prob,
+                zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                status: 'Sprechwunsch' 
+            };
+
+            // Wer hat heute Dispo-Schicht? (Tag im Dienstplan ermitteln)
+            const todayIdx = new Date().getDate() - 1;
+            const dispoEmp = employees.find(e => e.schedule[todayIdx] === 'Dispo');
+            const isPlayerDispo = dispoEmp && dispoEmp.id === "1001";
+            
+            let useAutoDispo = false;
+            let dispoName = "Auto-Dispo";
+            
+            if (dispoEmp && !isPlayerDispo) {
+                // Ein KI-Kollege ist als Disponent eingeteilt -> Er macht Auto-Dispo
+                useAutoDispo = true;
+                dispoName = dispoEmp.name + " (Dispo)";
+            } else if (currentRoute && !isPlayerDispo) {
+                // Spieler fährt selbst einen Bus und hat NICHT Dispo-Schicht -> Auto-Dispo übernimmt, damit er nicht beim Fahren gestört wird
+                useAutoDispo = true;
+            }
+
+            if(useAutoDispo) {
+                funk.aktion = 'Weiterfahrt';
+                funk.autoDispo = true;
+                funkProtokolle.push(funk);
+                showNotification(`${dispoName}`, `Wg ${veh.id} hat ein Problem gemeldet. Weiterfahrt genehmigt.`);
+            } else {
+                activeFunk.push(funk);
+                playSquelchSound();
+                showNotification("📞 Sprechwunsch!", `Wg ${veh.id} ruft Leitstelle!`);
+                updateFunkBadge();
+                if(document.getElementById('app-funk').style.display === 'flex') {
+                    renderFunkList();
+                }
+            }
+        }
+        setInterval(triggerRandomFunk, 40000); 
+
+        function updateFunkBadge() {
+            const badge = document.getElementById('funk-badge');
+            if(activeFunk.length > 0) {
+                badge.innerText = activeFunk.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+        }
+
+        function renderFunkList() {
+            const list = document.getElementById('funk-list');
+            list.innerHTML = '';
+            
+            const activeVehicles = vehicles.filter(v => v.status === "Ausgefahren");
+            
+            if(activeVehicles.length === 0 && activeFunk.length === 0) {
+                list.innerHTML = '<p class="text-gray-500 p-4 text-center text-sm">Aktuell keine Fahrzeuge im Einsatz.</p>';
+                document.getElementById('funk-title').innerText = 'Kanal 1 - Standby';
+                document.getElementById('funk-caller').innerText = 'Warte auf eingehende Funksprüche...';
+                document.getElementById('funk-message').classList.add('hidden');
+                document.getElementById('funk-actions').classList.add('hidden');
+                return;
+            }
+
+            let warteschlangeHtml = '';
+            let standbyHtml = '';
+
+            activeVehicles.forEach(v => {
+                const f = activeFunk.find(af => af.vehId === v.id);
+                const isSel = (selectedFunkId === (f ? f.id : 'hail_' + v.id));
+                
+                let bgClass = "bg-slate-700/40 hover:bg-slate-700";
+                let isTram = v.type.includes('Tram') || v.type.includes('Variobahn') || v.type.includes('Triebwagen') || v.type.includes('Strab');
+                let icon = isTram ? '🚋 Strab' : '🚌 KOM';
+                let statusText = "🟢 Auf Linie";
+                let textClass = "text-gray-400";
+                let clickAction = `onclick="hailVehicle('${v.id}')"`;
+
+                if (f) {
+                    bgClass = isSel ? "bg-orange-900 border-l-4 border-orange-500" : "bg-orange-800/80 animate-pulse border-l-4 border-orange-500";
+                    statusText = f.status === 'Sprechwunsch' ? "📞 Sprechwunsch (Warten)" : "🔊 Verbunden";
+                    textClass = "text-white font-bold";
+                    clickAction = `onclick="selectFunk('${f.id}')"`;
+                    
+                    warteschlangeHtml += `
+                        <div ${clickAction} class="p-3 rounded border border-slate-700 transition ${bgClass} cursor-pointer mb-2 shadow-sm">
+                            <div class="flex justify-between items-center mb-1">
+                                <div class="font-bold text-blue-300 text-sm">${icon} ${v.id}</div>
+                                <div class="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded text-gray-300 font-mono">${v.line || 'L ???'}</div>
+                            </div>
+                            <div class="text-xs ${textClass}">${statusText}</div>
+                        </div>
+                    `;
+                } else {
+                    if (isSel) {
+                        bgClass = "bg-slate-600 border-l-4 border-blue-500";
+                    }
+                    standbyHtml += `
+                        <div ${clickAction} class="p-3 rounded border border-slate-700 transition ${bgClass} cursor-pointer mb-2 shadow-sm">
+                            <div class="flex justify-between items-center mb-1">
+                                <div class="font-bold text-blue-300 text-sm">${icon} ${v.id}</div>
+                                <div class="text-[10px] bg-slate-900 px-1.5 py-0.5 rounded text-gray-300 font-mono">${v.line || 'L ???'}</div>
+                            </div>
+                            <div class="text-xs ${textClass}">${statusText}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (warteschlangeHtml !== '') {
+                list.innerHTML += `<div class="text-[10px] text-orange-400 font-bold uppercase tracking-widest mb-2 mt-2 px-2 flex items-center gap-1"><span>🔴</span> Warteschlange</div>${warteschlangeHtml}`;
+            }
+            if (standbyHtml !== '') {
+                list.innerHTML += `<div class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2 mt-4 px-2 flex items-center gap-1"><span>⚪</span> Standby (Auf Linie)</div>${standbyHtml}`;
+            }
+            
+            if(!selectedFunkId && activeFunk.length > 0) {
+                selectFunk(activeFunk[0].id);
+            }
+        }
+
+        function selectFunk(id) {
+            selectedFunkId = id;
+            const funk = activeFunk.find(f => f.id === id);
+            if(!funk) return;
+            
+            renderFunkList();
+
+            document.getElementById('funk-title').innerText = `Funkspruch Wg ${funk.vehId}`;
+            document.getElementById('funk-caller').innerText = `Eingegangen um ${funk.zeit}`;
+            
+            const msgEl = document.getElementById('funk-message');
+            const actionsEl = document.getElementById('funk-actions');
+            
+            if(funk.status === 'Sprechwunsch') {
+                msgEl.classList.add('hidden');
+                actionsEl.classList.remove('hidden');
+                actionsEl.innerHTML = `<button onclick="acceptFunk('${funk.id}')" class="w-full bg-orange-600 hover:bg-orange-500 text-white font-bold py-4 text-lg rounded shadow-lg transition animate-pulse flex items-center justify-center gap-2">📞 Sprechwunsch Annehmen</button>`;
+            } else {
+                msgEl.innerHTML = `<span class="text-orange-400">Fahrer Wg ${funk.vehId}:</span><br>"${funk.meldung}"`;
+                msgEl.classList.remove('hidden');
+                
+                actionsEl.classList.remove('hidden');
+                actionsEl.innerHTML = `
+                    <button onclick="handleFunkAction('werkstatt')" class="flex-1 bg-red-700 hover:bg-red-600 text-white font-bold py-3 rounded shadow transition">🚨 Aussetzen & Werkstatt</button>
+                    <button onclick="handleFunkAction('weiter')" class="flex-1 bg-green-700 hover:bg-green-600 text-white font-bold py-3 rounded shadow transition">✅ Weiterfahrt genehmigen</button>
+                `;
+            }
+        }
+
+        function acceptFunk(id) {
+            const funk = activeFunk.find(f => f.id === id);
+            if(funk) {
+                funk.status = 'Verbunden';
+                playSquelchSound();
+                selectFunk(id);
+            }
+        }
+
+        function hailVehicle(vid) {
+            selectedFunkId = 'hail_' + vid;
+            renderFunkList();
+            
+            document.getElementById('funk-title').innerText = `Kanal 1 - Ausgehend Wg ${vid}`;
+            document.getElementById('funk-caller').innerText = `Verbindungsaufbau bereit...`;
+            
+            const msgEl = document.getElementById('funk-message');
+            msgEl.classList.add('hidden');
+            
+            const actionsEl = document.getElementById('funk-actions');
+            actionsEl.classList.remove('hidden');
+            actionsEl.innerHTML = `
+                <div class="w-full flex flex-col gap-2">
+                    <input type="text" id="hail-input-${vid}" class="w-full bg-slate-900 border border-slate-600 rounded p-3 text-white focus:border-blue-500 outline-none shadow-inner" placeholder="Nachricht an Wg ${vid} eingeben...">
+                    <button onclick="dispatchHail('${vid}')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded shadow transition flex justify-center items-center gap-2">📻 Nachricht Senden</button>
+                </div>
+            `;
+            setTimeout(() => { document.getElementById(`hail-input-${vid}`)?.focus(); }, 100);
+        }
+
+        function dispatchHail(vid) {
+            const inputEl = document.getElementById(`hail-input-${vid}`);
+            if(!inputEl) return;
+            const msg = inputEl.value.trim();
+            if(!msg) return sysAlert("Bitte eine Nachricht eingeben!");
+            
+            playSquelchSound();
+            document.getElementById('funk-caller').innerText = `Warte auf Rückmeldung von Wg ${vid}...`;
+            
+            const msgEl = document.getElementById('funk-message');
+            msgEl.innerHTML = `<span class="text-blue-400">Leitstelle:</span> ${msg}`;
+            msgEl.classList.remove('hidden');
+            
+            const actionsEl = document.getElementById('funk-actions');
+            actionsEl.innerHTML = `<button disabled class="w-full bg-slate-600 text-gray-400 font-bold py-3 rounded shadow transition cursor-not-allowed">Warte auf Fahrer...</button>`;
+            
+            // Prüfen, ob der Spieler dieses Fahrzeug fährt
+            const pVehId = currentRoute ? vehicles.find(v => v.line === 'L ' + currentRoute.id)?.id : null;
+            if (vid === pVehId && document.getElementById('ibis-state-drive').classList.contains('flex')) {
+                const atronMsgEl = document.getElementById('atron-funk-msg');
+                if(atronMsgEl) {
+                    atronMsgEl.classList.remove('animate-pulse'); // Kein Blinken beim Lesen
+                    atronMsgEl.innerHTML = `
+                        <div class="text-left text-xs bg-orange-700 text-white p-1 rounded mb-2 font-bold uppercase tracking-wider">📞 Einzelruf Leitstelle:</div>
+                        <div class="text-left text-xs mb-3 leading-tight font-normal">${msg}</div>
+                        <button onclick="acknowledgeIndividualFunk('${vid}')" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 text-xs border border-green-800 shadow">Verstanden (Antworten)</button>
+                    `;
+                    atronMsgEl.classList.remove('hidden');
+                }
+                return; // Warte auf manuellen Klick des Spielers im Atron
+            }
+            
+            // Künstliche Verzögerung für die Antwort des KI-Fahrers (2 bis 4,5 Sekunden)
+            const responseDelay = Math.floor(Math.random() * 2500) + 2000;
+            
+            setTimeout(() => {
+                completeHailResponse(vid, msg);
+            }, responseDelay);
+        }
+
+        function completeHailResponse(vid, msg) {
+            playSquelchSound();
+            const caller = document.getElementById('funk-caller');
+            if(caller) caller.innerText = `Verbunden`;
+            
+            const msgEl = document.getElementById('funk-message');
+            if(msgEl) msgEl.innerHTML += `<br><br><span class="text-orange-400">Wg ${vid}:</span> Verstanden.`;
+            
+            const actionsEl = document.getElementById('funk-actions');
+            if(actionsEl) actionsEl.innerHTML = `<button onclick="closeFunk()" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 rounded shadow transition">Funk beenden</button>`;
+            
+            funkProtokolle.push({
+                id: Date.now().toString(),
+                vehId: vid,
+                meldung: `Dispo: ${msg} | Fahrer: Verstanden`,
+                zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                aktion: 'Info',
+                autoDispo: false
+            });
+        }
+
+        function acknowledgeIndividualFunk(vid) {
+            const atronMsgEl = document.getElementById('atron-funk-msg');
+            atronMsgEl.classList.add('animate-pulse'); // Blinken beim Senden an
+            atronMsgEl.innerHTML = `<div class="mt-2">Bestätigung gesendet...</div>`;
+            playSquelchSound();
+            setTimeout(() => {
+                atronMsgEl.classList.remove('animate-pulse');
+                atronMsgEl.classList.add('hidden');
+                completeHailResponse(vid, "Manuell beantwortet");
+            }, 1000);
+        }
+
+        function closeFunk() {
+            selectedFunkId = null;
+            renderFunkList();
+            document.getElementById('funk-title').innerText = 'Kanal 1 - Standby';
+            document.getElementById('funk-caller').innerText = 'Warte auf Eingabe...';
+            document.getElementById('funk-message').classList.add('hidden');
+            document.getElementById('funk-actions').classList.add('hidden');
+        }
+
+        function sendRundumfunk() {
+            document.getElementById('rf-category').value = "";
+            document.getElementById('rf-message').value = "";
+            document.getElementById('rundumfunk-modal').classList.remove('hidden');
+        }
+
+        function closeRundumfunkModal() {
+            document.getElementById('rundumfunk-modal').classList.add('hidden');
+        }
+
+        function updateRundumfunkTemplate() {
+            const cat = document.getElementById('rf-category').value;
+            const msgBox = document.getElementById('rf-message');
+            if(cat === 'Unwetter') msgBox.value = "Achtung an alle Fahrzeuge: Unwetterwarnung! Bitte Fahrweise den Witterungsbedingungen anpassen und Geschwindigkeit reduzieren.";
+            else if(cat === 'Stau') msgBox.value = "Allgemeine Info: Erhöhtes Verkehrsaufkommen und Stau im Innenstadtbereich. Mit Verspätungen ist zu rechnen.";
+            else if(cat === 'Kontrolle') msgBox.value = "Info an alle: Der Prüfdienst ist heute im Netz verstärkt im Einsatz. Bitte auf Kontrollen einstellen.";
+            else if(cat === 'Notfall') msgBox.value = "🚨 NOTFALL: Streckensperrung im Netz! Alle Fahrzeuge bitte im aktuellen Haltestellenbereich warten und auf weitere Anweisungen der Leitstelle achten.";
+            else msgBox.value = "";
+        }
+
+        function executeRundumfunk() {
+            const msg = document.getElementById('rf-message').value.trim();
+            if(!msg) return sysAlert("Bitte eine Nachricht eingeben!");
+            
+            closeRundumfunkModal();
+            playSquelchSound();
+            
+            const activeVehicles = vehicles.filter(v => v.status === "Ausgefahren");
+            let playerVehId = null;
+            
+            // Atron Benachrichtigung, falls der User selbst fährt
+            if(currentRoute && document.getElementById('ibis-state-drive').classList.contains('flex')) {
+                const pVeh = activeVehicles.find(v => v.line === 'L ' + currentRoute.id);
+                if(pVeh) playerVehId = pVeh.id;
+                
+                const msgEl = document.getElementById('atron-funk-msg');
+                msgEl.classList.remove('animate-pulse'); // Kein Blinken beim Lesen
+                msgEl.innerHTML = `
+                    <div class="text-left text-xs bg-red-700 text-white p-1 rounded mb-2 font-bold uppercase tracking-wider">📢 Rundumfunk Leitstelle:</div>
+                    <div class="text-left text-xs mb-3 leading-tight font-normal">${msg}</div>
+                    <button onclick="acknowledgeFunk()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 text-xs border border-green-800 shadow">Verstanden (Bestätigen)</button>
+                `;
+                msgEl.classList.remove('hidden');
+            }
+            
+            // Simuliere Bestätigung der KI-Fahrers
+            activeVehicles.forEach(v => {
+                if (v.id === playerVehId) return; // Das Spieler-Fahrzeug wird nicht automatisch bestätigt
+                
+                setTimeout(() => {
+                    playSquelchSound();
+                    showNotification("📻 Funk-Antwort", `Wg ${v.id}: Verstanden, Leitstelle.`);
+                    funkProtokolle.push({
+                        id: 'ACK-'+Date.now()+v.id,
+                        vehId: v.id,
+                        meldung: `Rundumfunk Bestätigung: "Verstanden"`,
+                        zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                        aktion: 'Info',
+                        autoDispo: true
+                    });
+                }, delay);
+                delay += (Math.random() * 3000 + 1500);
+            });
+            
+            funkProtokolle.push({
+                id: 'RF-'+Date.now(),
+                vehId: 'ALLE (Rundumfunk)',
+                meldung: msg,
+                zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                aktion: 'Info',
+                autoDispo: false
+            });
+        }
+
+        function acknowledgeFunk() {
+            const msgEl = document.getElementById('atron-funk-msg');
+            msgEl.classList.add('animate-pulse'); // Blinken beim Senden an
+            msgEl.innerHTML = `<div class="mt-2">Bestätigung wird gesendet...</div>`;
+            playSquelchSound();
+            
+            setTimeout(() => {
+                msgEl.classList.remove('animate-pulse');
+                msgEl.classList.add('hidden');
+                const vehId = vehicles.find(v => v.line === 'L ' + currentRoute?.id)?.id || 'Eigener Wagen';
+                funkProtokolle.push({
+                    id: 'ACK-'+Date.now(),
+                    vehId: vehId,
+                    meldung: `Manuelle Bestätigung: "Verstanden"`,
+                    zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                    aktion: 'Info',
+                    autoDispo: true
+                });
+            }, 1000);
+        }
+
+        function sendSprechwunsch() {
+            if(!currentRoute) return;
+            playSquelchSound();
+            
+            const msgEl = document.getElementById('atron-funk-msg');
+            msgEl.classList.add('animate-pulse'); // Blinken beim Warten an
+            msgEl.innerHTML = `<div class="mt-2">Sprechwunsch gesendet. Warte auf Leitstelle...</div>`;
+            msgEl.classList.remove('hidden');
+            
+            // Da wir im Fahrtmodus sind, übernimmt die Auto-Dispo die Leitstelle
+            setTimeout(() => {
+                msgEl.classList.remove('animate-pulse'); // Blinken beim Tippen aus
+                const vehId = vehicles.find(v => v.line === 'L ' + currentRoute?.id)?.id || '';
+                msgEl.innerHTML = `
+                    <div class="mb-2 text-left text-xs bg-orange-700 text-white p-1 rounded">Leitstelle: Wir hören, Wg ${vehId}. Was gibt es?</div>
+                    <div class="flex gap-1">
+                        <input type="text" id="atron-funk-input" class="w-full text-black bg-white p-1.5 text-xs border border-gray-500 outline-none font-normal" placeholder="Funkspruch eingeben...">
+                        <button onclick="submitSprechwunsch()" class="bg-black hover:bg-gray-800 text-white px-3 py-1 text-xs font-bold shadow flex items-center gap-1 shrink-0">
+                            🎙️ Senden
+                        </button>
+                    </div>
+                `;
+                playSquelchSound();
+                setTimeout(() => { document.getElementById('atron-funk-input')?.focus(); }, 100);
+            }, 2500);
+        }
+
+        function submitSprechwunsch() {
+            const inputEl = document.getElementById('atron-funk-input');
+            if(!inputEl) return;
+            const problem = inputEl.value.trim();
+            const msgEl = document.getElementById('atron-funk-msg');
+            const vehId = vehicles.find(v => v.line === 'L ' + currentRoute?.id)?.id || 'Eigener Wagen';
+
+            if(problem) {
+                msgEl.classList.add('animate-pulse'); // Blinken beim Bestätigen kurz an
+                msgEl.innerHTML = `<div class="text-left text-xs bg-orange-700 text-white p-1 rounded mt-2">Leitstelle: Verstanden. Ist im System notiert.</div>`;
+                playSquelchSound();
+                funkProtokolle.push({
+                    id: Date.now().toString(),
+                    vehId: vehId,
+                    meldung: problem,
+                    zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                    aktion: 'Weiterfahrt',
+                    autoDispo: true
+                });
+                setTimeout(() => { 
+                    msgEl.classList.remove('animate-pulse');
+                    msgEl.classList.add('hidden'); 
+                }, 3500);
+            } else {
+                msgEl.classList.remove('animate-pulse');
+                msgEl.innerHTML = `<div class="mt-2 text-red-800">Sprechwunsch abgebrochen.</div>`;
+                setTimeout(() => { msgEl.classList.add('hidden'); }, 2000);
+            }
+        }
+
+        function sendDelayTelegram(mins) {
+            if(!currentRoute || !routeStartTime) return sysAlert("Bitte erst Schicht beginnen!");
+            
+            const veh = vehicles.find(v => v.isPlayer);
+            if(veh) {
+                // Nur die Prognose für das ITCS setzen. Die Atron-Uhr bleibt unberührt!
+                veh.telegramDelaySec = mins * 60; 
+                // Timer setzen: Prognose erlischt nach genau 5 Minuten (300.000 ms)
+                veh.telegramTime = Date.now() + 300000;
+            }
+            
+            const vehId = veh ? veh.id : 'Eigener Wagen';
+            
+            // Sofort ins Funkarchiv eintragen
+            funkProtokolle.push({
+                id: 'DT-' + Date.now().toString(),
+                vehId: vehId,
+                meldung: `Daten-Telegramm: Verspätung gemeldet (+${mins} Min.)`,
+                zeit: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'}),
+                aktion: 'Info',
+                autoDispo: true
+            });
+            
+            // Kleiner Bestätigungs-Piepton am Atron
+            playPrinterSound(false); 
+            
+            // Banderole anzeigen
+            const msgEl = document.getElementById('atron-funk-msg');
+            msgEl.classList.remove('hidden', 'animate-pulse');
+            msgEl.innerHTML = `<div class="mt-2 text-xs bg-green-700 text-white p-2 rounded shadow border border-green-900 font-bold text-center">Telegramm gesendet: +${mins} Min. erfasst!</div>`;
+            
+            // Banderole nach kurzer Zeit wieder ausblenden
+            setTimeout(() => { msgEl.classList.add('hidden'); }, 3500);
+        }
+
+        function handleFunkAction(aktion) {
+            const funk = activeFunk.find(f => f.id === selectedFunkId);
+            if(!funk) return;
+
+            if(aktion === 'werkstatt') {
+                funk.aktion = 'Werkstatt';
+                const v = vehicles.find(veh => veh.id === funk.vehId);
+                if(v) {
+                    v.status = "In Werkstatt";
+                    v.problem = "Gefunkt: " + funk.meldung;
+                    v.repairUntil = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000); 
+                }
+                sysAlert(`Wg ${funk.vehId} wurde aufgefordert, sofort die Fahrt abzubrechen und in die Werkstatt einzurücken.`);
+                if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
+                if(document.getElementById('app-werkstatt').style.display === 'flex') renderWerkstatt();
+            } else {
+                funk.aktion = 'Weiterfahrt';
+                sysAlert(`Wg ${funk.vehId} darf die Fahrt fortsetzen. Defekt wurde notiert.`);
+            }
+
+            funk.autoDispo = false;
+            funkProtokolle.push(funk);
+            
+            activeFunk = activeFunk.filter(f => f.id !== selectedFunkId);
+            selectedFunkId = null;
+            updateFunkBadge();
+            renderFunkList();
         }
 
         // --- ZENTRALES ARCHIV ---
         function switchArchivTab(tab) {
             const btnEbe = document.getElementById('btn-archiv-ebe');
             const btnPersonal = document.getElementById('btn-archiv-personal');
+            const btnFunk = document.getElementById('btn-archiv-funk');
             const content = document.getElementById('archiv-content');
 
+            const activeClass = 'p-4 border-b border-slate-700 text-left font-bold text-white bg-blue-600 border-l-4 border-l-white transition';
+            const inactiveClass = 'p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent';
+
+            btnEbe.className = tab === 'ebe' ? activeClass : inactiveClass;
+            btnPersonal.className = tab === 'personal' ? activeClass : inactiveClass;
+            btnFunk.className = tab === 'funk' ? activeClass : inactiveClass;
+
             if(tab === 'ebe') {
-                btnEbe.className = 'p-4 border-b border-slate-700 text-left font-bold text-white bg-blue-600 border-l-4 border-l-white transition';
-                btnPersonal.className = 'p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent';
-                
                 let html = '<h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">🚨 Erfasste EBE-Verstöße</h2>';
                 if(ebeArchive.length === 0) {
                     html += '<div class="bg-slate-800 p-6 rounded-lg border border-slate-700 text-center"><p class="text-gray-400">Das Archiv ist leer. Es wurden noch keine EBEs ausgestellt.</p></div>';
@@ -1087,14 +1822,11 @@
                     html += '</tbody></table></div>';
                 }
                 content.innerHTML = html;
-            } else {
-                btnPersonal.className = 'p-4 border-b border-slate-700 text-left font-bold text-white bg-blue-600 border-l-4 border-l-white transition';
-                btnEbe.className = 'p-4 border-b border-slate-700 text-left text-gray-300 hover:bg-slate-700 transition border-l-4 border-l-transparent';
-                
+            } else if(tab === 'personal') {
                 let html = '<h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">👥 Zentrale Personalakten</h2>';
                 html += '<div class="grid grid-cols-1 md:grid-cols-2 gap-4">';
                 employees.forEach(emp => {
-                    let activeShifts = emp.schedule.filter(s => s.startsWith('F-') || s.startsWith('S-') || s.startsWith('N-')).length;
+                    let activeShifts = emp.schedule.filter(s => s && (s.startsWith('F-') || s.startsWith('S-') || s.startsWith('N-'))).length;
                     let urlaubTage = emp.schedule.filter(s => s === 'Urlaub').length;
                     let krankTage = emp.schedule.filter(s => s === 'Krank').length;
                     
@@ -1117,6 +1849,29 @@
                     `;
                 });
                 html += '</div>';
+                content.innerHTML = html;
+            } else if(tab === 'funk') {
+                let html = '<h2 class="text-2xl font-bold mb-6 text-white flex items-center gap-2">📻 Funk-Protokolle</h2>';
+                if(funkProtokolle.length === 0) {
+                    html += '<div class="bg-slate-800 p-6 rounded-lg border border-slate-700 text-center"><p class="text-gray-400">Keine Funk-Protokolle vorhanden.</p></div>';
+                } else {
+                    html += '<div class="space-y-3">';
+                    [...funkProtokolle].reverse().forEach(funk => {
+                        let badge = funk.aktion === 'Werkstatt' ? '<span class="bg-red-900 text-red-300 px-2 py-1 rounded text-xs">Werkstatt angeordnet</span>' : '<span class="bg-green-900 text-green-300 px-2 py-1 rounded text-xs">Weiterfahrt genehmigt</span>';
+                        let dispoText = funk.autoDispo ? '<span class="text-orange-400 text-xs font-bold">(Auto-Dispo)</span>' : '<span class="text-blue-400 text-xs">(Manuell)</span>';
+                        html += `
+                            <div class="bg-slate-800 p-4 rounded-lg shadow border border-slate-700">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="font-bold text-blue-400">Fahrzeug: Wg ${funk.vehId} <span class="text-gray-400 font-normal text-sm ml-2">(${funk.zeit})</span></div>
+                                    <div>${badge}</div>
+                                </div>
+                                <div class="text-sm text-gray-300 italic mb-2">"${funk.meldung}"</div>
+                                <div class="text-xs text-gray-500">Bearbeitet durch: Disponent ${dispoText}</div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                }
                 content.innerHTML = html;
             }
         }
@@ -1212,7 +1967,7 @@
                 id: newId, type: vehicle.type, tuev: tuevDate, hu: tuevDate,
                 status: "Einsatzbereit", repairUntil: null, problem: ""
             });
-            alert(`Herzlichen Glückwunsch!\nEin ${vehicle.type} wurde erfolgreich gekauft.\nDas Fahrzeug wurde mit der ID ${newId} deinem Betriebshof hinzugefügt!`);
+            sysAlert(`Herzlichen Glückwunsch!\nEin ${vehicle.type} wurde erfolgreich gekauft.\nDas Fahrzeug wurde mit der ID ${newId} deinem Betriebshof hinzugefügt!`);
             if(document.getElementById('app-betriebshof').style.display === 'flex') renderBetriebshof();
         }
 
@@ -1295,7 +2050,7 @@
             
             const checkboxes = document.querySelectorAll('#werkstatt-checkboxes input[type="checkbox"]:checked');
             if(checkboxes.length === 0) {
-                return alert("Fehler: Bitte wähle mindestens einen Grund für den Werkstattbesuch aus!");
+                return sysAlert("Fehler: Bitte wähle mindestens einen Grund für den Werkstattbesuch aus!");
             }
 
             const reasons = Array.from(checkboxes).map(cb => cb.value);
@@ -1373,11 +2128,11 @@
                 takt: parseInt(document.getElementById('n-takt').value) || 20,
                 stops: document.getElementById('n-stops').value.split(',').map(s=>s.trim())
             };
-            if(!r.id || r.stops.length < 2) return alert("Fehlerhafte Eingabe.");
+            if(!r.id || r.stops.length < 2) return sysAlert("Fehlerhafte Eingabe.");
             routes.push(r);
             renderRoutes();
             if(document.getElementById('app-personal').style.display === 'flex') updateToolDisplay(); // Refreshes dropdown
-            alert("Linie gespeichert!");
+            sysAlert("Linie gespeichert!");
         }
         function deleteRoute(idx) { routes.splice(idx, 1); renderRoutes(); }
         function renderRoutes() {
@@ -1400,6 +2155,74 @@
             });
         }
 
+        // --- ITCS (LIVE-RADAR) LOGIK ---
+        function renderItcs() {
+            const tbody = document.getElementById('itcs-list');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            
+            const activeVehicles = vehicles.filter(v => v.status === "Ausgefahren");
+            
+            if(activeVehicles.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-gray-500 italic">Aktuell keine Fahrzeuge im Liniennetz unterwegs.</td></tr>';
+                return;
+            }
+            
+            activeVehicles.forEach(v => {
+                let delayToUse = v.delaySec || 0;
+
+                // Zeit umrechnen
+                const absDelay = Math.abs(delayToUse);
+                const m = Math.floor(absDelay / 60).toString().padStart(2, '0');
+                const s = (absDelay % 60).toString().padStart(2, '0');
+                
+                let delayStr = "";
+                let delayClass = "";
+                if (delayToUse > 0) {
+                    delayStr = `+${m}:${s}`;
+                    delayClass = "text-red-400 font-bold bg-red-900/30 border border-red-800 px-2 py-1 rounded shadow-sm";
+                } else if (delayToUse < 0) {
+                    delayStr = `-${m}:${s}`;
+                    delayClass = "text-yellow-400 font-bold bg-yellow-900/30 border border-yellow-800 px-2 py-1 rounded shadow-sm";
+                } else {
+                    delayStr = `±00:00`;
+                    delayClass = "text-green-400 font-bold bg-green-900/30 border border-green-800 px-2 py-1 rounded shadow-sm";
+                }
+
+                // Routeninformationen abrufen
+                const routeId = v.line ? v.line.replace('L ', '') : '';
+                const route = routes.find(r => r.id === routeId);
+                const ziel = route ? route.stops[route.stops.length - 1] : 'Unbekannt (Betriebsfahrt)';
+                const fType = (v.type.includes('Tram') || v.type.includes('Variobahn') || v.type.includes('Triebwagen')) ? '🚋' : '🚌';
+
+                // Prognose (Gemeldet) berechnen
+                let telegramStr = `<span class="text-gray-500">--</span>`;
+                if (v.telegramDelaySec !== undefined) {
+                    const tAbs = Math.abs(v.telegramDelaySec);
+                    const tm = Math.floor(tAbs / 60).toString().padStart(2, '0');
+                    const ts = (tAbs % 60).toString().padStart(2, '0');
+                    telegramStr = `<span class="text-yellow-400 font-bold bg-yellow-900/30 border border-yellow-800 px-2 py-1 rounded shadow-sm font-mono">+${tm}:${ts}</span>`;
+                }
+
+                const lineKursStr = v.line ? `${v.line} / K${v.kurs || '1'}` : '---';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700/50 transition cursor-default">
+                        <td class="p-3 font-bold text-cyan-300 border-b border-slate-700/50">${fType} ${v.id}</td>
+                        <td class="p-3 border-b border-slate-700/50"><span class="text-white font-mono font-bold bg-slate-900 border border-slate-600 px-2 py-1 rounded shadow-inner">${lineKursStr}</span></td>
+                        <td class="p-3 text-gray-300 border-b border-slate-700/50 font-medium">${ziel}</td>
+                        <td class="p-3 text-right border-b border-slate-700/50">${telegramStr}</td>
+                        <td class="p-3 text-right border-b border-slate-700/50"><span class="${delayClass} font-mono">${delayStr}</span></td>
+                        <td class="p-3 text-right border-b border-slate-700/50">
+                            <span class="text-[10px] uppercase font-bold bg-slate-800 border border-slate-600 px-2 py-1 rounded text-gray-300 shadow-sm flex items-center justify-end gap-1 w-fit ml-auto">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Auf Linie
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
         // --- AUDIO SYSTEM (Web Speech API & Tone.js) ---
         function speakText(text) {
             if ('speechSynthesis' in window) {
@@ -1417,43 +2240,57 @@
             if(type === 'fahrscheinkontrolle') speakText("Sehr geehrte Fahrgäste, bitte halten Sie Ihre Fahrausweise zur Kontrolle bereit.");
             if(type === 'aufrucken') speakText("Bitte rücken Sie im Wagen durch, um anderen Fahrgästen das Einsteigen zu ermöglichen.");
             if(type === 'essen') speakText("Wir weisen Sie darauf hin, dass der Verzehr von Speisen und Getränken in diesem Fahrzeug nicht gestattet ist.");
+            if(type === 'zurueckbleiben') speakText("Bitte zurückbleiben. Türen schließen selbsttätig.");
+        }
+
+        async function playSquelchSound() {
+            try {
+                await Tone.start();
+                const noise = new Tone.Noise("white").start();
+                const filter = new Tone.Filter(800, "bandpass").toDestination();
+                noise.connect(filter);
+                noise.volume.value = -15;
+                setTimeout(() => { noise.stop(); noise.dispose(); filter.dispose(); }, 400);
+            } catch(e) {}
         }
 
         async function playPrinterSound(isLong) {
-            await Tone.start(); 
-            const now = Tone.now();
+            try {
+                await Tone.start(); 
+                const now = Tone.now();
 
-            const beep = new Tone.Synth({
-                oscillator: { type: "square" },
-                envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 },
-                volume: -12
-            }).toDestination();
-            beep.triggerAttackRelease("A5", 0.05, now);
+                const beep = new Tone.Synth({
+                    oscillator: { type: "square" },
+                    envelope: { attack: 0.01, decay: 0.1, sustain: 0, release: 0.1 },
+                    volume: -12
+                }).toDestination();
+                beep.triggerAttackRelease("A5", 0.05, now);
 
-            if (!isLong) {
-                const bell = new Tone.PolySynth(Tone.Synth, {
-                    oscillator: { type: "triangle" },
-                    envelope: { attack: 0.01, decay: 1.5, sustain: 0, release: 1.5 },
-                    volume: -5
-                }).toDestination();
-                
-                bell.triggerAttackRelease(["E6", "G6", "C7"], 1.5, now + 0.2);
-                setTimeout(() => { beep.dispose(); bell.dispose(); }, 3000);
-            } else {
-                const stutters = [0.8, 1.9, 3.0, 4.2];
-                stutters.forEach(time => {
-                    beep.triggerAttackRelease("A5", 0.05, now + time);
-                });
-                
-                const bell = new Tone.PolySynth(Tone.Synth, {
-                    oscillator: { type: "triangle" },
-                    envelope: { attack: 0.01, decay: 1.0, sustain: 0, release: 1.0 },
-                    volume: -5
-                }).toDestination();
-                
-                bell.triggerAttackRelease(["C6", "E6"], 1.0, now + 5.0);
-                setTimeout(() => { beep.dispose(); bell.dispose(); }, 6500);
-            }
+                if (!isLong) {
+                    const bell = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "triangle" },
+                        envelope: { attack: 0.01, decay: 1.5, sustain: 0, release: 1.5 },
+                        volume: -5
+                    }).toDestination();
+                    
+                    bell.triggerAttackRelease(["E6", "G6", "C7"], 1.5, now + 0.2);
+                    setTimeout(() => { beep.dispose(); bell.dispose(); }, 3000);
+                } else {
+                    const stutters = [0.8, 1.9, 3.0, 4.2];
+                    stutters.forEach(time => {
+                        beep.triggerAttackRelease("A5", 0.05, now + time);
+                    });
+                    
+                    const bell = new Tone.PolySynth(Tone.Synth, {
+                        oscillator: { type: "triangle" },
+                        envelope: { attack: 0.01, decay: 1.0, sustain: 0, release: 1.0 },
+                        volume: -5
+                    }).toDestination();
+                    
+                    bell.triggerAttackRelease(["C6", "E6"], 1.0, now + 5.0);
+                    setTimeout(() => { beep.dispose(); bell.dispose(); }, 6500);
+                }
+            } catch(e) {}
         }
 
         // --- IBIS ATRON LOGIK & KASSENSYSTEM ---
@@ -1471,6 +2308,7 @@
             document.getElementById('ibis-state-menu').classList.add('hidden');
             document.getElementById('ibis-state-verkauf').classList.add('hidden');
             document.getElementById('ibis-state-ebe').classList.add('hidden');
+            document.getElementById('ibis-state-nachrichten').classList.add('hidden');
             
             const bootContainer = document.getElementById('ibis-state-boot');
             bootContainer.classList.remove('hidden');
@@ -1505,25 +2343,35 @@
             const pId = document.getElementById('hw-login-personal').value.trim();
             const code = document.getElementById('hw-login-code').value.toUpperCase().trim();
             
-            if(!pId) return alert("Fehler: Bitte eine Personalnummer eingeben!");
-            if(!code) return alert("Fehler: Bitte Schichtcode oder Linie eingeben!");
+            if(!pId) return sysAlert("Fehler: Bitte eine Personalnummer eingeben!");
+            if(!code) return sysAlert("Fehler: Bitte Schichtcode oder Linie eingeben!");
 
             const driver = employees.find(e => e.id === pId);
-            if(!driver) return alert(`Fehler: Personalnummer ${pId} ist im System nicht hinterlegt!`);
+            if(!driver) return sysAlert(`Fehler: Personalnummer ${pId} ist im System nicht hinterlegt!`);
 
             let foundLineId = code.includes('-') ? code.split('-')[1] : code; 
             
             currentRoute = routes.find(r => r.id === foundLineId);
-            if(!currentRoute) return alert("Fehler: Linie oder Schicht nicht im Fahrplan gefunden!");
+            if(!currentRoute) return sysAlert("Fehler: Linie oder Schicht nicht im Fahrplan gefunden!");
             
             if(driver.role === "Busfahrer/in" && currentRoute.type === "Tram") {
-                return alert(`LIZENZ-FEHLER: Mitarbeiter ${driver.name} hat keine Fahrberechtigung für Straßenbahnen!`);
+                return sysAlert(`LIZENZ-FEHLER: Mitarbeiter ${driver.name} hat keine Fahrberechtigung für Straßenbahnen!`);
             }
             if(driver.role === "Straßenbahnfahrer/in" && currentRoute.type === "Bus") {
-                return alert(`LIZENZ-FEHLER: Mitarbeiter ${driver.name} hat keine Fahrberechtigung für Busse!`);
+                return sysAlert(`LIZENZ-FEHLER: Mitarbeiter ${driver.name} hat keine Fahrberechtigung für Busse!`);
             }
             
             currentDriverId = pId;
+
+            // Fahrzeug aus dem Betriebshof zuweisen und als Spieler markieren
+            let myVeh = vehicles.find(v => v.status === "Einsatzbereit" && (currentRoute.type === "Tram" ? v.type.includes('Tram') || v.type.includes('Variobahn') || v.type.includes('Triebwagen') : !v.type.includes('Tram') && !v.type.includes('Variobahn') && !v.type.includes('Triebwagen')));
+            
+            if (myVeh) {
+                myVeh.status = "Ausgefahren";
+                myVeh.line = "L " + currentRoute.id;
+                myVeh.isPlayer = true;
+                myVeh.delaySec = 0;
+            }
 
             const now = new Date();
             const [sh, sm] = currentRoute.start.split(':').map(Number);
@@ -1547,17 +2395,19 @@
         }
 
         function toggleIbisMenu() {
-            if(!currentRoute) return alert("Funktion gesperrt: Bitte erst Schicht beginnen!");
+            if(!currentRoute) return sysAlert("Funktion gesperrt: Bitte erst Schicht beginnen!");
             const drive = document.getElementById('ibis-state-drive');
             const menu = document.getElementById('ibis-state-menu');
             const verkauf = document.getElementById('ibis-state-verkauf');
             const ebe = document.getElementById('ibis-state-ebe');
+            const nachrichten = document.getElementById('ibis-state-nachrichten');
             
             if(drive.classList.contains('hidden')) {
                 drive.classList.remove('hidden'); drive.classList.add('flex');
                 menu.classList.add('hidden'); menu.classList.remove('flex');
                 verkauf.classList.add('hidden'); verkauf.classList.remove('flex');
                 ebe.classList.add('hidden'); ebe.classList.remove('flex');
+                nachrichten.classList.add('hidden'); nachrichten.classList.remove('flex');
             } else {
                 drive.classList.add('hidden'); drive.classList.remove('flex');
                 menu.classList.remove('hidden'); menu.classList.add('flex');
@@ -1629,11 +2479,11 @@
             const grund = document.getElementById('ebe-grund').value;
 
             if(!vorname || !nachname || !plz) {
-                return alert("Fehler: Bitte Vorname, Nachname und PLZ ausfüllen!");
+                return sysAlert("Fehler: Bitte Vorname, Nachname und PLZ ausfüllen!");
             }
 
             if(plz.length !== 5 || isNaN(plz)) {
-                return alert("Fehler: Die Postleitzahl muss aus exakt 5 Ziffern bestehen.");
+                return sysAlert("Fehler: Die Postleitzahl muss aus exakt 5 Ziffern bestehen.");
             }
 
             const fahrerId = document.getElementById('hw-login-personal').value || 'Unbekannt';
@@ -1682,25 +2532,45 @@
         }
 
         function ibisPruefen() {
-            alert("Prüf-Modus (Validierung) aktiv.\n\nBitte Barcode scannen oder eTicket-Chipkarte auflegen...\n\n✅ Prüfung erfolgreich!\nSicherheitszertifikat gültig (Geprüft gegen VDV-KA Sperrliste).");
+            sysAlert("Prüf-Modus (Validierung) aktiv.\n\nBitte Barcode scannen oder eTicket-Chipkarte auflegen...\n\n✅ Prüfung erfolgreich!\nSicherheitszertifikat gültig (Geprüft gegen VDV-KA Sperrliste).");
         }
 
         function ibisNachrichten() {
-            alert("Nachrichten- und Kommunikationscenter\n\nStatus: Online\nEs liegen keine neuen Nachrichten von der Leitstelle vor.");
+            document.getElementById('ibis-state-menu').classList.add('hidden');
+            document.getElementById('ibis-state-menu').classList.remove('flex');
+            document.getElementById('ibis-state-nachrichten').classList.remove('hidden');
+            document.getElementById('ibis-state-nachrichten').classList.add('flex');
+        }
+
+        function closeNachrichten() {
+            document.getElementById('ibis-state-nachrichten').classList.add('hidden');
+            document.getElementById('ibis-state-nachrichten').classList.remove('flex');
+            document.getElementById('ibis-state-menu').classList.remove('hidden');
+            document.getElementById('ibis-state-menu').classList.add('flex');
         }
 
         function ibisKassensturz() {
-            if(!currentRoute) return alert("Bitte erst Schicht beginnen, um einen Kassensturz durchzuführen.");
-            const bestaetigung = confirm(`Schicht- und Kassenverwaltung\n\nAktuelle Zwischenabrechnung:\nVerkaufte Tickets: ${transaktionsSpeicher.verkauf}\nBargeldbestand / Umsatz: ${transaktionsSpeicher.umsatz.toFixed(2)} €\nErfasste EBEs: ${transaktionsSpeicher.ebe}\n\nMöchtest du den Kassensturz durchführen, die Daten übertragen und die Schicht beenden?`);
+            if(!currentRoute) return sysAlert("Bitte erst Schicht beginnen, um einen Kassensturz durchzuführen.");
             
-            if(bestaetigung) {
-                alert("Datenpakete an zentrales Hintergrundsystem übertragen.\nKasse abgemeldet. Schicht beendet.");
+            sysConfirm(`Schicht- und Kassenverwaltung\n\nAktuelle Zwischenabrechnung:\nVerkaufte Tickets: ${transaktionsSpeicher.verkauf}\nBargeldbestand / Umsatz: ${transaktionsSpeicher.umsatz.toFixed(2)} €\nErfasste EBEs: ${transaktionsSpeicher.ebe}\n\nMöchtest du den Kassensturz durchführen, die Daten übertragen und die Schicht beenden?`, () => {
+                sysAlert("Datenpakete an zentrales Hintergrundsystem übertragen.\nKasse abgemeldet. Schicht beendet.");
                 transaktionsSpeicher = { verkauf: 0, umsatz: 0.00, ebe: 0 }; 
                 beendeDienst();
-            }
+            }, "Kassensturz durchführen?");
         }
 
         function beendeDienst() {
+            // Fahrzeug wieder freigeben und aus Radar löschen
+            let myVeh = vehicles.find(v => v.isPlayer);
+            if(myVeh) {
+                myVeh.status = "Einsatzbereit";
+                myVeh.line = "";
+                myVeh.isPlayer = false;
+                myVeh.delaySec = 0;
+                myVeh.telegramDelaySec = undefined;
+                myVeh.telegramTime = undefined;
+            }
+
             currentRoute = null;
             currentDriverId = null;
             document.getElementById('ibis-state-menu').classList.add('hidden');
@@ -1709,6 +2579,8 @@
             document.getElementById('ibis-state-verkauf').classList.remove('flex');
             document.getElementById('ibis-state-ebe').classList.add('hidden');
             document.getElementById('ibis-state-ebe').classList.remove('flex');
+            document.getElementById('ibis-state-nachrichten').classList.add('hidden');
+            document.getElementById('ibis-state-nachrichten').classList.remove('flex');
             document.getElementById('ibis-state-drive').classList.add('hidden');
             document.getElementById('ibis-state-drive').classList.remove('flex');
             document.getElementById('ibis-state-login').classList.remove('hidden');
@@ -1745,15 +2617,26 @@
             else document.getElementById('ibis-screen').classList.remove('atron-dark');
         }
 
-        function updateDelay() {
-            const now = new Date();
+        function getPlayerRealDelaySec() {
+            let myVeh = vehicles.find(v => v.isPlayer);
+            if (!myVeh || !currentRoute || !routeStartTime) return 0;
+            
             const expectedTime = new Date(routeStartTime.getTime() + (currentStopIdx * (currentRoute.dauer / (currentRoute.stops.length - 1 || 1)) * 60000));
-            const diffSec = Math.floor((now - expectedTime) / 1000);
-            const m = Math.abs(Math.floor(diffSec / 60)).toString().padStart(2, '0');
-            const s = Math.abs(diffSec % 60).toString().padStart(2, '0');
+            return Math.floor((new Date() - expectedTime) / 1000);
+        }
+
+        function updateDelay() {
+            const diffSec = getPlayerRealDelaySec();
+            
+            const absDiff = Math.abs(diffSec);
+            const m = Math.floor(absDiff / 60).toString().padStart(2, '0');
+            const s = (absDiff % 60).toString().padStart(2, '0');
+            
             const delayEl = document.getElementById('ibis-delay');
-            if(diffSec > 60) { delayEl.innerText = `+${m}:${s}`; delayEl.className = 'text-red-600 font-bold'; }
-            else if(diffSec < -60) { delayEl.innerText = `-${m}:${s}`; delayEl.className = 'text-yellow-300 font-bold'; }
+            
+            // Ab sofort wird jede einzelne Sekunde live berechnet (> 0 statt > 60)
+            if(diffSec > 0) { delayEl.innerText = `+${m}:${s}`; delayEl.className = 'text-red-600 font-bold'; }
+            else if(diffSec < 0) { delayEl.innerText = `-${m}:${s}`; delayEl.className = 'text-yellow-300 font-bold'; }
             else { delayEl.innerText = `±00:00`; delayEl.className = 'text-green-600 font-bold'; }
         }
 
